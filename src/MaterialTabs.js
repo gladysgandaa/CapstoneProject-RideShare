@@ -60,19 +60,19 @@ export default function SimpleTabs() {
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
+          <Tab label="Ride Share" {...a11yProps(0)} />
+          <Tab label="Log in" {...a11yProps(1)} />
+          <Tab label="Sign Up" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        Item One
+        Ride Share
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        Log in
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        Sign Up - Registration Form Here
       </TabPanel>
     </div>
   );
