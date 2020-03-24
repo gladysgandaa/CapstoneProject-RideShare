@@ -6,7 +6,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { BrowserRouter as Link } from "react-router-dom";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -61,20 +62,11 @@ export default function SimpleTabs() {
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab label="Ride Share" {...a11yProps(0)} />
-          <Tab label="Sign In" {...a11yProps(1)} />
-          <Tab label="Sign Up" {...a11yProps(2)} />
+          <Tab label="Ride Share" href="/" {...a11yProps(0)} />
+          <Tab label="Sign In" href="/signin" {...a11yProps(1)} />
+          <Tab label="Sign Up" href="/signup" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0}>
-        <Link to="/">Home</Link>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <Link to="/signin">Sign In</Link>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <Link to="/signup">Sign Up</Link>
-      </TabPanel>
     </div>
   );
 }
