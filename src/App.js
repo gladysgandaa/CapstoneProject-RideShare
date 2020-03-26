@@ -25,5 +25,5 @@ class App extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyB3o5ior_i7n349A_xgUZQbMQ2QAB-XHqg"
+  apiKey: "API KEY"
 })(App);
