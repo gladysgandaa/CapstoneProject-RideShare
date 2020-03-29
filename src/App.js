@@ -2,28 +2,25 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import TabPanel from "./MaterialTabs.js";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import MapContainer from "./components/MapContainer";
+import TestComponent from "./components/TestComponent";
 
 class App extends Component {
   render() {
-    const mapStyles = {
-      width: "100%",
-      height: "100%"
-    };
-
     return (
-      <Map
-        google={this.props.google}
-        zoom={8}
-        style={mapStyles}
-        initialCenter={{ lat: 47.444, lng: -122.176 }}
-      >
-        <Marker position={{ lat: 48.0, lng: -122.0 }} />
-      </Map>
+      <div className="App">
+        <div className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h2>Welcome to React</h2>
+        </div>
+        <p className="App-intro">Material Tab Panel:</p>
+        <TabPanel></TabPanel>
+        <div>
+          <MapContainer map={MapContainer} />
+        </div>
+      </div>
     );
   }
 }
 
-export default GoogleApiWrapper({
-  apiKey: "API KEY"
-})(App);
+export default App;

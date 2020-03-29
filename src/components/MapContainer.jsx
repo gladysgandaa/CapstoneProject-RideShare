@@ -6,7 +6,10 @@ class MapContainer extends Component {
     super(props);
 
     this.state = {
-      location: null
+      location: [
+        { lat: 48.0, lng: -122.0 },
+        { latitude: 47.359423, longitude: -122.021071 }
+      ]
     };
   }
 
@@ -16,57 +19,49 @@ class MapContainer extends Component {
   }
 
   displayMarkers = () => {
-    return this.state.stores.map((store, index) => {
-      return (
-        <Marker
-          key={index}
-          id={index}
-          position={{
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          }}
-          onClick={() => console.log("You clicked me!")}
-        />
-      );
-    });
+    return (
+      <Marker
+        position={{
+          lat: this.state.location.lat,
+          lng: this.state.location.lng
+        }}
+        onClick={() => console.log("You clicked me!")}
+      />
+    );
   };
 
   setLocation = () => {
     console.log("set location called");
     navigator.geolocation.getCurrentPosition(position => {
       console.log("getCurrentPosition called");
-      const location = position;
-      console.log("lat:", position.coords.latitude);
-      console.log("long:", position.coords.longitude);
+      const location = { ...this.state.location };
+      location.lat = position.coords.latitude;
+      location.lng = position.coords.longitude;
       this.setState({ location });
+      console.log("location: ", this.state.location);
     });
   };
 
+  //can get state, cannot set it
   render() {
     const mapStyles = {
       width: "100%",
       height: "100%"
     };
     console.log("state", this.state);
-    this.setLocation(); //does nothing
-    console.log("state called after setlocation", this.state);
     return (
       <div>
-        <h3>Testing</h3>
+        <h3></h3>
         <Map
-          location={this.setLocation()}
+          location={this.state.location}
           google={this.props.google}
           zoom={8}
           style={mapStyles}
-          // initialCenter={{
-          //   lat: location.coords.latitude,
-          //   lng: location.coords.longitude
-          // }}
-          // initialCenter={location}
+          initialCenter={{ lat: -37.8303708, lng: 144.9674938 }} //cannot set this dynamically
         >
           {this.setLocation()}
-          {/* {this.displayMarkers()} */}
-          <Marker position={{ lat: 48.0, lng: -122.0 }} />
+          {this.displayMarkers()}
+          <Marker position={this.state.location} />
         </Map>
       </div>
     );
@@ -74,6 +69,5 @@ class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: ""
+  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
 })(MapContainer);
-//AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
