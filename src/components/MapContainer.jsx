@@ -1,14 +1,20 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+// import UserMarker from "../UserMarker";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      location: [
-        { lat: 48.0, lng: -122.0 },
-        { latitude: 47.359423, longitude: -122.021071 }
+      user: { lat: 48.0, lng: -122.0 },
+      vehicles: [
+        { lat: 37.49855629475769, lng: 144.8674427 },
+        { lat: -37.8301784, lng: 144.9674227 },
+        { lat: -37.8303434, lng: 144.4444427 },
+        { lat: -37.8303784, lng: 144.9673427 },
+        { lat: -37.8332784, lng: 144.9672322 },
+        { lat: -37.8303123, lng: 144.9777727 }
       ]
     };
   }
@@ -18,27 +24,45 @@ class MapContainer extends Component {
     this._ismounted = true;
   }
 
-  displayMarkers = () => {
+  displayUser = () => {
     return (
       <Marker
+        colour="blue"
+        name="User Marker"
         position={{
-          lat: this.state.location.lat,
-          lng: this.state.location.lng
+          lat: this.state.user.lat,
+          lng: this.state.user.lng
         }}
-        onClick={() => console.log("You clicked me!")}
+        onClick={() => console.log("You clicked User Marker")}
       />
     );
   };
 
-  setLocation = () => {
+  displayVehicles = () => {
+    return this.state.vehicles.map((vehicle, index) => {
+      return (
+        <Marker
+          key={index}
+          id={index}
+          position={{
+            lat: vehicle.lat,
+            lng: vehicle.lng
+          }}
+          onClick={() => console.log("You clicked Vehicle Marker")}
+        />
+      );
+    });
+  };
+
+  setUserLocation = () => {
     console.log("set location called");
     navigator.geolocation.getCurrentPosition(position => {
       console.log("getCurrentPosition called");
-      const location = { ...this.state.location };
-      location.lat = position.coords.latitude;
-      location.lng = position.coords.longitude;
-      this.setState({ location });
-      console.log("location: ", this.state.location);
+      const user = { ...this.state.user };
+      user.lat = position.coords.latitude;
+      user.lng = position.coords.longitude;
+      this.setState({ user });
+      console.log("user: ", this.state.user);
     });
   };
 
@@ -48,20 +72,21 @@ class MapContainer extends Component {
       width: "100%",
       height: "100%"
     };
+
     console.log("state", this.state);
     return (
       <div>
         <h3></h3>
         <Map
-          location={this.state.location}
+          user={this.state.user}
           google={this.props.google}
-          zoom={8}
+          zoom={15}
           style={mapStyles}
-          initialCenter={{ lat: -37.8303708, lng: 144.9674938 }} //cannot set this dynamically
+          initialCenter={{ lat: -37.8303708, lng: 144.9674938 }} //Work out how to set this dynamically
         >
-          {this.setLocation()}
-          {this.displayMarkers()}
-          <Marker position={this.state.location} />
+          {this.setUserLocation()}
+          {this.displayUser()}
+          {this.displayVehicles()}
         </Map>
       </div>
     );
