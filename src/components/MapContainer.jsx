@@ -80,7 +80,7 @@ class MapContainer extends Component {
         <Map
           user={this.state.user}
           google={this.props.google}
-          zoom={15}
+          zoom={8}
           style={mapStyles}
           initialCenter={{ lat: -37.8303708, lng: 144.9674938 }} //Work out how to set this dynamically
         >
