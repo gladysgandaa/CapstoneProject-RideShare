@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import AddressForm from "./Booking";
 import TabPanel from "./MaterialTabs.js";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import SignIn from "./SignIn";
@@ -10,6 +11,7 @@ class App extends Component {
     return (
       <Router>
         <TabPanel></TabPanel>
+        <AddressForm></AddressForm>
         <Switch>
           <Route path="/signin">
             <SignIn />
