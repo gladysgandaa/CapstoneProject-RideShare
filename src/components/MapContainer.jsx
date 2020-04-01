@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-// import UserMarker from "../UserMarker";
 
 class MapContainer extends Component {
   constructor(props) {
@@ -9,9 +8,9 @@ class MapContainer extends Component {
     this.state = {
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
-        { lat: 37.49855629475769, lng: 144.8674427 },
+        { lat: 37.79855629475769, lng: 144.8674427 },
         { lat: -37.8301784, lng: 144.9674227 },
-        { lat: -37.8303434, lng: 144.4444427 },
+        { lat: -37.8303434, lng: 144.7444427 },
         { lat: -37.8303784, lng: 144.9673427 },
         { lat: -37.8332784, lng: 144.9672322 },
         { lat: -37.8303123, lng: 144.9777727 }
@@ -66,7 +65,29 @@ class MapContainer extends Component {
     });
   };
 
-  //can get state, cannot set it
+  //remove position
+  haversineDistance = (mk1, mk2) => {
+    var R = 3958.8; // Radius of the Earth in miles
+    var rlat1 = mk1.position.lat() * (Math.PI / 180); // Convert degrees to radians
+    var rlat2 = mk2.position.lat() * (Math.PI / 180); // Convert degrees to radians
+    var difflat = rlat2 - rlat1; // Radian difference (latitudes)
+    var difflon = (mk2.position.lng() - mk1.position.lng()) * (Math.PI / 180); // Radian difference (longitudes)
+
+    var d =
+      2 *
+      R *
+      Math.asin(
+        Math.sqrt(
+          Math.sin(difflat / 2) * Math.sin(difflat / 2) +
+            Math.cos(rlat1) *
+              Math.cos(rlat2) *
+              Math.sin(difflon / 2) *
+              Math.sin(difflon / 2)
+        )
+      );
+    return d;
+  };
+
   render() {
     const mapStyles = {
       width: "100%",
