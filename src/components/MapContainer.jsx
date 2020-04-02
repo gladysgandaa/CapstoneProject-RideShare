@@ -22,11 +22,6 @@ class MapContainer extends Component {
   componentDidMount() {
     console.log("mounted");
     this.handleHaversine(this.state.user, this.state.vehicles);
-    var distance = this.haversineDistance(
-      this.state.user,
-      this.state.vehicles[1]
-    );
-    console.log("distance : ", distance);
     this._ismounted = true;
   }
 
@@ -60,22 +55,16 @@ class MapContainer extends Component {
     });
   };
 
-  setLocation = () => {
-    console.log("centre : ", this.state.centre);
+  setUserLocation = () => {
     navigator.geolocation.getCurrentPosition(position => {
       const user = { ...this.state.user };
-      const centre = { ...this.state.centre };
       user.lat = position.coords.latitude;
       user.lng = position.coords.longitude;
-      centre.lat = position.coords.latitude;
-      centre.lng = position.coords.longitude;
       this.setState({ user });
-      this.setState({ centre });
-      console.log("centre after : ", this.state.centre);
     });
   };
 
-  //return array ot tuples with the marker as well
+  //TODO return array of tuples with a marker ID as well distance
   handleHaversine = (user, ...args) => {
     var distances = [];
     for (var a in args) {
@@ -84,10 +73,10 @@ class MapContainer extends Component {
         distances.push(this.haversineDistance(user, args[a][b]));
       }
     }
-    console.log("shortest distance is:", distances.sort()[0]);
+    //return order list of distances from user to each vehicle marker
+    return distances.sort();
   };
 
-  //remove position
   haversineDistance = (mk1, mk2) => {
     console.log("haversine called");
     var R = 3958.8; // Radius of the Earth in miles
@@ -125,10 +114,10 @@ class MapContainer extends Component {
           google={this.props.google}
           zoom={8}
           style={mapStyles}
-          onReady={this.setLocation}
+          onReady={this.setUserLocation}
           initialCenter={this.state.centre} //Work out how to set this dynamically
         >
-          {this.setLocation()}
+          {this.setUserLocation()}
           {this.displayUser()}
           {this.displayVehicles()}
         </Map>
