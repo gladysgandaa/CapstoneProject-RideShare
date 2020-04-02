@@ -8,12 +8,12 @@ class MapContainer extends Component {
     this.state = {
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
-        { lat: -37.7985769, lng: 144.8674427 },
-        { lat: -37.8301784, lng: 144.9674227 },
-        { lat: -37.8303434, lng: 144.7444427 },
-        { lat: -37.8303784, lng: 144.9673427 },
-        { lat: -37.8332784, lng: 144.9672322 },
-        { lat: -37.8303123, lng: 144.9777727 }
+        { name: "car0", coords: { lat: -37.7985769, lng: 144.8674427 } },
+        { name: "car1", coords: { lat: -37.8301784, lng: 144.9674227 } },
+        { name: "car2", coords: { lat: -37.8303434, lng: 144.7444427 } },
+        { name: "car3", coords: { lat: -37.8303784, lng: 144.9673427 } },
+        { name: "car4", coords: { lat: -37.8332784, lng: 144.9672322 } },
+        { name: "car5", coords: { lat: -37.8303123, lng: 144.9777727 } }
       ],
       centre: { lat: -37.8303708, lng: 144.9674938 }
     };
@@ -21,7 +21,7 @@ class MapContainer extends Component {
 
   componentDidMount() {
     console.log("mounted");
-    this.handleHaversine(this.state.user, this.state.vehicles);
+    this.getDistances(this.state.user, this.state.vehicles);
     this._ismounted = true;
   }
 
@@ -46,8 +46,8 @@ class MapContainer extends Component {
           key={index}
           id={index}
           position={{
-            lat: vehicle.lat,
-            lng: vehicle.lng
+            lat: vehicle.coords.lat,
+            lng: vehicle.coords.lng
           }}
           onClick={() => console.log("You clicked Vehicle Marker")}
         />
@@ -64,21 +64,21 @@ class MapContainer extends Component {
     });
   };
 
-  //TODO return array of tuples with a marker ID as well distance
-  handleHaversine = (user, ...args) => {
+  getDistances = (user, ...args) => {
     var distances = [];
     for (var a in args) {
       console.log("args[a]", args[a]);
       for (var b in args[a]) {
-        distances.push(this.haversineDistance(user, args[a][b]));
+        distances.push({
+          name: args[a][b].name,
+          distance: this.haversineDistance(user, args[a][b].coords)
+        });
       }
     }
-    //return order list of distances from user to each vehicle marker
-    return distances.sort();
+    return distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
   };
 
   haversineDistance = (mk1, mk2) => {
-    console.log("haversine called");
     var R = 3958.8; // Radius of the Earth in miles
     var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
     var rlat2 = mk2.lat * (Math.PI / 180); // Convert degrees to radians
@@ -129,4 +129,4 @@ class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: ""
 })(MapContainer);
-//AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
+// AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
