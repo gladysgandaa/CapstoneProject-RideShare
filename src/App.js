@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Home from "./Home";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import TabPanel from "./MaterialTabs.js";
-import MapContainer from "./MapContainer";
+import SideList from "./components/SideList";
 
 class App extends Component {
   render() {
@@ -12,7 +11,7 @@ class App extends Component {
       <Router>
         <TabPanel></TabPanel>
         <Switch>
-          <Route path="/" component={MapContainer} exact />
+          <Route path="/" component={SideList} exact />
           <Route path="/signin" component={SignIn} />
           <Route path="/signup" component={SignUp} />
         </Switch>
