@@ -25,6 +25,14 @@ export default function AddressForm() {
             fullWidth
             autoComplete="fname"
           />
+          <TextField
+            required
+            id="phone"
+            name="phone"
+            label="Mobile"
+            fullWidth
+            autoComplete="phone"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -35,26 +43,14 @@ export default function AddressForm() {
             fullWidth
             autoComplete="lname"
           />
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              id="phone"
-              name="phone"
-              label="Mobile"
-              fullWidth
-              autoComplete="phone"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              id="email"
-              name="email"
-              label="Email ID"
-              fullWidth
-              autoComplete="email"
-            />
-          </Grid>
+          <TextField
+            required
+            id="email"
+            name="email"
+            label="Email ID"
+            fullWidth
+            autoComplete="email"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -104,17 +100,17 @@ export default function AddressForm() {
             <MenuItem value="suv">SUV</MenuItem>
           </TextField>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            fullwidth
-            endIcon={<Icon>send</Icon>}
-          >
-            Procced To Payment
-          </Button>
-        </Grid>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          fullwidth
+          endIcon={<Icon>send</Icon>}
+        >
+          Proceed To Payment
+        </Button>
       </Grid>
     </React.Fragment>
   );
