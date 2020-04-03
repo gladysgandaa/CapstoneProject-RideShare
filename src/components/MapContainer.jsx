@@ -8,12 +8,36 @@ class MapContainer extends Component {
     this.state = {
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
-        { name: "car0", coords: { lat: -37.7985769, lng: 144.8674427 } },
-        { name: "car1", coords: { lat: -37.8301784, lng: 144.9674227 } },
-        { name: "car2", coords: { lat: -37.8303434, lng: 144.7444427 } },
-        { name: "car3", coords: { lat: -37.8303784, lng: 144.9673427 } },
-        { name: "car4", coords: { lat: -37.8332784, lng: 144.9672322 } },
-        { name: "car5", coords: { lat: -37.8303123, lng: 144.9777727 } }
+        {
+          name: "car0",
+          coords: { lat: -37.7985769, lng: 144.8674427 },
+          available: false
+        },
+        {
+          name: "car1",
+          coords: { lat: -37.8301784, lng: 144.9674227 },
+          available: false
+        },
+        {
+          name: "car2",
+          coords: { lat: -37.8303434, lng: 144.7444427 },
+          available: true
+        },
+        {
+          name: "car3",
+          coords: { lat: -37.8303784, lng: 144.9673427 },
+          available: true
+        },
+        {
+          name: "car4",
+          coords: { lat: -37.8332784, lng: 144.9672322 },
+          available: true
+        },
+        {
+          name: "car5",
+          coords: { lat: -37.8303123, lng: 144.9777727 },
+          available: false
+        }
       ],
       centre: { lat: -37.8303708, lng: 144.9674938 }
     };
@@ -75,6 +99,10 @@ class MapContainer extends Component {
         });
       }
     }
+    console.log(
+      "distances:",
+      distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
+    );
     return distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
   };
 
@@ -97,6 +125,17 @@ class MapContainer extends Component {
         )
       );
     return d;
+  };
+
+  setCentre = () => {
+    this.setState(prevState => {
+      let mapCenter = Object.assign({}, prevState.center);
+      mapCenter.lat = this.state.user.lat;
+      mapCenter.lng = this.state.user.lng;
+      this.setState({ center: mapCenter });
+      console.log("setCentre called, state = ", this.state);
+      // return { center: mapCenter };
+    });
   };
 
   render() {
@@ -129,4 +168,4 @@ class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: ""
 })(MapContainer);
-// AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
+//
