@@ -12,32 +12,38 @@ class MapContainer extends Component {
         {
           name: "car0",
           coords: { lat: -37.7985769, lng: 144.8674427 },
-          available: false
+          available: false,
+          distance: 1.1
         },
         {
           name: "car1",
           coords: { lat: -37.8301784, lng: 144.9674227 },
-          available: false
+          available: false,
+          distance: 2.4
         },
         {
           name: "car2",
           coords: { lat: -37.8303434, lng: 144.7444427 },
-          available: true
+          available: true,
+          distance: 1.1
         },
         {
           name: "car3",
           coords: { lat: -37.8303784, lng: 144.9673427 },
-          available: true
+          available: true,
+          distance: 5.5
         },
         {
           name: "car4",
           coords: { lat: -37.8332784, lng: 144.9672322 },
-          available: true
+          available: true,
+          distance: 5.6
         },
         {
           name: "car5",
           coords: { lat: -37.8303123, lng: 144.9777727 },
-          available: false
+          available: false,
+          distance: 8.8
         }
       ],
       centre: { lat: -37.8303708, lng: 144.9674938 }
@@ -62,6 +68,11 @@ class MapContainer extends Component {
       />
     );
   };
+
+  //display top 3 nearest
+  //This should call displayVehicles, so should return a marker
+  //in the same way, so that it's callable from render()
+  sortByproximity = () => {};
 
   displayVehicles = () => {
     return this.state.vehicles.map((vehicle, index) => {
@@ -91,8 +102,10 @@ class MapContainer extends Component {
 
   getDistances = (user, ...args) => {
     var distances = [];
+    const vehicleDistances = { ...this.state.vehicles };
     for (var a in args) {
       console.log("args[a]", args[a]);
+
       for (var b in args[a]) {
         distances.push({
           name: args[a][b].name,
@@ -100,10 +113,18 @@ class MapContainer extends Component {
         });
       }
     }
-    console.log(
-      "distances:",
-      distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-    );
+
+    //Update state with distances
+    for (var d in distances) {
+      for (var v in vehicleDistances) {
+        if (vehicleDistances[v].name === distances[d].name) {
+          vehicleDistances[v].distance = distances[d].distance;
+          this.setState({ vehicleDistances });
+        }
+      }
+    }
+
+    console.log("state: ", this.state);
     return distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
   };
 
@@ -167,6 +188,6 @@ class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
+  apiKey: ""
 })(MapContainer);
-//
+//AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
