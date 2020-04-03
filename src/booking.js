@@ -2,8 +2,6 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/MenuItem";
 import Icon from "@material-ui/core/MenuItem";
@@ -11,7 +9,7 @@ import classes from "@material-ui/core/MenuItem";
 
 export default function AddressForm() {
   return (
-    <React.Fragment>
+    <div class="spacing">
       <Typography variant="h4" gutterBottom>
         Booking form
       </Typography>
@@ -101,7 +99,7 @@ export default function AddressForm() {
           </TextField>
         </Grid>
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={2}>
         <Button
           variant="contained"
           color="primary"
@@ -112,6 +110,6 @@ export default function AddressForm() {
           Proceed To Payment
         </Button>
       </Grid>
-    </React.Fragment>
+    </div>
   );
 }
