@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import { blue } from "@material-ui/core/colors";
 
 class MapContainer extends Component {
   constructor(props) {
@@ -52,7 +53,6 @@ class MapContainer extends Component {
   displayUser = () => {
     return (
       <Marker
-        colour="blue"
         name="User Marker"
         position={{
           lat: this.state.user.lat,
@@ -69,6 +69,7 @@ class MapContainer extends Component {
         <Marker
           key={index}
           id={index}
+          icon={"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
           position={{
             lat: vehicle.coords.lat,
             lng: vehicle.coords.lng
@@ -151,7 +152,7 @@ class MapContainer extends Component {
         <Map
           user={this.state.user}
           google={this.props.google}
-          zoom={8}
+          zoom={30}
           style={mapStyles}
           onReady={this.setUserLocation}
           initialCenter={this.state.centre} //Work out how to set this dynamically
@@ -166,6 +167,6 @@ class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: ""
+  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
 })(MapContainer);
 //
