@@ -9,7 +9,7 @@ import classes from "@material-ui/core/MenuItem";
 
 export default function AddressForm() {
   return (
-    <div class="spacing">
+    <div style={{ margin: 35 }}>
       <Typography variant="h4" gutterBottom>
         Booking form
       </Typography>
