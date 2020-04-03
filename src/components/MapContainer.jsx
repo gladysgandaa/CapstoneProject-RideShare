@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { blue } from "@material-ui/core/colors";
+import axios from "axios";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
 
+    //TODO : populated with dummy data. Getting this data into staet from API will require another function
     this.state = {
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
@@ -46,12 +48,34 @@ class MapContainer extends Component {
           distance: 8.8
         }
       ],
-      centre: { lat: -37.8303708, lng: 144.9674938 }
+      centre: { lat: -37.8303708, lng: 144.9674938 },
+      apiVehicle: {
+        model: "Toyota",
+        rentalCostPerHour: 10,
+        available: false,
+        numberOfSeats: 4,
+        year: 2002,
+        carId: "S4EYi4_v5SalKdVVJFhxZg",
+        returnDate: null,
+        make: "Camry",
+        currentLocation: {
+          Longitude: 143.3674938,
+          Latitude: -36.3303708
+        }
+      }
     };
   }
 
   componentDidMount() {
     console.log("mounted");
+    axios
+      .get(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=ZBw_yvGWf5IuPhFQmjDRYA"
+      )
+      .then(res => {
+        const apiVehicle = res.data;
+        this.setState({ apiVehicle });
+      });
     this.getDistances(this.state.user, this.state.vehicles);
     this._ismounted = true;
   }
@@ -72,7 +96,7 @@ class MapContainer extends Component {
   //display top 3 nearest
   //This should call displayVehicles, so should return a marker
   //in the same way, so that it's callable from render()
-  sortByproximity = () => {};
+  displayByproximity = () => {};
 
   displayVehicles = () => {
     return this.state.vehicles.map((vehicle, index) => {
@@ -169,7 +193,6 @@ class MapContainer extends Component {
     console.log("render called - state:", this.state);
     return (
       <div>
-        <h3></h3>
         <Map
           user={this.state.user}
           google={this.props.google}
