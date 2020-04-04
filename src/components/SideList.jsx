@@ -38,7 +38,7 @@ class SideList extends Component {
             <Avatar alt="Benz" src="" />
           </ListItemAvatar>
           <ListItemText
-            primary={"Mercedes-Benz CLA 200"}
+            primary="Mercedes-Benz CLA 200"
             secondary={
               <React.Fragment>
                 <Typography

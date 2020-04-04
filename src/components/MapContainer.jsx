@@ -19,6 +19,7 @@ class MapContainer extends Component {
     //TODO : populated with dummy data. Getting this data into staet from API will require another function
     this.state = {
       test: "test",
+      fromDb: [],
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
         {
@@ -59,7 +60,7 @@ class MapContainer extends Component {
         }
       ],
       centre: { lat: -37.8303708, lng: 144.9674938 },
-      apiVehicle: {
+      mockApiVehicle: {
         model: "Toyota",
         rentalCostPerHour: 10,
         available: false,
@@ -78,17 +79,46 @@ class MapContainer extends Component {
 
   componentDidMount() {
     console.log("mounted");
+    this.populateVariableLengthArray();
+    console.log("fromDB", this.state.fromDb);
+
     axios
       .get(
         "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=ZBw_yvGWf5IuPhFQmjDRYA"
       )
       .then(res => {
-        const apiVehicle = res.data;
-        this.setState({ apiVehicle });
+        const mockApiVehicle = res.data;
+        this.setState({ mockApiVehicle });
       });
     this.getDistances(this.state.user, this.state.vehicles);
     this._ismounted = true;
   }
+
+  //Set state with variable length array to simulate DB connection
+  populateVariableLengthArray = () => {
+    const newArr = [
+      {
+        name: "car1",
+        coords: { lat: -37.8301784, lng: 144.9674227 },
+        available: false,
+        distance: 2.4
+      },
+      {
+        name: "car2",
+        coords: { lat: -37.8303434, lng: 144.7444427 },
+        available: true,
+        distance: 1.1
+      },
+      {
+        name: "car4",
+        coords: { lat: -37.8332784, lng: 144.9672322 },
+        available: true,
+        distance: 5.6
+      }
+    ];
+    this.setState({ fromDb: [...this.state.fromDb, newArr] });
+    console.log("**************fromDB", this.state.fromDb);
+  };
 
   displayUser = () => {
     return (
@@ -203,7 +233,10 @@ class MapContainer extends Component {
     console.log("render called - state:", this.state);
     return (
       <div>
-        {/* <Map
+        <div>
+          <SideList test={this.state.test}></SideList>
+        </div>
+        <Map
           user={this.state.user}
           google={this.props.google}
           zoom={30}
@@ -214,8 +247,7 @@ class MapContainer extends Component {
           {this.setUserLocation()}
           {this.displayUser()}
           {this.displayVehicles()}
-        </Map> */}
-        <SideList test={this.state.test}></SideList>
+        </Map>
       </div>
     );
   }
