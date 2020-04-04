@@ -16,7 +16,7 @@ class App extends Component {
         <Router>
           <TabPanel></TabPanel>
           <Switch>
-            <Route path="/" component={SideList} exact />
+            {/* <Route path="/" component={SideList} exact /> */}
             <Route path="/signin" component={SignIn} />
             <Route path="/signup" component={SignUp} />
           </Switch>

@@ -7,6 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
+import MapContainer from "./MapContainer";
 
 class SideList extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class SideList extends Component {
   }
 
   render() {
+    console.log("attempting to acces props: ", this.props.test);
     const useStyles = makeStyles(theme => ({
       root: {
         width: "100%",
@@ -36,7 +38,7 @@ class SideList extends Component {
             <Avatar alt="Benz" src="" />
           </ListItemAvatar>
           <ListItemText
-            primary="Mercedes-Benz CLA 200"
+            primary={"Mercedes-Benz CLA 200"}
             secondary={
               <React.Fragment>
                 <Typography
@@ -45,7 +47,7 @@ class SideList extends Component {
                   className={useStyles.inline}
                   color="textPrimary"
                 >
-                  From : $25 / daily
+                  {this.props.test}, From : $25 / daily
                 </Typography>
               </React.Fragment>
             }

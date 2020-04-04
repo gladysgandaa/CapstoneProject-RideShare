@@ -10,6 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
+import SideList from "./SideList";
 
 class MapContainer extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class MapContainer extends Component {
 
     //TODO : populated with dummy data. Getting this data into staet from API will require another function
     this.state = {
+      test: "test",
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
         {
@@ -201,7 +203,7 @@ class MapContainer extends Component {
     console.log("render called - state:", this.state);
     return (
       <div>
-        <Map
+        {/* <Map
           user={this.state.user}
           google={this.props.google}
           zoom={30}
@@ -212,7 +214,8 @@ class MapContainer extends Component {
           {this.setUserLocation()}
           {this.displayUser()}
           {this.displayVehicles()}
-        </Map>
+        </Map> */}
+        <SideList test={this.state.test}></SideList>
       </div>
     );
   }
