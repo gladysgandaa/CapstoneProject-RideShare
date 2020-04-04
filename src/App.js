@@ -4,6 +4,7 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import TabPanel from "./MaterialTabs.js";
 import SideList from "./components/SideList";
+import MapContainer from "./components/MapContainer";
 
 class App extends Component {
   render() {
