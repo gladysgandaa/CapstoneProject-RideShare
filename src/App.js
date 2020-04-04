@@ -3,7 +3,6 @@ import logo from "./logo.svg";
 import "./App.css";
 import TabPanel from "./MaterialTabs.js";
 import MapContainer from "./components/MapContainer";
-import TestComponent from "./components/TestComponent";
 
 class App extends Component {
   render() {
