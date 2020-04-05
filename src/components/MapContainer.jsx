@@ -2,22 +2,16 @@ import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { blue } from "@material-ui/core/colors";
 import axios from "axios";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Divider from "@material-ui/core/Divider";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import Typography from "@material-ui/core/Typography";
+import SideList from "./SideList";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
-
-    //TODO : populated with dummy data. Getting this data into staet from API will require another function
     this.state = {
-      user: { lat: 48.0, lng: -122.0 },
+      test: "test",
+      centre: { lat: -37.8303708, lng: 144.9674938 },
+      vehicleDistances: [],
+      user: { Latitude: 48.0, Longitude: -122.0 },
       vehicles: [
         {
           name: "car0",
@@ -30,94 +24,69 @@ class MapContainer extends Component {
           coords: { lat: -37.8301784, lng: 144.9674227 },
           available: false,
           distance: 2.4
-        },
-        {
-          name: "car2",
-          coords: { lat: -37.8303434, lng: 144.7444427 },
-          available: true,
-          distance: 1.1
-        },
-        {
-          name: "car3",
-          coords: { lat: -37.8303784, lng: 144.9673427 },
-          available: true,
-          distance: 5.5
-        },
-        {
-          name: "car4",
-          coords: { lat: -37.8332784, lng: 144.9672322 },
-          available: true,
-          distance: 5.6
-        },
-        {
-          name: "car5",
-          coords: { lat: -37.8303123, lng: 144.9777727 },
-          available: false,
-          distance: 8.8
         }
       ],
-      centre: { lat: -37.8303708, lng: 144.9674938 },
-      apiVehicle: {
-        model: "Toyota",
-        rentalCostPerHour: 10,
-        available: false,
-        numberOfSeats: 4,
-        year: 2002,
-        carId: "S4EYi4_v5SalKdVVJFhxZg",
-        returnDate: null,
-        make: "Camry",
-        currentLocation: {
-          Longitude: 143.3674938,
-          Latitude: -36.3303708
+      dbVehicles: [
+        {
+          model: "placeholder",
+          rentalCostPerHour: 10,
+          distance: 1.1,
+          numberOfSeats: 4,
+          year: 2002,
+          carId: "aaaaaaapBQkWvaS8XIk-_A",
+          returnDate: null,
+          make: "Camry",
+          currentLocation: {
+            Longitude: 144.3674938,
+            Latitude: -37.3303708
+          }
         }
-      }
+      ]
     };
   }
 
-  componentDidMount() {
-    console.log("mounted");
-    axios
-      .get(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=ZBw_yvGWf5IuPhFQmjDRYA"
-      )
-      .then(res => {
-        const apiVehicle = res.data;
-        this.setState({ apiVehicle });
-      });
-    this.getDistances(this.state.user, this.state.vehicles);
-    this._ismounted = true;
+  componentWillMount() {
+    this.getVehicles();
+    console.log("before render");
   }
+
+  //Set state with variable length array to simulate DB connection. Works
+  getVehicles = () => {
+    axios
+      .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
+      .then(res => {
+        const dbVehicles = res.data.Items;
+        this.setState({ dbVehicles }, () => {
+          this.getDistances(this.state.user, this.state.dbVehicles);
+        });
+      });
+  };
 
   displayUser = () => {
     return (
       <Marker
         name="User Marker"
         position={{
-          lat: this.state.user.lat,
-          lng: this.state.user.lng
+          lat: this.state.user.Latitude,
+          lng: this.state.user.Longitude
         }}
         onClick={() => console.log("You clicked User Marker")}
       />
     );
   };
 
-  //display top 3 nearest
-  //This should call displayVehicles, so should return a marker
-  //in the same way, so that it's callable from render()
-  displayByproximity = () => {};
-
   displayVehicles = () => {
-    return this.state.vehicles.map((vehicle, index) => {
+    return this.state.dbVehicles.map((dbVehicle, index) => {
       return (
         <Marker
           key={index}
           id={index}
           icon={"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
           position={{
-            lat: vehicle.coords.lat,
-            lng: vehicle.coords.lng
+            lat: dbVehicle.currentLocation.Latitude,
+            lng: dbVehicle.currentLocation.Longitude
           }}
-          onClick={() => console.log("You clicked Vehicle Marker")}
+          onClick={() => console.log(dbVehicle.model)}
         />
       );
     });
@@ -126,46 +95,48 @@ class MapContainer extends Component {
   setUserLocation = () => {
     navigator.geolocation.getCurrentPosition(position => {
       const user = { ...this.state.user };
-      user.lat = position.coords.latitude;
-      user.lng = position.coords.longitude;
+      user.Latitude = position.coords.latitude;
+      user.Longitude = position.coords.longitude;
       this.setState({ user });
     });
   };
 
   getDistances = (user, ...args) => {
     var distances = [];
-    const vehicleDistances = { ...this.state.vehicles };
+    //adding as attribute
+    const vehicleDbCopy = { ...this.state.dbVehicles };
     for (var a in args) {
-      console.log("args[a]", args[a]);
-
       for (var b in args[a]) {
         distances.push({
-          name: args[a][b].name,
-          distance: this.haversineDistance(user, args[a][b].coords)
+          carId: args[a][b].carId,
+          distance: this.haversineDistance(user, args[a][b].currentLocation)
         });
       }
     }
 
-    //Update state with distances
+    distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+    this.setState({ vehicleDistances: distances });
+
+    //this is setting state somehow
     for (var d in distances) {
-      for (var v in vehicleDistances) {
-        if (vehicleDistances[v].name === distances[d].name) {
-          vehicleDistances[v].distance = distances[d].distance;
-          this.setState({ vehicleDistances });
+      for (var v in vehicleDbCopy) {
+        if (vehicleDbCopy[v].carId === distances[d].carId) {
+          vehicleDbCopy[v].distance = distances[d].distance;
         }
       }
     }
 
-    console.log("state: ", this.state);
-    return distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+    this.setState({ vehicleDbCopy });
+
+    return distances;
   };
 
   haversineDistance = (mk1, mk2) => {
     var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
-    var rlat2 = mk2.lat * (Math.PI / 180); // Convert degrees to radians
+    var rlat1 = mk1.Latitude * (Math.PI / 180); // Convert degrees to radians
+    var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (mk2.lng - mk1.lng) * (Math.PI / 180); // Radian difference (longitudes)
+    var difflon = (mk2.Longitude - mk1.Longitude) * (Math.PI / 180); // Radian difference (longitudes)
     var d =
       2 *
       R *
@@ -188,7 +159,6 @@ class MapContainer extends Component {
       mapCenter.lng = this.state.user.lng;
       this.setState({ center: mapCenter });
       console.log("setCentre called, state = ", this.state);
-      // return { center: mapCenter };
     });
   };
 
@@ -198,13 +168,16 @@ class MapContainer extends Component {
       height: "100%"
     };
 
-    console.log("render called - state:", this.state);
+    console.log("render - state", this.state);
     return (
       <div>
+        <div>
+          <SideList cars={this.state.dbVehicles} />
+        </div>
         <Map
           user={this.state.user}
           google={this.props.google}
-          zoom={30}
+          zoom={10}
           style={mapStyles}
           onReady={this.setUserLocation}
           initialCenter={this.state.centre} //Work out how to set this dynamically
@@ -219,6 +192,6 @@ class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: ""
+  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
 })(MapContainer);
 //AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
