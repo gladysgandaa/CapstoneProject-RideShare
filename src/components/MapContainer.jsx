@@ -108,8 +108,9 @@ class MapContainer extends Component {
 
   getDistances = (user, ...args) => {
     var distances = [];
+
     //adding as attribute
-    const vehicleDistances = { ...this.state.dbVehicles };
+    const vehicleDbCopy = { ...this.state.dbVehicles };
     for (var a in args) {
       for (var b in args[a]) {
         distances.push({
@@ -118,23 +119,27 @@ class MapContainer extends Component {
         });
       }
     }
-    console.log("distances before adding to state:", distances);
+
+    distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
     this.setState({ vehicleDistances: distances });
-    //Update state with distances This updates an attribute that the vehicles don't have
+
+    //this is setting state somehow
     for (var d in distances) {
-      for (var v in vehicleDistances) {
-        if (vehicleDistances[v].carId === distances[d].carId) {
-          vehicleDistances[v].distance = distances[d].distance;
-          this.setState({ vehicleDistances });
+      for (var v in vehicleDbCopy) {
+        if (vehicleDbCopy[v].carId === distances[d].carId) {
+          vehicleDbCopy[v].distance = distances[d].distance;
         }
       }
     }
+    const testArray = [{ one: 1, two: 2, three: 0 }];
+    console.log("testArray", testArray);
+    testArray.sort();
+    console.log("testArray sorted", testArray);
+    console.log("type of vehicleDBCopy", vehicleDbCopy);
+    // vehicleDbCopy.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+    // this.setState({ vehicleDbCopy });
 
-    console.log(
-      "getDistance: distances ",
-      distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-    );
-    return distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
+    return distances;
   };
 
   haversineDistance = (mk1, mk2) => {
@@ -175,9 +180,7 @@ class MapContainer extends Component {
       height: "100%"
     };
 
-    console.log("render - dbVehicles", this.state.dbVehicles);
-    console.log("state distances", this.state.vehicleDistances);
-
+    console.log("render - state", this.state);
     return (
       <div>
         <div>
