@@ -181,7 +181,7 @@ class MapContainer extends Component {
     return (
       <div>
         <div>
-          <SideList dbVehicles={this.state.dbVehicles} />
+          <SideList cars={this.state.dbVehicles} />
         </div>
         <Map
           user={this.state.user}
