@@ -19,7 +19,6 @@ class MapContainer extends Component {
     //TODO : populated with dummy data. Getting this data into staet from API will require another function
     this.state = {
       test: "test",
-      fromDb: [],
       user: { lat: 48.0, lng: -122.0 },
       vehicles: [
         {
@@ -33,93 +32,31 @@ class MapContainer extends Component {
           coords: { lat: -37.8301784, lng: 144.9674227 },
           available: false,
           distance: 2.4
-        },
-        {
-          name: "car2",
-          coords: { lat: -37.8303434, lng: 144.7444427 },
-          available: true,
-          distance: 1.1
-        },
-        {
-          name: "car3",
-          coords: { lat: -37.8303784, lng: 144.9673427 },
-          available: true,
-          distance: 5.5
-        },
-        {
-          name: "car4",
-          coords: { lat: -37.8332784, lng: 144.9672322 },
-          available: true,
-          distance: 5.6
-        },
-        {
-          name: "car5",
-          coords: { lat: -37.8303123, lng: 144.9777727 },
-          available: false,
-          distance: 8.8
         }
       ],
       centre: { lat: -37.8303708, lng: 144.9674938 },
-      mockApiVehicle: {
-        model: "Toyota",
-        rentalCostPerHour: 10,
-        available: false,
-        numberOfSeats: 4,
-        year: 2002,
-        carId: "S4EYi4_v5SalKdVVJFhxZg",
-        returnDate: null,
-        make: "Camry",
-        currentLocation: {
-          Longitude: 143.3674938,
-          Latitude: -36.3303708
-        }
-      }
+      dbVehicles: []
     };
   }
 
   componentDidMount() {
     console.log("mounted");
     this.populateVariableLengthArray();
-    console.log("fromDB", this.state.fromDb);
-
-    axios
-      .get(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=ZBw_yvGWf5IuPhFQmjDRYA"
-      )
-      .then(res => {
-        const mockApiVehicle = res.data;
-        this.setState({ mockApiVehicle });
-      });
     this.getDistances(this.state.user, this.state.vehicles);
     this._ismounted = true;
   }
 
-  //Set state with variable length array to simulate DB connection
+  //Set state with variable length array to simulate DB connection. Works
   populateVariableLengthArray = () => {
-    const newArr = [
-      {
-        name: "car1",
-        coords: { lat: -37.8301784, lng: 144.9674227 },
-        available: false,
-        distance: 2.4
-      },
-      {
-        name: "car2",
-        coords: { lat: -37.8303434, lng: 144.7444427 },
-        available: true,
-        distance: 1.1
-      },
-      {
-        name: "car4",
-        coords: { lat: -37.8332784, lng: 144.9672322 },
-        available: true,
-        distance: 5.6
-      }
-    ];
-    this.setState({ fromDb: [...this.state.fromDb, newArr] });
-    console.log("**************fromDB", this.state.fromDb);
+    axios
+      .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
+      .then(res => {
+        const dbVehicles = res.data.Items;
+        this.setState({ dbVehicles });
+      });
   };
 
+  //No refactor required
   displayUser = () => {
     return (
       <Marker
@@ -230,7 +167,7 @@ class MapContainer extends Component {
       height: "100%"
     };
 
-    console.log("render called - state:", this.state);
+    console.log("state from render:", this.state);
     return (
       <div>
         <div>
@@ -254,6 +191,6 @@ class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
+  apiKey: ""
 })(MapContainer);
 //AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
