@@ -7,7 +7,9 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import SideList from "./components/SideList";
 import MapContainer from "./components/MapContainer";
+import Map from "./components/Map";
 
+//TODO - this should call map now, which will then call map container
 class App extends Component {
   render() {
     return (

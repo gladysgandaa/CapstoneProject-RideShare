@@ -2,24 +2,15 @@ import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { blue } from "@material-ui/core/colors";
 import axios from "axios";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import Divider from "@material-ui/core/Divider";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import Typography from "@material-ui/core/Typography";
 import SideList from "./SideList";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
-
-    //TODO : populated with dummy data. Getting this data into staet from API will require another function
     this.state = {
       test: "test",
-      user: { lat: 48.0, lng: -122.0 },
+      vehicleDistances: [],
+      user: { Latitude: 48.0, Longitude: -122.0 },
       vehicles: [
         {
           name: "car0",
@@ -35,56 +26,70 @@ class MapContainer extends Component {
         }
       ],
       centre: { lat: -37.8303708, lng: 144.9674938 },
-      dbVehicles: []
+      dbVehicles: [
+        {
+          model: "placeholder",
+          rentalCostPerHour: 10,
+          distance: 1.1,
+          numberOfSeats: 4,
+          year: 2002,
+          carId: "aaaaaaapBQkWvaS8XIk-_A",
+          returnDate: null,
+          make: "Camry",
+          currentLocation: {
+            Longitude: 144.3674938,
+            Latitude: -36.3303708
+          }
+        }
+      ]
     };
   }
 
-  componentDidMount() {
-    console.log("mounted");
-    this.populateVariableLengthArray();
-    this.getDistances(this.state.user, this.state.vehicles);
-    this._ismounted = true;
+  // componentDidMount() {
+  //   this.getVehicles();
+  // }
+
+  componentWillMount() {
+    this.getVehicles();
+    console.log("before render");
   }
 
   //Set state with variable length array to simulate DB connection. Works
-  populateVariableLengthArray = () => {
+  getVehicles = () => {
     axios
       .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
       .then(res => {
         const dbVehicles = res.data.Items;
-        this.setState({ dbVehicles });
+        this.setState({ dbVehicles }, () => {
+          console.log("testing setState callback", this.state.dbVehicles);
+          this.getDistances(this.state.user, this.state.dbVehicles);
+        });
       });
   };
 
-  //No refactor required
   displayUser = () => {
     return (
       <Marker
         name="User Marker"
         position={{
-          lat: this.state.user.lat,
-          lng: this.state.user.lng
+          lat: this.state.user.Latitude,
+          lng: this.state.user.Longitude
         }}
         onClick={() => console.log("You clicked User Marker")}
       />
     );
   };
 
-  //display top 3 nearest
-  //This should call displayVehicles, so should return a marker
-  //in the same way, so that it's callable from render()
-  displayByproximity = () => {};
-
   displayVehicles = () => {
-    return this.state.vehicles.map((vehicle, index) => {
+    return this.state.dbVehicles.map((vehicle, index) => {
       return (
         <Marker
           key={index}
           id={index}
           icon={"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
           position={{
-            lat: vehicle.coords.lat,
-            lng: vehicle.coords.lng
+            Latitude: vehicle.currentLocation.Latitude,
+            Longitude: vehicle.currentLocation.Longitude
           }}
           onClick={() => console.log("You clicked Vehicle Marker")}
         />
@@ -95,46 +100,49 @@ class MapContainer extends Component {
   setUserLocation = () => {
     navigator.geolocation.getCurrentPosition(position => {
       const user = { ...this.state.user };
-      user.lat = position.coords.latitude;
-      user.lng = position.coords.longitude;
+      user.Latitude = position.coords.latitude;
+      user.Longitude = position.coords.longitude;
       this.setState({ user });
     });
   };
 
   getDistances = (user, ...args) => {
     var distances = [];
-    const vehicleDistances = { ...this.state.vehicles };
+    //adding as attribute
+    const vehicleDistances = { ...this.state.dbVehicles };
     for (var a in args) {
-      console.log("args[a]", args[a]);
-
       for (var b in args[a]) {
         distances.push({
-          name: args[a][b].name,
-          distance: this.haversineDistance(user, args[a][b].coords)
+          carId: args[a][b].carId,
+          distance: this.haversineDistance(user, args[a][b].currentLocation)
         });
       }
     }
-
-    //Update state with distances
+    console.log("distances before adding to state:", distances);
+    this.setState({ vehicleDistances: distances });
+    //Update state with distances This updates an attribute that the vehicles don't have
     for (var d in distances) {
       for (var v in vehicleDistances) {
-        if (vehicleDistances[v].name === distances[d].name) {
+        if (vehicleDistances[v].carId === distances[d].carId) {
           vehicleDistances[v].distance = distances[d].distance;
           this.setState({ vehicleDistances });
         }
       }
     }
 
-    console.log("state: ", this.state);
+    console.log(
+      "getDistance: distances ",
+      distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
+    );
     return distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
   };
 
   haversineDistance = (mk1, mk2) => {
     var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
-    var rlat2 = mk2.lat * (Math.PI / 180); // Convert degrees to radians
+    var rlat1 = mk1.Latitude * (Math.PI / 180); // Convert degrees to radians
+    var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (mk2.lng - mk1.lng) * (Math.PI / 180); // Radian difference (longitudes)
+    var difflon = (mk2.Longitude - mk1.Longitude) * (Math.PI / 180); // Radian difference (longitudes)
     var d =
       2 *
       R *
@@ -167,11 +175,13 @@ class MapContainer extends Component {
       height: "100%"
     };
 
-    console.log("state from render:", this.state);
+    console.log("render - dbVehicles", this.state.dbVehicles);
+    console.log("state distances", this.state.vehicleDistances);
+
     return (
       <div>
         <div>
-          <SideList test={this.state.test}></SideList>
+          <SideList dbVehicles={this.state.dbVehicles} />
         </div>
         <Map
           user={this.state.user}

@@ -7,7 +7,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import MapContainer from "./MapContainer";
 
 class SideList extends Component {
   constructor(props) {
@@ -18,7 +17,7 @@ class SideList extends Component {
   }
 
   render() {
-    console.log("attempting to acces props: ", this.props.test);
+    console.log("attempting to acces props: ", this.props.dbVehicles); //undefined
     const useStyles = makeStyles(theme => ({
       root: {
         width: "100%",
@@ -47,7 +46,7 @@ class SideList extends Component {
                   className={useStyles.inline}
                   color="textPrimary"
                 >
-                  {this.props.test}, From : $25 / daily
+                  {this.props.dbVehicles[0].model}, From : $25 / daily
                 </Typography>
               </React.Fragment>
             }
