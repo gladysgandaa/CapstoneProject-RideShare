@@ -108,7 +108,6 @@ class MapContainer extends Component {
 
   getDistances = (user, ...args) => {
     var distances = [];
-
     //adding as attribute
     const vehicleDbCopy = { ...this.state.dbVehicles };
     for (var a in args) {
@@ -131,13 +130,8 @@ class MapContainer extends Component {
         }
       }
     }
-    const testArray = [{ one: 1, two: 2, three: 0 }];
-    console.log("testArray", testArray);
-    testArray.sort();
-    console.log("testArray sorted", testArray);
-    console.log("type of vehicleDBCopy", vehicleDbCopy);
-    // vehicleDbCopy.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-    // this.setState({ vehicleDbCopy });
+
+    this.setState({ vehicleDbCopy });
 
     return distances;
   };
