@@ -14,7 +14,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SideList = ({ cars }) => {
-  console.log("attempting to acces props: ", cars.dbVehicles); //undefined
   return (
     <List className={useStyles.root}>
       {!cars.length ? (
@@ -26,6 +25,7 @@ const SideList = ({ cars }) => {
               key={car.carId}
               make={car.make}
               model={car.model}
+              distance={car.distance}
               rentalCostPerHour={car.rentalCostPerHour}
             />
           );

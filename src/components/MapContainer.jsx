@@ -9,6 +9,7 @@ class MapContainer extends Component {
     super(props);
     this.state = {
       test: "test",
+      centre: { lat: -37.8303708, lng: 144.9674938 },
       vehicleDistances: [],
       user: { Latitude: 48.0, Longitude: -122.0 },
       vehicles: [
@@ -25,7 +26,6 @@ class MapContainer extends Component {
           distance: 2.4
         }
       ],
-      centre: { lat: -37.8303708, lng: 144.9674938 },
       dbVehicles: [
         {
           model: "placeholder",
@@ -38,16 +38,12 @@ class MapContainer extends Component {
           make: "Camry",
           currentLocation: {
             Longitude: 144.3674938,
-            Latitude: -36.3303708
+            Latitude: -37.3303708
           }
         }
       ]
     };
   }
-
-  // componentDidMount() {
-  //   this.getVehicles();
-  // }
 
   componentWillMount() {
     this.getVehicles();
@@ -61,7 +57,6 @@ class MapContainer extends Component {
       .then(res => {
         const dbVehicles = res.data.Items;
         this.setState({ dbVehicles }, () => {
-          console.log("testing setState callback", this.state.dbVehicles);
           this.getDistances(this.state.user, this.state.dbVehicles);
         });
       });
@@ -81,17 +76,17 @@ class MapContainer extends Component {
   };
 
   displayVehicles = () => {
-    return this.state.dbVehicles.map((vehicle, index) => {
+    return this.state.dbVehicles.map((dbVehicle, index) => {
       return (
         <Marker
           key={index}
           id={index}
           icon={"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
           position={{
-            Latitude: vehicle.currentLocation.Latitude,
-            Longitude: vehicle.currentLocation.Longitude
+            lat: dbVehicle.currentLocation.Latitude,
+            lng: dbVehicle.currentLocation.Longitude
           }}
-          onClick={() => console.log("You clicked Vehicle Marker")}
+          onClick={() => console.log(dbVehicle.model)}
         />
       );
     });
@@ -164,7 +159,6 @@ class MapContainer extends Component {
       mapCenter.lng = this.state.user.lng;
       this.setState({ center: mapCenter });
       console.log("setCentre called, state = ", this.state);
-      // return { center: mapCenter };
     });
   };
 
@@ -183,7 +177,7 @@ class MapContainer extends Component {
         <Map
           user={this.state.user}
           google={this.props.google}
-          zoom={30}
+          zoom={10}
           style={mapStyles}
           onReady={this.setUserLocation}
           initialCenter={this.state.centre} //Work out how to set this dynamically
@@ -198,6 +192,6 @@ class MapContainer extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: ""
+  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
 })(MapContainer);
 //AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI

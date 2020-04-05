@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  const { make, model, rentalCostPerHour } = props;
+  const { make, model, rentalCostPerHour, distance } = props;
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -30,10 +30,11 @@ const Car = props => {
               className={useStyles.inline}
               color="textPrimary"
             >
-              {model}, From : ${rentalCostPerHour} / hourly
+              {model}, From : ${rentalCostPerHour} hourly
             </Typography>
           }
         />
+        <div>Miles from you: {distance}</div>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>
