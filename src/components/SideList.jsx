@@ -1,14 +1,11 @@
 import React from "react";
 import List from "@material-ui/core/List";
 import { makeStyles } from "@material-ui/core/styles";
-
 import Car from "./Car";
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: "100%",
-    maxWidth: "30%",
-    maxHeight: "100%",
+    width: "50%",
     backgroundColor: theme.palette.background.paper
   }
 }));

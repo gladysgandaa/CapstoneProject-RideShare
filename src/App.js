@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import MapContainer from "./components/MapContainer";
+import Booking from "./booking";
 
 //TODO - this should call map now, which will then call map container
 class App extends Component {
@@ -20,6 +21,7 @@ class App extends Component {
             </Route>
             <Route path="/signin" component={SignIn} />
             <Route path="/signup" component={SignUp} />
+            <Route path="/booking" component={Booking} />
           </Switch>
         </Router>
       </div>
