@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import "./App.css";
-import TabPanel from "./MaterialTabs.js";
+import TabPanel from "./components/navigation/MaterialTabs";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
-import MapContainer from "./components/MapContainer";
-import BookingForm from "./components/Booking/Booking";
+import SignIn from "./components/authentication/SignIn";
+import SignUp from "./components/authentication/SignUp";
+import MapContainer from "./components/map/MapContainer";
+import BookingForm from "./components/booking/Booking";
 
 //TODO - this should call map now, which will then call map container
 class App extends Component {

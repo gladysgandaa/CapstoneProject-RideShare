@@ -5,6 +5,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
@@ -35,6 +36,9 @@ const Car = props => {
           }
         />
         <div>Miles from you: {distance}</div>
+        <Button href="/book" variant="contained" color="primary">
+            Book
+        </Button>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>
