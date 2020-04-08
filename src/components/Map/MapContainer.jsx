@@ -55,7 +55,7 @@ class MapContainer extends Component {
     axios
       .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
       .then(res => {
-        const dbVehicles = res.data.Items;
+        const dbVehicles = res.data;
         this.setState({ dbVehicles }, () => {
           this.getDistances(this.state.user, this.state.dbVehicles);
         });
