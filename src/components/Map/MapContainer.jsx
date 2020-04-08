@@ -11,7 +11,7 @@ class MapContainer extends Component {
       test: "test",
       centre: { lat: -37.8303708, lng: 144.9674938 },
       vehicleDistances: [],
-      user: { Latitude: 48.0, Longitude: -122.0 },
+      user: { Latitude: -36.75818, Longitude: 144.28024 },
       vehicles: [
         {
           name: "car0",
