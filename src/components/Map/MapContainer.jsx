@@ -177,7 +177,7 @@ class MapContainer extends Component {
         <Map
           user={this.state.user}
           google={this.props.google}
-          zoom={10}
+          zoom={5}
           style={mapStyles}
           onReady={this.setUserLocation}
           initialCenter={this.state.centre} //Work out how to set this dynamically
