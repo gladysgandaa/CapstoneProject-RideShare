@@ -23,7 +23,7 @@ const Car = props => {
           <Avatar alt={model} src="" />
         </ListItemAvatar>
         <ListItemText
-          primary={`${model} ${make}`}
+          primary={`${make} ${model}`}
           secondary={
             <Typography
               component="span"
@@ -37,7 +37,7 @@ const Car = props => {
         />
         <div>Miles from you: {distance}</div>
         <Button href="/book" variant="contained" color="primary">
-            Book
+          Book
         </Button>
       </ListItem>
       <Divider variant="inset" component="li" />
