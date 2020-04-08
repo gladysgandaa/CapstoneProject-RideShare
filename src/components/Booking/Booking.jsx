@@ -8,13 +8,13 @@ import Icon from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
-    root: {
-      margin: 35,
-    }
-  }));
+  root: {
+    margin: 35
+  }
+}));
 
 export default function BookingForm() {
-    const classes = useStyles();
+  const classes = useStyles();
   return (
     <div className={classes.root}>
       <Typography variant="h4" gutterBottom>
@@ -42,14 +42,14 @@ export default function BookingForm() {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-            <TextField
-                required
-                id="phone"
-                name="phone"
-                label="Mobile"
-                fullWidth
-                autoComplete="phone"
-            />
+          <TextField
+            required
+            id="phone"
+            name="phone"
+            label="Mobile"
+            fullWidth
+            autoComplete="phone"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -62,10 +62,10 @@ export default function BookingForm() {
           />
         </Grid>
         <Grid item xs={12} sm={6}>
-            <TextField id="select" label="Select Car" fullWidth value="20" select>
-                <MenuItem value="sedan">Sedan</MenuItem>
-                <MenuItem value="suv">SUV</MenuItem>
-            </TextField>
+          <TextField id="select" label="Select Car" fullWidth value="20" select>
+            <MenuItem value="sedan">Sedan</MenuItem>
+            <MenuItem value="suv">SUV</MenuItem>
+          </TextField>
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -90,23 +90,25 @@ export default function BookingForm() {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="time"
-            label="Drop off Time"
+            id="select"
+            label="Duration (hrs)"
             fullWidth
-            type="time"
-            defaultValue="07:30"
-            inputProps={{
-              step: 300 // 5 min
-            }}
-          />
+            value="20"
+            select
+          >
+            <MenuItem value="one">1</MenuItem>
+            <MenuItem value="three">3</MenuItem>
+            <MenuItem value="six">6</MenuItem>
+            <MenuItem value="twelve">12</MenuItem>
+            <MenuItem value="twentyFour">24</MenuItem>
+          </TextField>
         </Grid>
         <Grid item xs={12} sm={2}>
-            <Button href="/book" variant="contained" color="primary">
-                Book
-            </Button>
+          <Button href="/book" variant="contained" color="primary">
+            Book
+          </Button>
         </Grid>
       </Grid>
-      
     </div>
   );
 }
