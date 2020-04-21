@@ -40,6 +40,20 @@ class MapContainer extends Component {
             Longitude: 144.3674938,
             Latitude: -37.3303708
           }
+        },
+        {
+          model: "placeholder2",
+          rentalCostPerHour: 10,
+          distance: 1.1,
+          numberOfSeats: 4,
+          year: 2002,
+          carId: "aaaaaagpBQkWvaS8XIk-_A",
+          returnDate: null,
+          make: "Camry",
+          currentLocation: {
+            Longitude: 144.3674938,
+            Latitude: -37.3303708
+          }
         }
       ]
     };
@@ -55,7 +69,8 @@ class MapContainer extends Component {
     axios
       .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
       .then(res => {
-        const dbVehicles = res.data.Items;
+        console.log("api call result:", res);
+        const dbVehicles = res.data;
         this.setState({ dbVehicles }, () => {
           this.getDistances(this.state.user, this.state.dbVehicles);
         });
@@ -75,6 +90,7 @@ class MapContainer extends Component {
     );
   };
 
+  //Error here
   displayVehicles = () => {
     return this.state.dbVehicles.map((dbVehicle, index) => {
       return (
