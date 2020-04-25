@@ -12,6 +12,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <BookingForm />
         <p className="App-intro">Material Tab Panel:</p>
         <Router>
           <TabPanel></TabPanel>
