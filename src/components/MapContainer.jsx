@@ -3,6 +3,8 @@ import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { blue } from "@material-ui/core/colors";
 import axios from "axios";
 import SideList from "./SideList";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
 
 class MapContainer extends Component {
   constructor(props) {
@@ -167,25 +169,34 @@ class MapContainer extends Component {
       width: "100%",
       height: "100%"
     };
+    const useStyles = makeStyles(theme => ({
+      root: {
+        flexGrow: 1
+      }
+    }));
 
     console.log("render - state", this.state);
     return (
-      <div>
-        <div>
-          <SideList cars={this.state.dbVehicles} />
-        </div>
-        <Map
-          user={this.state.user}
-          google={this.props.google}
-          zoom={10}
-          style={mapStyles}
-          onReady={this.setUserLocation}
-          initialCenter={this.state.centre} //Work out how to set this dynamically
-        >
-          {this.setUserLocation()}
-          {this.displayUser()}
-          {this.displayVehicles()}
-        </Map>
+      <div style={useStyles.root}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <SideList cars={this.state.dbVehicles} />
+          </Grid>
+          <Grid item xs={12} sm={8}>
+            <Map
+              user={this.state.user}
+              google={this.props.google}
+              zoom={10}
+              style={mapStyles}
+              onReady={this.setUserLocation}
+              initialCenter={this.state.centre} //Work out how to set this dynamically
+            >
+              {this.setUserLocation()}
+              {this.displayUser()}
+              {this.displayVehicles()}
+            </Map>
+          </Grid>
+        </Grid>
       </div>
     );
   }
