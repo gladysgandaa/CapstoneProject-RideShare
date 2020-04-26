@@ -1,11 +1,6 @@
+/* global google */
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-import {
-  withScriptjs,
-  withGoogleMap,
-  GoogleMap,
-  Marker
-} from "react-google-maps";
 import { blue } from "@material-ui/core/colors";
 import axios from "axios";
 import SideList from "./SideList";
