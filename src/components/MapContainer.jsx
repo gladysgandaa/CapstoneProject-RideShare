@@ -1,5 +1,11 @@
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker
+} from "react-google-maps";
 import { blue } from "@material-ui/core/colors";
 import axios from "axios";
 import SideList from "./SideList";
@@ -81,9 +87,9 @@ class MapContainer extends Component {
           key={index}
           id={index}
           icon={{
-            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-            // anchor: new google.maps.Point(0, 53),
-            // labelOrigin: new google.maps.Point(14, 53)
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
           }}
           position={{
             lat: dbVehicle.currentLocation.Latitude,
