@@ -81,9 +81,9 @@ class MapContainer extends Component {
           key={index}
           id={index}
           icon={{
-            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-            anchor: new google.maps.Point(0, 53),
-            labelOrigin: new google.maps.Point(14, 53)
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            // anchor: new google.maps.Point(0, 53),
+            // labelOrigin: new google.maps.Point(14, 53)
           }}
           position={{
             lat: dbVehicle.currentLocation.Latitude,
