@@ -10,7 +10,7 @@ class MapContainer extends Component {
     super(props);
     this.state = {
       test: "test",
-      centre: { lat: -37.7985769, lng: 144.8674427 },
+      centre: { lat: 17.7985769, lng: -144.8674427 },
       vehicleDistances: [],
       user: this.props.userLocation,
       vehicles: [
@@ -191,7 +191,8 @@ class MapContainer extends Component {
           zoom={7}
           style={mapStyles}
           onReady={this.setUserLocation}
-          initialCenter={this.props.userLocation} //TODO : Work out how to set this dynamically
+          initialCenter={this.state.centre} //TODO : Work out how to set this dynamically
+          center={this.props.userLocation}
         >
           {this.setUserLocation()}
           {this.displayUser()}
