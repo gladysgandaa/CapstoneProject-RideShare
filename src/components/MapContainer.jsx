@@ -90,7 +90,7 @@ class MapContainer extends Component {
             lng: dbVehicle.currentLocation.Longitude
           }}
           label={{
-            text: dbVehicle.make,
+            text: dbVehicle.make.concat(" ", dbVehicle.model),
             fontFamily: "Arial",
             fontSize: "14px"
           }}
