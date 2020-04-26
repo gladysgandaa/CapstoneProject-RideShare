@@ -1,3 +1,4 @@
+/* global google */
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 import { blue } from "@material-ui/core/colors";
