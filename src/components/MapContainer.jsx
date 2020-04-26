@@ -9,9 +9,9 @@ class MapContainer extends Component {
     super(props);
     this.state = {
       test: "test",
-      centre: { lat: -37.8303708, lng: 144.9674938 },
+      centre: { lat: -37.7985769, lng: 144.8674427 },
       vehicleDistances: [],
-      user: { Latitude: 48.0, Longitude: -122.0 },
+      user: this.props.userLocation,
       vehicles: [
         {
           name: "car0",
@@ -47,7 +47,6 @@ class MapContainer extends Component {
 
   componentWillMount() {
     this.getVehicles();
-    console.log("before render");
   }
 
   //Set state with variable length array to simulate DB connection. Works
@@ -81,12 +80,21 @@ class MapContainer extends Component {
         <Marker
           key={index}
           id={index}
-          icon={"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
+          icon={{
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
+          }}
           position={{
             lat: dbVehicle.currentLocation.Latitude,
             lng: dbVehicle.currentLocation.Longitude
           }}
-          onClick={() => console.log(dbVehicle.model)}
+          label={{
+            text: dbVehicle.make,
+            fontFamily: "Arial",
+            fontSize: "14px"
+          }}
+          onClick={() => console.log(dbVehicle.make, dbVehicle.model)}
         />
       );
     });
@@ -154,21 +162,23 @@ class MapContainer extends Component {
 
   setCentre = () => {
     this.setState(prevState => {
-      let mapCenter = Object.assign({}, prevState.center);
+      let mapCenter = Object.assign({}, prevState.centre);
       mapCenter.lat = this.state.user.lat;
       mapCenter.lng = this.state.user.lng;
-      this.setState({ center: mapCenter });
+      this.setState({ centre: mapCenter });
       console.log("setCentre called, state = ", this.state);
     });
   };
 
   render() {
+    const initialCentreFromProps = this.props.userLocation;
+    const centre = this.state.centre;
     const mapStyles = {
       width: "100%",
       height: "100%"
     };
-
-    console.log("render - state", this.state);
+    console.log("centre from props :", initialCentreFromProps);
+    console.log("render - state", this.state.user);
     return (
       <div>
         <div>
@@ -177,10 +187,10 @@ class MapContainer extends Component {
         <Map
           user={this.state.user}
           google={this.props.google}
-          zoom={10}
+          zoom={7}
           style={mapStyles}
           onReady={this.setUserLocation}
-          initialCenter={this.state.centre} //Work out how to set this dynamically
+          initialCenter={this.props.userLocation} //TODO : Work out how to set this dynamically
         >
           {this.setUserLocation()}
           {this.displayUser()}
@@ -194,4 +204,3 @@ class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
 })(MapContainer);
-//AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI
