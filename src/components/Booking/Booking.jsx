@@ -10,7 +10,7 @@ export default class BookingForm extends Component {
     super(props);
 
     this.state = {
-      carid: "",
+      carId: "",
       date: "",
       duration: ""
     };
@@ -26,10 +26,10 @@ export default class BookingForm extends Component {
   };
 
   render() {
-    const { carid, date, duration } = this.state;
+    const { carId, date, duration } = this.state;
     return (
       <div>
-        <form onSubmit={this.submitHandler}>
+        <form>
           <Typography variant="h4" gutterBottom>
             Book a Car.
           </Typography>
@@ -77,10 +77,10 @@ export default class BookingForm extends Component {
             <Grid item xs={12} sm={6}>
               <TextField
                 id="select"
-                name="carid"
+                name="carId"
                 label="Select Car"
                 fullWidth
-                value={carid}
+                value={carId}
                 onChange={this.changeHandler}
                 select
               >
