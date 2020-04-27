@@ -4,10 +4,8 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/MenuItem";
-import Icon from "@material-ui/core/MenuItem";
-import { makeStyles } from "@material-ui/core/styles";
 
-class BookingForm extends Component {
+export default class BookingForm extends Component {
   constructor(props) {
     super(props);
 
@@ -29,15 +27,9 @@ class BookingForm extends Component {
   };
 
   render() {
-    const useStyles = makeStyles(theme => ({
-      root: {
-        margin: 35
-      }
-    }));
-    const classes = useStyles();
     const { carid, date, time, duration } = this.state;
     return (
-      <div className={classes.root}>
+      <div>
         <form onSubmit={this.submitHandler}>
           <Typography variant="h4" gutterBottom>
             Book a Car.
@@ -97,14 +89,14 @@ class BookingForm extends Component {
                 <MenuItem value="suv">SUV</MenuItem>
               </TextField>
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
-                id="date"
-                name="data"
-                label="Date of Pick Up"
+                id="datetime-local"
+                name="date"
                 fullWidth
-                type="date"
-                value={date}
+                type="datetime-local"
+                defaultValue="2017-05-24T10:30"
                 onchange={this.changeHandler}
               />
             </Grid>
@@ -112,7 +104,6 @@ class BookingForm extends Component {
               <TextField
                 id="time"
                 name="time"
-                label="Pick Up Time"
                 fullWidth
                 type="time"
                 value={time}
