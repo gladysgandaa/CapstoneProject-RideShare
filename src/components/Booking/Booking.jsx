@@ -8,7 +8,7 @@ import Button from "@material-ui/core/MenuItem";
 export default class BookingForm extends Component {
   constructor(props) {
     super(props);
-
+    this.submitHandler = this.submitHandler.bind(this);
     this.state = {
       carid: "",
       date: "",
@@ -18,7 +18,7 @@ export default class BookingForm extends Component {
   }
 
   changeHandler = e => {
-    this.setState({ [e.targwt.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   submitHandler = e => {
@@ -82,7 +82,7 @@ export default class BookingForm extends Component {
                 label="Select Car"
                 fullWidth
                 value={carid}
-                onchange={this.changeHandler}
+                onChange={this.changeHandler}
                 select
               >
                 <MenuItem value="sedan">Sedan</MenuItem>
@@ -96,23 +96,11 @@ export default class BookingForm extends Component {
                 name="date"
                 fullWidth
                 type="datetime-local"
-                defaultValue="2017-05-24T10:30"
-                onchange={this.changeHandler}
+                value={date}
+                onChange={this.changeHandler}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="time"
-                name="time"
-                fullWidth
-                type="time"
-                value={time}
-                onchange={this.changeHandler}
-                inputProps={{
-                  step: 300 // 5 min
-                }}
-              />
-            </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 id="select"
@@ -120,7 +108,7 @@ export default class BookingForm extends Component {
                 label="Duration (hrs)"
                 fullWidth
                 value={duration}
-                onchange={this.changeHandler}
+                onChange={this.changeHandler}
                 select
               >
                 <MenuItem value="one">1</MenuItem>
