@@ -8,11 +8,10 @@ import Button from "@material-ui/core/MenuItem";
 export default class BookingForm extends Component {
   constructor(props) {
     super(props);
-    this.submitHandler = this.submitHandler.bind(this);
+
     this.state = {
       carid: "",
       date: "",
-      time: "",
       duration: ""
     };
   }
@@ -27,7 +26,7 @@ export default class BookingForm extends Component {
   };
 
   render() {
-    const { carid, date, time, duration } = this.state;
+    const { carid, date, duration } = this.state;
     return (
       <div>
         <form onSubmit={this.submitHandler}>
@@ -100,7 +99,6 @@ export default class BookingForm extends Component {
                 onChange={this.changeHandler}
               />
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <TextField
                 id="select"
@@ -111,20 +109,15 @@ export default class BookingForm extends Component {
                 onChange={this.changeHandler}
                 select
               >
-                <MenuItem value="one">1</MenuItem>
-                <MenuItem value="three">3</MenuItem>
-                <MenuItem value="six">6</MenuItem>
-                <MenuItem value="twelve">12</MenuItem>
-                <MenuItem value="twentyFour">24</MenuItem>
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+                <MenuItem value={12}>12</MenuItem>
+                <MenuItem value={24}>24</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Button
-                href="/book"
-                type="submit"
-                variant="contained"
-                color="primary"
-              >
+              <Button type="submit" onClick={this.submitHandler}>
                 Book
               </Button>
             </Grid>
