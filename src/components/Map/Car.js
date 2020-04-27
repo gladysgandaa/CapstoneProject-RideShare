@@ -36,9 +36,16 @@ const Car = props => {
           }
         />
         <div>Miles from you: {distance}</div>
-        <Button href="/book" variant="contained" color="primary">
-          Book
-        </Button>
+        <div>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            href="/book"
+          >
+            Book
+          </Button>
+        </div>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>
