@@ -141,12 +141,13 @@ class MapContainer extends Component {
     return distances;
   };
 
+  //DO NOT LEAVE IT LIKE THIS
   haversineDistance = (mk1, mk2) => {
     var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = mk1.Latitude * (Math.PI / 180); // Convert degrees to radians
+    var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
     var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (mk2.Longitude - mk1.Longitude) * (Math.PI / 180); // Radian difference (longitudes)
+    var difflon = (mk2.Longitude - mk1.lng) * (Math.PI / 180); // Radian difference (longitudes)
     var d =
       2 *
       R *
