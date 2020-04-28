@@ -5,14 +5,14 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 
-export default class BookingForm extends Component {
+class BookingForm extends Component {
   constructor(props) {
     super(props);
-
+    const { carId, make, model } = props.location.state;
     this.state = {
-      carId: props.carId,
-      make: props.make,
-      model: props.model,
+      carId: carId,
+      make: make,
+      model: model,
       date: "",
       duration: ""
     };
@@ -125,3 +125,4 @@ export default class BookingForm extends Component {
     );
   }
 }
+export default BookingForm;
