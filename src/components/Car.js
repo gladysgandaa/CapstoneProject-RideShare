@@ -35,19 +35,19 @@ const Car = props => {
               {model}, From : ${rentalCostPerHour} hourly
               <br></br>
               Miles from you: {distance}
+              <div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  href="/booking"
+                >
+                  Book
+                </Button>
+              </div>
             </Typography>
           }
         />
-        <div>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            href="/booking"
-          >
-            Book
-          </Button>
-        </div>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>

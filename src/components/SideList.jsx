@@ -3,16 +3,21 @@ import List from "@material-ui/core/List";
 import { makeStyles } from "@material-ui/core/styles";
 import Car from "./Car";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
-    width: "50%",
-    backgroundColor: theme.palette.background.paper
+    width: "100%",
+    left: 0
   }
-}));
+});
 
 const SideList = ({ cars }) => {
+  const classes = useStyles();
   return (
-    <List className={useStyles.root}>
+    <List
+      classes={{
+        root: classes.root
+      }}
+    >
       {!cars.length ? (
         <h1>No Cars Found.</h1>
       ) : (
