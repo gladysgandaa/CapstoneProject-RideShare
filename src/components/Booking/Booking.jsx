@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
+import axios from "axios";
 
 class BookingForm extends Component {
   constructor(props) {
@@ -13,8 +14,8 @@ class BookingForm extends Component {
       carId: carId,
       make: make,
       model: model,
-      date: "",
-      duration: ""
+      date: "2020-04-28T15:30:00",
+      duration: 1
     };
   }
 
@@ -28,7 +29,7 @@ class BookingForm extends Component {
   };
 
   render() {
-    const { make, model, duration } = this.state;
+    const { make, model, date, duration } = this.state;
     return (
       <div>
         <form onSubmit={this.submitHandler}>
@@ -92,7 +93,7 @@ class BookingForm extends Component {
                 name="date"
                 type="datetime-local"
                 fullWidth
-                defaultValue="2020-04-28T15:30:00"
+                value={date}
                 onChange={this.changeHandler}
                 InputLabelProps={{
                   shrink: true
