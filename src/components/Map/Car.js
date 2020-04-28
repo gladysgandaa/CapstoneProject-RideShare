@@ -5,8 +5,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import BookingForm from "../Booking/Booking";
 
 const useStyles = makeStyles(theme => ({
   inline: {
@@ -15,8 +17,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  const { make, model, rentalCostPerHour, distance } = props;
-
+  console.log(props);
+  const { carId, make, model, rentalCostPerHour, distance } = props;
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -24,7 +26,7 @@ const Car = props => {
           <Avatar alt={model} src="" />
         </ListItemAvatar>
         <ListItemText
-          primary={`${model} ${make}`}
+          primary={`${make} ${model}`}
           secondary={
             <Typography
               component="span"
@@ -48,6 +50,23 @@ const Car = props => {
             </Typography>
           }
         />
+        <div>Miles from you: {distance}</div>
+        <div>
+          <Link
+            to={{
+              pathname: "/book",
+              state: {
+                make: make,
+                model: model,
+                carId: carId
+              }
+            }}
+          >
+            <Button variant="contained" color="primary">
+              Book
+            </Button>
+          </Link>
+        </div>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>

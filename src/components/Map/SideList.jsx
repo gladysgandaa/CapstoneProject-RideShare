@@ -13,11 +13,7 @@ const useStyles = makeStyles({
 const SideList = ({ cars }) => {
   const classes = useStyles();
   return (
-    <List
-      classes={{
-        root: classes.root
-      }}
-    >
+    <List className={classes.root}>
       {!cars.length ? (
         <h1>No Cars Found.</h1>
       ) : (
@@ -25,6 +21,7 @@ const SideList = ({ cars }) => {
           return (
             <Car
               key={car.carId}
+              carId={car.carId}
               make={car.make}
               model={car.model}
               distance={car.distance}

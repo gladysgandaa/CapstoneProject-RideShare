@@ -1,11 +1,10 @@
 /* global google */
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-import { blue } from "@material-ui/core/colors";
-import axios from "axios";
-import SideList from "./SideList";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import SideList from "./SideList";
 
 class MapContainer extends Component {
   constructor(props) {
@@ -176,12 +175,12 @@ class MapContainer extends Component {
   render() {
     const initialCentreFromProps = this.props.userLocation;
     const centre = this.state.centre;
-    
+
     const mapStyles = {
       width: "100%",
       height: "100%"
     };
-    
+
     const useStyles = makeStyles(theme => ({
       root: {
         flexGrow: 1
@@ -211,8 +210,8 @@ class MapContainer extends Component {
             </Map>
           </Grid>
         </Grid>
-    console.log("centre from props :", initialCentreFromProps);
-    console.log("render - state", this.state.user);
+        {console.log("centre from props :", initialCentreFromProps)}
+        {console.log("render - state", this.state.user)}
       </div>
     );
   }
