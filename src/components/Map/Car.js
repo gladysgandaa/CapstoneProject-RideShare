@@ -35,6 +35,18 @@ const Car = props => {
               color="textPrimary"
             >
               {model}, From : ${rentalCostPerHour} hourly
+              <br></br>
+              Miles from you: {distance}
+              <div>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  href="/booking"
+                >
+                  Book
+                </Button>
+              </div>
             </Typography>
           }
         />

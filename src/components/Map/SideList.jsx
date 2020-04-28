@@ -1,7 +1,6 @@
 import React from "react";
 import List from "@material-ui/core/List";
 import { makeStyles } from "@material-ui/core/styles";
-
 import Car from "./Car";
 
 const useStyles = makeStyles({
