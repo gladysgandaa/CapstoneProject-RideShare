@@ -2,13 +2,17 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import Button from "@material-ui/core/MenuItem";
+import Icon from "@material-ui/core/MenuItem";
+import classes from "@material-ui/core/MenuItem";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 
 export default function AddressForm() {
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+    <div style={{ margin: 35 }}>
+      <Typography variant="h4" gutterBottom>
         Booking form
       </Typography>
       <Grid container spacing={3}>
@@ -21,6 +25,14 @@ export default function AddressForm() {
             fullWidth
             autoComplete="fname"
           />
+          <TextField
+            required
+            id="phone"
+            name="phone"
+            label="Mobile"
+            fullWidth
+            autoComplete="phone"
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -31,73 +43,75 @@ export default function AddressForm() {
             fullWidth
             autoComplete="lname"
           />
-        </Grid>
-        <Grid item xs={12}>
           <TextField
             required
-            id="address1"
-            name="address1"
-            label="Address line 1"
+            id="email"
+            name="email"
+            label="Email ID"
             fullWidth
-            autoComplete="billing address-line1"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            fullWidth
-            autoComplete="billing address-line2"
+            autoComplete="email"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
+            id="date"
+            label="Date of Pick Up"
             fullWidth
-            autoComplete="billing address-level2"
+            type="date"
+            defaultValue="2017-05-24"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="state"
-            name="state"
-            label="State/Province/Region"
+            id="time"
+            label="Pick Up Time"
             fullWidth
+            type="time"
+            defaultValue="07:30"
+            inputProps={{
+              step: 300 // 5 min
+            }}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
+            id="date"
+            label="Date of Drop Off"
             fullWidth
-            autoComplete="billing postal-code"
+            type="date"
+            defaultValue="2017-05-24"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
+            id="time"
+            label="Drop off Time"
             fullWidth
-            autoComplete="billing country"
+            type="time"
+            defaultValue="07:30"
+            inputProps={{
+              step: 300 // 5 min
+            }}
           />
         </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={
-              <Checkbox color="secondary" name="saveAddress" value="yes" />
-            }
-            label="Use this address for payment details"
-          />
+        <Grid item xs={12} sm={6}>
+          <TextField id="select" label="Select Car" fullWidth value="20" select>
+            <MenuItem value="sedan">Sedan</MenuItem>
+            <MenuItem value="suv">SUV</MenuItem>
+          </TextField>
         </Grid>
       </Grid>
-    </React.Fragment>
+      <Grid item xs={12} sm={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          fullwidth
+          endIcon={<Icon>send</Icon>}
+        >
+          Proceed To Payment
+        </Button>
+      </Grid>
+    </div>
   );
 }
