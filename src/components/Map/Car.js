@@ -38,35 +38,24 @@ const Car = props => {
               <br></br>
               Miles from you: {distance}
               <div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  href="/booking"
+                <Link
+                  to={{
+                    pathname: "/book",
+                    state: {
+                      make: make,
+                      model: model,
+                      carId: carId
+                    }
+                  }}
                 >
-                  Book
-                </Button>
+                  <Button variant="contained" color="primary">
+                    Book
+                  </Button>
+                </Link>
               </div>
             </Typography>
           }
         />
-        <div>Miles from you: {distance}</div>
-        <div>
-          <Link
-            to={{
-              pathname: "/book",
-              state: {
-                make: make,
-                model: model,
-                carId: carId
-              }
-            }}
-          >
-            <Button variant="contained" color="primary">
-              Book
-            </Button>
-          </Link>
-        </div>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>
