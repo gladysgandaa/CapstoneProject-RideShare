@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   inline: {
     display: "inline",
     fontSize: "16px"
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 const History = props => {
   console.log(props);
   const classes = useStyles();
-  const { carId, make, model, rentalCostPerHour, distance } = props;
+  const { carId, make, model } = props;
   return (
     <div>
       <h2>Past Booking</h2>
