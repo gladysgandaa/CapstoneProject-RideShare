@@ -4,6 +4,7 @@ import TabPanel from "./components/Navigation/MaterialTabs";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
+import History from "./components/History/History";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
 
@@ -41,6 +42,7 @@ class App extends Component {
 
             <Route path="/signin" component={SignIn} />
             <Route path="/signup" component={SignUp} />
+            <Route path="/history" component={History} />
             <Route path="/book" component={BookingForm} />
           </Switch>
         </Router>
