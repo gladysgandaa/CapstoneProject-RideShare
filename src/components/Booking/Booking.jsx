@@ -5,6 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
+import ErrorDialog from "../Dialog/ErrorDialog";
 
 class BookingForm extends Component {
   constructor(props) {
@@ -20,7 +21,9 @@ class BookingForm extends Component {
       make: make,
       model: model,
       date: defaultDate,
-      duration: 1
+      duration: 1,
+      errMessage: "",
+      open: false
     };
   }
 
@@ -42,11 +45,24 @@ class BookingForm extends Component {
         JSON.stringify(this.state)
       )
       .then(response => {
-        console.log(response);
+        console.log(`Response => ${response}`);
       })
       .catch(error => {
-        console.log(error);
+        console.log(`Error => ${error}`);
+        if (error.response.status === 500) {
+          this.setState({
+            errorMessage: `Selected time for the ${this.state.make} ${this.state.model} is unavailable. Please select another time.`,
+            open: true
+          });
+        }
       });
+  };
+
+  handleClose = () => {
+    this.setState({
+      errorMessage: "",
+      open: false
+    });
   };
 
   render() {
@@ -137,6 +153,15 @@ class BookingForm extends Component {
                 <MenuItem value={12}>12</MenuItem>
                 <MenuItem value={24}>24</MenuItem>
               </TextField>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              {this.state.errorMessage && (
+                <ErrorDialog
+                  errorMessage={this.state.errorMessage}
+                  open={this.state.open}
+                  handleClose={this.handleClose}
+                />
+              )}
             </Grid>
             <Grid item xs={12} sm={2}>
               <Button type="submit">Book</Button>
