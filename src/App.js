@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./App.css";
-import TabPanel from "./components/Navigation/MaterialTabs";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";

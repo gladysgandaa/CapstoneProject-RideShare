@@ -175,7 +175,6 @@ class MapContainer extends Component {
 
   render() {
     const initialCentreFromProps = this.props.userLocation;
-    const centre = this.state.centre;
 
     const mapStyles = {
       width: "100%",
