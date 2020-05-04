@@ -26,6 +26,17 @@ class BookingForm extends Component {
   submitHandler = e => {
     e.preventDefault();
     console.log(this.state);
+    axios
+      .post(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+        this.state
+      )
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {
