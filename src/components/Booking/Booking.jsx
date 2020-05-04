@@ -9,12 +9,17 @@ import axios from "axios";
 class BookingForm extends Component {
   constructor(props) {
     super(props);
+
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    const localISOTime = new Date(Date.now() - tzoffset);
+    localISOTime.setSeconds(0);
+    const defaultDate = localISOTime.toISOString().slice(0, -5);
     const { carId, make, model } = props.location.state;
     this.state = {
       carId: carId,
       make: make,
       model: model,
-      date: "2020-04-28T15:30:00",
+      date: defaultDate,
       duration: 1
     };
   }
@@ -26,10 +31,15 @@ class BookingForm extends Component {
   submitHandler = e => {
     e.preventDefault();
     console.log(this.state);
+    const postData = {
+      body: JSON.stringify(this.state)
+    };
+
+    console.log(postData);
     axios
       .post(
         "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-        this.state
+        JSON.stringify(this.state)
       )
       .then(response => {
         console.log(response);
