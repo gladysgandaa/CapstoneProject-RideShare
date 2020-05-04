@@ -3,17 +3,19 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import Button from "@material-ui/core/MenuItem";
+import Button from "@material-ui/core/Button";
 import axios from "axios";
 
-export default class BookingForm extends Component {
+class BookingForm extends Component {
   constructor(props) {
     super(props);
-
+    const { carId, make, model } = props.location.state;
     this.state = {
-      carId: "",
-      date: "",
-      duration: ""
+      carId: carId,
+      make: make,
+      model: model,
+      date: "2020-04-28T15:30:00",
+      duration: 1
     };
   }
 
@@ -38,10 +40,10 @@ export default class BookingForm extends Component {
   };
 
   render() {
-    const { carId, date, duration } = this.state;
+    const { make, model, date, duration } = this.state;
     return (
       <div>
-        <form>
+        <form onSubmit={this.submitHandler}>
           <Typography variant="h4" gutterBottom>
             Book a Car.
           </Typography>
@@ -88,27 +90,25 @@ export default class BookingForm extends Component {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                id="select"
-                name="carId"
-                label="Select Car"
+                disabled
+                id="selected-car"
+                label="Selected Car"
                 fullWidth
-                value={carId}
-                onChange={this.changeHandler}
-                select
-              >
-                <MenuItem value="sedan">Sedan</MenuItem>
-                <MenuItem value="suv">SUV</MenuItem>
-              </TextField>
+                defaultValue={`${make} ${model}`}
+              />
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <TextField
                 id="datetime-local"
+                label="Select Date and Time"
                 name="date"
-                fullWidth
                 type="datetime-local"
+                fullWidth
                 value={date}
                 onChange={this.changeHandler}
+                InputLabelProps={{
+                  shrink: true
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -129,9 +129,7 @@ export default class BookingForm extends Component {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Button type="submit" onClick={this.submitHandler}>
-                Book
-              </Button>
+              <Button type="submit">Book</Button>
             </Grid>
           </Grid>
         </form>
@@ -139,3 +137,4 @@ export default class BookingForm extends Component {
     );
   }
 }
+export default BookingForm;

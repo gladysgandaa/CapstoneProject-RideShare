@@ -1,6 +1,8 @@
+/* global google */
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-import { blue } from "@material-ui/core/colors";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import SideList from "./SideList";
 
@@ -9,9 +11,9 @@ class MapContainer extends Component {
     super(props);
     this.state = {
       test: "test",
-      centre: { lat: -37.8303708, lng: 144.9674938 },
+      centre: { lat: 17.7985769, lng: -144.8674427 },
       vehicleDistances: [],
-      user: { Latitude: -36.75818, Longitude: 144.28024 },
+      user: this.props.userLocation,
       vehicles: [
         {
           name: "car0",
@@ -47,7 +49,6 @@ class MapContainer extends Component {
 
   componentWillMount() {
     this.getVehicles();
-    console.log("before render");
   }
 
   //Set state with variable length array to simulate DB connection. Works
@@ -81,12 +82,21 @@ class MapContainer extends Component {
         <Marker
           key={index}
           id={index}
-          icon={"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
+          icon={{
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
+          }}
           position={{
             lat: dbVehicle.currentLocation.Latitude,
             lng: dbVehicle.currentLocation.Longitude
           }}
-          onClick={() => console.log(dbVehicle.model)}
+          label={{
+            text: dbVehicle.make.concat(" ", dbVehicle.model),
+            fontFamily: "Arial",
+            fontSize: "14px"
+          }}
+          onClick={() => console.log(dbVehicle.make, dbVehicle.model)}
         />
       );
     });
@@ -131,12 +141,13 @@ class MapContainer extends Component {
     return distances;
   };
 
+  //DO NOT LEAVE IT LIKE THIS
   haversineDistance = (mk1, mk2) => {
     var R = 3958.8; // Radius of the Earth in miles
-    var rlat1 = mk1.Latitude * (Math.PI / 180); // Convert degrees to radians
+    var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
     var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (mk2.Longitude - mk1.Longitude) * (Math.PI / 180); // Radian difference (longitudes)
+    var difflon = (mk2.Longitude - mk1.lng) * (Math.PI / 180); // Radian difference (longitudes)
     var d =
       2 *
       R *
@@ -154,38 +165,54 @@ class MapContainer extends Component {
 
   setCentre = () => {
     this.setState(prevState => {
-      let mapCenter = Object.assign({}, prevState.center);
+      let mapCenter = Object.assign({}, prevState.centre);
       mapCenter.lat = this.state.user.lat;
       mapCenter.lng = this.state.user.lng;
-      this.setState({ center: mapCenter });
+      this.setState({ centre: mapCenter });
       console.log("setCentre called, state = ", this.state);
     });
   };
 
   render() {
+    const initialCentreFromProps = this.props.userLocation;
+    const centre = this.state.centre;
+
     const mapStyles = {
       width: "100%",
       height: "100%"
     };
 
+    const useStyles = makeStyles(theme => ({
+      root: {
+        flexGrow: 1
+      }
+    }));
+
     console.log("render - state", this.state);
     return (
-      <div>
-        <div>
-          <SideList cars={this.state.dbVehicles} />
-        </div>
-        <Map
-          user={this.state.user}
-          google={this.props.google}
-          zoom={5}
-          style={mapStyles}
-          onReady={this.setUserLocation}
-          initialCenter={this.state.centre} //Work out how to set this dynamically
-        >
-          {this.setUserLocation()}
-          {this.displayUser()}
-          {this.displayVehicles()}
-        </Map>
+      <div style={useStyles.root}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <SideList cars={this.state.dbVehicles} />
+          </Grid>
+          <Grid item xs={12} sm={8}>
+            <Map
+              user={this.state.user}
+              google={this.props.google}
+              zoom={7}
+              style={mapStyles}
+              onReady={this.setUserLocation}
+              initialCenter={this.state.centre} //Work out how to set this dynamically
+              center={this.props.userLocation}
+            >
+              {this.setUserLocation()}
+              {this.displayUser()}
+              {this.displayVehicles()}
+            </Map>
+          </Grid>
+        </Grid>
+        {console.log("centre from props :", initialCentreFromProps)}
+        {console.log("render - state", this.state.user)}
       </div>
     );
   }
@@ -194,4 +221,3 @@ class MapContainer extends Component {
 export default GoogleApiWrapper({
   apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
 })(MapContainer);
-//AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI

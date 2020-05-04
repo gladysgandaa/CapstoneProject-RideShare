@@ -7,6 +7,8 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import BookingForm from "../Booking/Booking";
 
 const useStyles = makeStyles(theme => ({
   inline: {
@@ -15,7 +17,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  const { make, model, rentalCostPerHour, distance } = props;
+  console.log(props);
+  const { carId, make, model, rentalCostPerHour, distance } = props;
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -32,13 +35,27 @@ const Car = props => {
               color="textPrimary"
             >
               {model}, From : ${rentalCostPerHour} hourly
+              <br></br>
+              Miles from you: {distance}
+              <div>
+                <Link
+                  to={{
+                    pathname: "/book",
+                    state: {
+                      make: make,
+                      model: model,
+                      carId: carId
+                    }
+                  }}
+                >
+                  <Button variant="contained" color="primary">
+                    Book
+                  </Button>
+                </Link>
+              </div>
             </Typography>
           }
         />
-        <div>Miles from you: {distance}</div>
-        <Button href="/book" variant="contained" color="primary">
-          Book
-        </Button>
       </ListItem>
       <Divider variant="inset" component="li" />
     </div>
