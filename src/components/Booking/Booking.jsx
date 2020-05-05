@@ -15,11 +15,12 @@ class BookingForm extends Component {
     const localISOTime = new Date(Date.now() - tzoffset);
     localISOTime.setSeconds(0);
     const defaultDate = localISOTime.toISOString().slice(0, -5);
-    const { carId, make, model } = props.location.state;
+    const { carId, make, model, currentLocation } = props.location.state;
     this.state = {
       carId: carId,
       make: make,
       model: model,
+      pickUpLocation: currentLocation,
       date: defaultDate,
       duration: 1,
       errMessage: "",
