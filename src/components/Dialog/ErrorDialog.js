@@ -7,15 +7,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-const useStyles = makeStyles(theme => ({
-  error: {
-    color: "red"
-  }
-}));
-
 export default function ErrorDialog(props) {
   var { errorMessage, handleClose, open } = props;
-  const classes = useStyles();
 
   return (
     <React.Fragment>
