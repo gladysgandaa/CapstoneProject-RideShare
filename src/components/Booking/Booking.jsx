@@ -6,6 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import MaterialDialog from "../Dialog/Dialog";
+import SignUpDialog from "../Dialog/SignUpDialog";
 
 class BookingForm extends Component {
   constructor(props) {
@@ -25,6 +26,7 @@ class BookingForm extends Component {
       duration: 1,
       errorMessage: "",
       loginMessage: "",
+      signupMessage: "",
       open: false
     };
   }
@@ -64,6 +66,14 @@ class BookingForm extends Component {
     e.preventDefault();
     this.setState({
       loginMessage: `Login`,
+      open: true
+    });
+  };
+
+  openSignUp = e => {
+    e.preventDefault();
+    this.setState({
+      signupMessage: `SignUp`,
       open: true
     });
   };
@@ -195,6 +205,19 @@ class BookingForm extends Component {
             </Grid>
             <Grid item xs={12} sm={2}>
               <Button onClick={this.openLogin}>Book</Button>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              {this.state.signupMessage && (
+                <SignUpDialog
+                  title="SignUp"
+                  message={this.state.signupMessage}
+                  open={this.state.open}
+                  handleClose={this.handleClose}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button onClick={this.openSignUp}>SignUp</Button>
             </Grid>
           </Grid>
         </form>
