@@ -17,7 +17,14 @@ const useStyles = makeStyles(theme => ({
 
 const Car = props => {
   console.log(props);
-  const { carId, make, model, rentalCostPerHour, distance } = props;
+  const {
+    carId,
+    make,
+    model,
+    rentalCostPerHour,
+    distance,
+    currentLocation
+  } = props;
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -43,7 +50,8 @@ const Car = props => {
                     state: {
                       make: make,
                       model: model,
-                      carId: carId
+                      carId: carId,
+                      currentLocation: currentLocation
                     }
                   }}
                 >
