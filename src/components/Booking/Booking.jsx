@@ -5,7 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
-import ErrorDialog from "../Dialog/ErrorDialog";
+import MaterialDialog from "../Dialog/Dialog";
 
 class BookingForm extends Component {
   constructor(props) {
@@ -23,7 +23,8 @@ class BookingForm extends Component {
       pickUpLocation: currentLocation,
       date: defaultDate,
       duration: 1,
-      errMessage: "",
+      errorMessage: "",
+      loginMessage: "",
       open: false
     };
   }
@@ -46,7 +47,7 @@ class BookingForm extends Component {
         JSON.stringify(this.state)
       )
       .then(response => {
-        console.log(`Response => ${response}`);
+        console.log(`Response => ${response.message}`);
       })
       .catch(error => {
         console.log(`Error => ${error}`);
@@ -59,9 +60,26 @@ class BookingForm extends Component {
       });
   };
 
+  openLogin = e => {
+    e.preventDefault();
+    this.setState({
+      loginMessage: `Login`,
+      open: true
+    });
+  };
+
+  openError = e => {
+    e.preventDefault();
+    this.setState({
+      errorMessage: `Selected time for the ${this.state.make} ${this.state.model} is unavailable. Please select another time.`,
+      open: true
+    });
+  };
+
   handleClose = () => {
     this.setState({
       errorMessage: "",
+      loginMessage: "",
       open: false
     });
   };
@@ -157,15 +175,26 @@ class BookingForm extends Component {
             </Grid>
             <Grid item xs={12} sm={2}>
               {this.state.errorMessage && (
-                <ErrorDialog
-                  errorMessage={this.state.errorMessage}
+                <MaterialDialog
+                  title="Sorry"
+                  message={this.state.errorMessage}
                   open={this.state.open}
                   handleClose={this.handleClose}
                 />
               )}
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Button type="submit">Book</Button>
+              {this.state.loginMessage && (
+                <MaterialDialog
+                  title="Login"
+                  message={this.state.loginMessage}
+                  open={this.state.open}
+                  handleClose={this.handleClose}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button onClick={this.openLogin}>Book</Button>
             </Grid>
           </Grid>
         </form>

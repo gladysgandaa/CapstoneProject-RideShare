@@ -7,8 +7,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-export default function ErrorDialog(props) {
-  var { errorMessage, handleClose, open } = props;
+export default function MaterialDialog(props) {
+  var { title, message, handleClose, open } = props;
 
   return (
     <React.Fragment>
@@ -19,9 +19,9 @@ export default function ErrorDialog(props) {
         onClose={handleClose}
         aria-labelledby="max-width-dialog-title"
       >
-        <DialogTitle id="max-width-dialog-title">Sorry</DialogTitle>
+        <DialogTitle id="max-width-dialog-title">{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>{errorMessage}</DialogContentText>
+          <DialogContentText>{message}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
