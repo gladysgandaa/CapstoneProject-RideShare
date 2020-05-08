@@ -6,11 +6,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import ErrorDialog from "../Dialog/ErrorDialog";
+import { withRouter } from "react-router-dom";
 
 class BookingForm extends Component {
   constructor(props) {
     super(props);
-
+    this.routeChange = this.routeChange.bind(this);
     const tzoffset = new Date().getTimezoneOffset() * 60000;
     const localISOTime = new Date(Date.now() - tzoffset);
     localISOTime.setSeconds(0);
@@ -57,6 +58,12 @@ class BookingForm extends Component {
           });
         }
       });
+  };
+
+  routeChange = () => {
+    let path = `/payment`;
+    this.props.history.push(path);
+    console.log("routechange called");
   };
 
   handleClose = () => {
@@ -165,7 +172,9 @@ class BookingForm extends Component {
               )}
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Button type="submit">Book</Button>
+              <Button type="submit" onClick={this.routeChange}>
+                Book
+              </Button>
             </Grid>
           </Grid>
         </form>
