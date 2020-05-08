@@ -5,6 +5,7 @@ import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
+import Payment from "./components/Payment/Payment";
 
 //TODO - this should call map now, which will then call map container
 class App extends Component {
@@ -41,6 +42,7 @@ class App extends Component {
             <Route path="/signin" component={SignIn} />
             <Route path="/signup" component={SignUp} />
             <Route path="/book" component={BookingForm} />
+            <Route path="/payment" component={Payment} />
           </Switch>
         </Router>
       </div>
