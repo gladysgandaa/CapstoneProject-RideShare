@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -42,61 +43,85 @@ const ShowHistory = props => {
     duration,
     userId
   } = props;
+
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  function getCar() {
+    try {
+      axios
+        .get(
+          `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`
+        )
+        .then(response => {
+          setMake(response.data.make);
+          setModel(response.data.model);
+          setIsLoading(false);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  getCar();
+
   return (
     <div>
-      <ListItem alignItems="flex-start">
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={1}>
-            <ListItemAvatar>
-              <Avatar src="" classes={{ root: classes.avatar }} />
-            </ListItemAvatar>
-          </Grid>
-          <Grid item xs={12} sm={8}>
-            <ListItemText
-              classes={{ primary: classes.primary }}
-              primary={carId}
-              secondary={
-                <Typography
-                  component="span"
-                  variant="body2"
-                  className={useStyles.inline}
-                  color="textPrimary"
-                >
-                  Booking ID: {carId}
-                  <br></br>
-                  Booking Time: {startTime}
-                  <br></br>
-                  Duration : {duration} hours
-                </Typography>
-              }
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Link
-              to={{
-                pathname: "/book",
-                state: {
-                  startTime: startTime,
-                  bookingId: bookingId,
-                  pickupLocation: pickupLocation,
-                  carId: carId,
-                  duration: duration,
-                  userId: userId
+      {!isLoading && (
+        <ListItem alignItems="flex-start">
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={1}>
+              <ListItemAvatar>
+                <Avatar src="" classes={{ root: classes.avatar }} />
+              </ListItemAvatar>
+            </Grid>
+            <Grid item xs={12} sm={8}>
+              <ListItemText
+                classes={{ primary: classes.primary }}
+                primary={`${make} ${model}`}
+                secondary={
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    className={useStyles.inline}
+                    color="textPrimary"
+                  >
+                    Booking ID: {bookingId}
+                    <br></br>
+                    Booking Time: {startTime}
+                    <br></br>
+                    Duration : {duration} hours
+                  </Typography>
                 }
-              }}
-            >
-              <Button
-                alignItems="flex-end"
-                variant="contained"
-                color="primary"
-                classes={{ root: classes.button }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Link
+                to={{
+                  pathname: "/book",
+                  state: {
+                    startTime: startTime,
+                    bookingId: bookingId,
+                    pickupLocation: pickupLocation,
+                    carId: carId,
+                    duration: duration,
+                    userId: userId
+                  }
+                }}
               >
-                Book Again
-              </Button>
-            </Link>
+                <Button
+                  alignItems="flex-end"
+                  variant="contained"
+                  color="primary"
+                  classes={{ root: classes.button }}
+                >
+                  Book Again
+                </Button>
+              </Link>
+            </Grid>
           </Grid>
-        </Grid>
-      </ListItem>
+        </ListItem>
+      )}
       <Divider variant="inset" classes={{ root: classes.root }} />
     </div>
   );
