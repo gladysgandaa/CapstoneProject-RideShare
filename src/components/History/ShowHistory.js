@@ -25,6 +25,9 @@ const useStyles = makeStyles(() => ({
     height: "65px",
     width: "65px",
     margin: "auto"
+  },
+  button: {
+    float: "right"
   }
 }));
 
@@ -82,7 +85,12 @@ const ShowHistory = props => {
                 }
               }}
             >
-              <Button alignItems="flex-end" variant="contained" color="primary">
+              <Button
+                alignItems="flex-end"
+                variant="contained"
+                color="primary"
+                classes={{ root: classes.button }}
+              >
                 Book Again
               </Button>
             </Link>
