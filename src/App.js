@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
+import { AppContext } from "./libs/contextLib";
 
 //TODO - this should call map now, which will then call map container
 class App extends Component {
@@ -26,23 +27,26 @@ class App extends Component {
     this.setUserLocation();
     console.log("state.user", this.state.user);
     const userlocation = { lat: -37.8303789, lng: 144.9674638 };
+
     return (
       <div className="App">
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <MapContainer
-                map={MapContainer}
-                userLocation={userlocation}
-                centreFromProps={userlocation}
-              />
-            </Route>
+        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
+          <Router>
+            <Switch>
+              <Route exact path="/">
+                <MapContainer
+                  map={MapContainer}
+                  userLocation={userlocation}
+                  centreFromProps={userlocation}
+                />
+              </Route>
 
-            <Route path="/signin" component={SignIn} />
-            <Route path="/signup" component={SignUp} />
-            <Route path="/book" component={BookingForm} />
-          </Switch>
-        </Router>
+              <Route path="/signin" component={SignIn} />
+              <Route path="/signup" component={SignUp} />
+              <Route path="/book" component={BookingForm} />
+            </Switch>
+          </Router>
+        </AppContext.Provider>
       </div>
     );
   }
