@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const History = props => {
+const ShowHistory = props => {
   console.log(props);
   const classes = useStyles();
   const {
@@ -92,4 +92,4 @@ const History = props => {
     </div>
   );
 };
-export default History;
+export default ShowHistory;
