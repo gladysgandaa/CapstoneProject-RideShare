@@ -27,6 +27,9 @@ const ShowHistory = props => {
   } = props;
   return (
     <div>
+      <Typography component="h1" variant="h5">
+        Booking History
+      </Typography>
       <ListItem alignItems="flex-start">
         <ListItemAvatar>
           <Avatar src="" />
