@@ -51,7 +51,8 @@ const Car = props => {
                       make: make,
                       model: model,
                       carId: carId,
-                      currentLocation: currentLocation
+                      currentLocation: currentLocation,
+                      rentalCostPerHour: rentalCostPerHour
                     }
                   }}
                 >
