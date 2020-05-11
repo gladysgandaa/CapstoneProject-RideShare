@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import HistoryList from "./HistoryList.js";
+import Typography from "@material-ui/core/Typography";
 
 class History extends Component {
   constructor(props) {
@@ -43,6 +44,11 @@ class History extends Component {
     return (
       <div style={useStyles.root}>
         <Grid container spacing={3}>
+          <Grid item xs={12} sm={12}>
+            <Typography component="h1" variant="h4">
+              Booking History
+            </Typography>
+          </Grid>
           <Grid item xs={12} sm={12}>
             <HistoryList bookings={this.state.bookingHistory} />
           </Grid>
