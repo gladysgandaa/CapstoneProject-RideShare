@@ -77,28 +77,36 @@ class MapContainer extends Component {
   };
 
   displayVehicles = () => {
+    if (!this.state.dbVehicles[0].distance) {
+      return null;
+    }
+
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      return (
-        <Marker
-          key={index}
-          id={index}
-          icon={{
-            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-            anchor: new google.maps.Point(0, 53),
-            labelOrigin: new google.maps.Point(14, 53)
-          }}
-          position={{
-            lat: dbVehicle.currentLocation.Latitude,
-            lng: dbVehicle.currentLocation.Longitude
-          }}
-          label={{
-            text: dbVehicle.make.concat(" ", dbVehicle.model),
-            fontFamily: "Arial",
-            fontSize: "14px"
-          }}
-          onClick={() => console.log(dbVehicle.make, dbVehicle.model)}
-        />
-      );
+      console.log("Vehicle Distances", dbVehicle.distance);
+      if (dbVehicle.distance < 180) {
+        console.log("Passed conditional");
+        return (
+          <Marker
+            key={index}
+            id={index}
+            icon={{
+              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              anchor: new google.maps.Point(0, 53),
+              labelOrigin: new google.maps.Point(14, 53)
+            }}
+            position={{
+              lat: dbVehicle.currentLocation.Latitude,
+              lng: dbVehicle.currentLocation.Longitude
+            }}
+            label={{
+              text: dbVehicle.make.concat(" ", dbVehicle.model),
+              fontFamily: "Arial",
+              fontSize: "14px"
+            }}
+            onClick={() => console.log(dbVehicle.make, dbVehicle.model)}
+          />
+        );
+      }
     });
   };
 
@@ -201,7 +209,7 @@ class MapContainer extends Component {
               zoom={7}
               style={mapStyles}
               onReady={this.setUserLocation}
-              initialCenter={this.state.centre} //Work out how to set this dynamically
+              initialCenter={this.state.centre}
               center={this.props.userLocation}
             >
               {this.setUserLocation()}
