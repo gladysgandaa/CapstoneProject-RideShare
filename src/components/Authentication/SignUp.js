@@ -49,6 +49,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const passwordValidator = require("password-validator");
+
+// create a password schema
+const schema = new passwordValidator();
+
+schema
+  .is()
+  .min(8)
+  .has()
+  .uppercase()
+  .has()
+  .lowercase()
+  .has()
+  .digits()
+  .has()
+  .symbols();
+
 export default function SignUp() {
   const classes = useStyles();
   const [fields, handleFieldChange] = useFormFields({
@@ -61,6 +78,10 @@ export default function SignUp() {
   });
   const [newUser, setNewUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordConfirmed, setIsPasswordConfirmed] = useState(false);
+  const [passwordConfirmError, setPasswordConfirmError] = useState("");
+  const [validPassword, setValidPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const { userHasAuthenticated } = useAppContext();
   const history = useHistory();
 
@@ -69,9 +90,54 @@ export default function SignUp() {
       fields.firstName.length > 0 &&
       fields.lastName.length > 0 &&
       fields.email.length > 0 &&
-      fields.password.length > 0 &&
-      fields.password === fields.confirmPassword
+      validPassword === true &&
+      isPasswordConfirmed === true
     );
+  }
+
+  function confirmPassword() {
+    if (fields.confirmPassword && fields.confirmPassword !== fields.password) {
+      return setPasswordConfirmError("Passwords do not match.");
+    } else if (
+      fields.password.length === 0 ||
+      fields.confirmPassword.length === 0
+    ) {
+      return setPasswordConfirmError("Please enter a password.");
+    } else {
+      setPasswordConfirmError("");
+      return setIsPasswordConfirmed(true);
+    }
+  }
+
+  function validatePassword() {
+    const validationRulesErrors = schema.validate(fields.password, {
+      list: true
+    });
+
+    if (validationRulesErrors.length > 0) {
+      return setPasswordError(
+        formatPasswordValidateError(validationRulesErrors)
+      );
+    } else {
+      setPasswordError("");
+      return setValidPassword(true);
+    }
+  }
+
+  function formatPasswordValidateError(errors) {
+    for (let i = 0; i < errors.length; i++) {
+      if (errors[i] === "min") {
+        return "Invalid password. Password needs to contain at least 8 characters.";
+      } else if (errors[i] === "lowercase") {
+        return "Invalid password. Password needs to contain at least 1 lowercase letter.";
+      } else if (errors[i] === "uppercase") {
+        return "Invalid password. Password needs to contain at least 1 uppercase letter.";
+      } else if (errors[i] === "digits") {
+        return "Invalid password. Password needs to contain at least 1 number.";
+      } else if (errors[i] === "symbols") {
+        return "Invalid password. Password needs to contain at least 1 symbol.";
+      }
+    }
   }
 
   function validateConfirmationForm() {
@@ -218,12 +284,15 @@ export default function SignUp() {
                   required
                   fullWidth
                   value={fields.password}
-                  onChange={handleFieldChange}
                   name="password"
                   label="Password"
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  error={passwordError !== ""}
+                  helperText={passwordError}
+                  onChange={handleFieldChange}
+                  onBlur={validatePassword}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -232,12 +301,15 @@ export default function SignUp() {
                   required
                   fullWidth
                   value={fields.confirmPassword}
-                  onChange={handleFieldChange}
                   name="confirmPassword"
-                  label="confirmPassword"
+                  label="Confirm Password"
                   type="password"
                   id="confirmPassword"
                   autoComplete="current-password"
+                  error={passwordConfirmError !== ""}
+                  helperText={passwordConfirmError}
+                  onBlur={confirmPassword}
+                  onChange={handleFieldChange}
                 />
               </Grid>
               <Grid item xs={12}>
