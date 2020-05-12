@@ -130,6 +130,8 @@ class SignUp extends Component {
 
   render() {
     const { formErrors } = this.state;
+    const classes = useStyles();
+
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -227,3 +229,4 @@ class SignUp extends Component {
     );
   }
 }
+export default SignUp;

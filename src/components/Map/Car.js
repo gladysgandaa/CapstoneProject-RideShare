@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
+  const classes = useStyles();
   console.log(props);
   const {
     carId,
@@ -37,7 +38,7 @@ const Car = props => {
             <Typography
               component="span"
               variant="body2"
-              className={useStyles.inline}
+              className={classes.inline}
               color="textPrimary"
             >
               {model}, From : ${rentalCostPerHour} hourly
