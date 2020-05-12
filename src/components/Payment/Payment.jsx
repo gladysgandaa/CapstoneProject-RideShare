@@ -9,9 +9,9 @@ export default class PaymentExample extends Component {
   };
 
   render() {
-    const total =
-      this.props.location.state.rentalCostPerHour *
-      this.props.location.stateduration;
+    const costPerHour = this.props.location.state.rentalCostPerHour;
+    const durationOfRental = this.props.location.state.duration;
+    const total = costPerHour * durationOfRental;
     return (
       <div>
         <PayPalBtn
