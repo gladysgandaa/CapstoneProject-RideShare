@@ -42,7 +42,7 @@ const Car = props => {
             >
               {model}, From : ${rentalCostPerHour} hourly
               <br></br>
-              Miles from you: {distance}
+              Kilometres from you: {distance}
               <div>
                 <Link
                   to={{
