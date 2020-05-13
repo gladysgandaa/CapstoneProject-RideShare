@@ -1,33 +1,24 @@
 /* global google */
 import React, { Component } from "react";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import SideList from "./SideList";
 
+//Make this adjustable
+const search_distance = 180;
+
 class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      test: "test",
+      activeMarker: {},
+      selectedPlace: {},
+      showingInfoWindow: false,
       centre: { lat: 17.7985769, lng: -144.8674427 },
       vehicleDistances: [],
       user: this.props.userLocation,
-      vehicles: [
-        {
-          name: "car0",
-          coords: { lat: -37.7985769, lng: 144.8674427 },
-          available: false,
-          distance: 1.1
-        },
-        {
-          name: "car1",
-          coords: { lat: -37.8301784, lng: 144.9674227 },
-          available: false,
-          distance: 2.4
-        }
-      ],
       dbVehicles: [
         {
           model: "placeholder",
@@ -82,7 +73,7 @@ class MapContainer extends Component {
     }
 
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      if (dbVehicle.distance < 180) {
+      if (dbVehicle.distance < search_distance) {
         return (
           <Marker
             key={index}
@@ -99,9 +90,17 @@ class MapContainer extends Component {
             label={{
               text: dbVehicle.make.concat(" ", dbVehicle.model),
               fontFamily: "Arial",
-              fontSize: "14px"
+              fontSize: "14px",
+              fontWeight: "900"
             }}
-            onClick={() => console.log(dbVehicle.make, dbVehicle.model)}
+            InfoWindow={{
+              content: "INFO WINDOW",
+              pixelOffset: (3000, 3000),
+              position: (dbVehicle.Longitude, dbVehicle.Latitude)
+            }}
+            onClick={() => {
+              console.log(dbVehicle.make.concat(" ", dbVehicle.model));
+            }}
           />
         );
       }
@@ -131,9 +130,7 @@ class MapContainer extends Component {
     }
 
     distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-    this.setState({ vehicleDistances: distances });
 
-    //this is setting state somehow
     for (var d in distances) {
       for (var v in vehicleDbCopy) {
         if (vehicleDbCopy[v].carId === distances[d].carId) {
@@ -141,8 +138,6 @@ class MapContainer extends Component {
         }
       }
     }
-
-    this.setState({ vehicleDbCopy });
 
     return distances;
   };
