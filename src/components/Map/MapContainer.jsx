@@ -82,9 +82,7 @@ class MapContainer extends Component {
     }
 
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      console.log("Vehicle Distances", dbVehicle.distance);
       if (dbVehicle.distance < 180) {
-        console.log("Passed conditional");
         return (
           <Marker
             key={index}

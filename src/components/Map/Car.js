@@ -25,6 +25,8 @@ const Car = props => {
     distance,
     currentLocation
   } = props;
+
+  var trunc_dist = Math.trunc(distance);
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -42,7 +44,7 @@ const Car = props => {
             >
               {model}, From : ${rentalCostPerHour} hourly
               <br></br>
-              Kilometres from you: {distance}
+              Kilometres from you: {trunc_dist}
               <div>
                 <Link
                   to={{
