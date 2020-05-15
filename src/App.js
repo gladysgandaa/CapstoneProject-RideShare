@@ -5,6 +5,7 @@ import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
+import AddCar from "./components/Admin/AddCar";
 import Payment from "./components/Payment/Payment";
 import { AppContext } from "./libs/contextLib";
 
@@ -43,6 +44,7 @@ const App = () => {
             <Route path="/signin" component={SignIn} />
             <Route path="/signup" component={SignUp} />
             <Route path="/book" component={BookingForm} />
+            <Route path="/addcar" component={AddCar} />
             <Route path="/payment" component={Payment} />
           </Switch>
         </Router>
