@@ -13,6 +13,7 @@ class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      markerName: "placeholder",
       activeMarker: {},
       selectedPlace: {},
       showingInfoWindow: false,
@@ -46,6 +47,7 @@ class MapContainer extends Component {
     this.setState({
       activeMarker: marker,
       selectedPlace: props,
+      markerName: marker.name,
       showingInfoWindow: true
     });
 
@@ -97,6 +99,7 @@ class MapContainer extends Component {
       if (dbVehicle.distance < search_distance) {
         return (
           <Marker
+            name={dbVehicle.make.concat(" ", dbVehicle.model)}
             key={index}
             id={index}
             icon={{
@@ -107,12 +110,6 @@ class MapContainer extends Component {
             position={{
               lat: dbVehicle.currentLocation.Latitude,
               lng: dbVehicle.currentLocation.Longitude
-            }}
-            label={{
-              text: dbVehicle.make.concat(" ", dbVehicle.model),
-              fontFamily: "Arial",
-              fontSize: "14px",
-              fontWeight: "900"
             }}
             onClick={this.onMarkerClick}
           />
@@ -184,7 +181,6 @@ class MapContainer extends Component {
       mapCenter.lat = this.state.user.lat;
       mapCenter.lng = this.state.user.lng;
       this.setState({ centre: mapCenter });
-      console.log("setCentre called, state = ", this.state);
     });
   };
 
@@ -201,8 +197,7 @@ class MapContainer extends Component {
         flexGrow: 1
       }
     }));
-
-    console.log("render - state", this.state);
+    console.log("state", this.state.markerName);
     return (
       <div style={useStyles.root}>
         <Grid container spacing={3}>
@@ -221,19 +216,18 @@ class MapContainer extends Component {
               initialCenter={this.state.centre}
               center={this.props.userLocation}
             >
+              {this.setUserLocation()}
+              {this.displayUser()}
+              {this.displayVehicles()}
               <InfoWindow
                 marker={this.state.activeMarker}
                 onClose={this.onInfoWindowClose}
                 visible={this.state.showingInfoWindow}
               >
                 <div>
-                  <h4>{"MarkerText"}</h4>
+                  <h4>{this.state.markerName}</h4>
                 </div>
               </InfoWindow>
-
-              {this.setUserLocation()}
-              {this.displayUser()}
-              {this.displayVehicles()}
             </Map>
           </Grid>
         </Grid>
