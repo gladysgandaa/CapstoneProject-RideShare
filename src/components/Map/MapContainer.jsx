@@ -42,6 +42,27 @@ class MapContainer extends Component {
     this.getVehicles();
   }
 
+  onMarkerClick = (props, marker) =>
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      showingInfoWindow: true
+    });
+
+  onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false
+    });
+
+  onMapClicked = () => {
+    if (this.state.showingInfoWindow)
+      this.setState({
+        activeMarker: null,
+        showingInfoWindow: false
+      });
+  };
+
   //Set state with variable length array to simulate DB connection. Works
   getVehicles = () => {
     axios
@@ -93,14 +114,7 @@ class MapContainer extends Component {
               fontSize: "14px",
               fontWeight: "900"
             }}
-            InfoWindow={{
-              content: "INFO WINDOW",
-              pixelOffset: (3000, 3000),
-              position: (dbVehicle.Longitude, dbVehicle.Latitude)
-            }}
-            onClick={() => {
-              console.log(dbVehicle.make.concat(" ", dbVehicle.model));
-            }}
+            onClick={this.onMarkerClick}
           />
         );
       }
@@ -175,7 +189,7 @@ class MapContainer extends Component {
   };
 
   render() {
-    const initialCentreFromProps = this.props.userLocation;
+    if (!this.props.loaded) return <div>Loading...</div>;
 
     const mapStyles = {
       width: "100%",
@@ -197,6 +211,8 @@ class MapContainer extends Component {
           </Grid>
           <Grid item xs={12} sm={8}>
             <Map
+              google={this.props.google}
+              onClick={this.onMapClicked}
               user={this.state.user}
               google={this.props.google}
               zoom={7}
@@ -205,14 +221,22 @@ class MapContainer extends Component {
               initialCenter={this.state.centre}
               center={this.props.userLocation}
             >
+              <InfoWindow
+                marker={this.state.activeMarker}
+                onClose={this.onInfoWindowClose}
+                visible={this.state.showingInfoWindow}
+              >
+                <div>
+                  <h4>{"MarkerText"}</h4>
+                </div>
+              </InfoWindow>
+
               {this.setUserLocation()}
               {this.displayUser()}
               {this.displayVehicles()}
             </Map>
           </Grid>
         </Grid>
-        {console.log("centre from props :", initialCentreFromProps)}
-        {console.log("render - state", this.state.user)}
       </div>
     );
   }
