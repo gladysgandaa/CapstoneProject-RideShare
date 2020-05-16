@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  console.log(props);
+  // console.log(props);
   const {
     carId,
     make,
@@ -25,6 +25,8 @@ const Car = props => {
     distance,
     currentLocation
   } = props;
+
+  var trunc_dist = Math.trunc(distance);
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -40,9 +42,9 @@ const Car = props => {
               className={useStyles.inline}
               color="textPrimary"
             >
-              {model}, From : ${rentalCostPerHour} hourly
+              From : ${rentalCostPerHour} hourly
               <br></br>
-              Miles from you: {distance}
+              Kilometres from you: {trunc_dist}
               <div>
                 <Link
                   to={{
