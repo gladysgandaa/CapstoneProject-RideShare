@@ -19,12 +19,10 @@ const App = () => {
       currentUser.Latitude = position.coords.latitude;
       currentUser.Longitude = position.coords.longitude;
       setUser({ currentUser });
-      console.log("user location form App.js:", user);
     });
   };
 
   setUserLocation();
-  console.log("state.user", user);
   const userlocation = { lat: -37.8303789, lng: 144.9674638 };
 
   return (

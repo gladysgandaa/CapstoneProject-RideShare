@@ -5,14 +5,14 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import SideList from "./SideList";
-
-//Make this adjustable
-const search_distance = 180;
+import Slider from "react-rangeslider";
+import "react-rangeslider/lib/index.css";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      search_distance: 50,
       markerName: "placeholder",
       activeMarker: {},
       selectedPlace: {},
@@ -43,6 +43,7 @@ class MapContainer extends Component {
     this.getVehicles();
   }
 
+  //Marker Functions
   onMarkerClick = (props, marker) =>
     this.setState({
       activeMarker: marker,
@@ -65,6 +66,18 @@ class MapContainer extends Component {
       });
   };
 
+  //TODO - current problem is that copying state is altering it in some way
+  removeFarVehicles = () => {
+    var rmDbVehicles = JSON.parse(JSON.stringify(this.state.dbVehicles));
+    for (var d in rmDbVehicles) {
+      if (rmDbVehicles[d].distance > this.state.search_distance) {
+        delete rmDbVehicles[d];
+        this.setState({ dbVehicles: rmDbVehicles });
+      }
+    }
+    console.log("state after delete:", this.state.dbVehicles);
+  };
+
   //Set state with variable length array to simulate DB connection. Works
   getVehicles = () => {
     axios
@@ -73,6 +86,7 @@ class MapContainer extends Component {
         const dbVehicles = res.data;
         this.setState({ dbVehicles }, () => {
           this.getDistances(this.state.user, this.state.dbVehicles);
+          this.removeFarVehicles();
         });
       });
   };
@@ -91,12 +105,14 @@ class MapContainer extends Component {
   };
 
   displayVehicles = () => {
-    if (!this.state.dbVehicles[0].distance) {
+    //This doesn't work
+    if (!this.state.dbVehicles) {
+      console.log("no vehicles");
       return null;
     }
 
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      if (dbVehicle.distance < search_distance) {
+      if (dbVehicle.distance < this.state.search_distance) {
         return (
           <Marker
             name={dbVehicle.make.concat(" ", dbVehicle.model)}
@@ -149,7 +165,6 @@ class MapContainer extends Component {
         }
       }
     }
-
     return distances;
   };
 
@@ -197,7 +212,6 @@ class MapContainer extends Component {
         flexGrow: 1
       }
     }));
-    console.log("state", this.state.markerName);
     return (
       <div style={useStyles.root}>
         <Grid container spacing={3}>
