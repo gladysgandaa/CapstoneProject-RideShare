@@ -12,7 +12,7 @@ class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      search_distance: 50,
+      search_distance: 100,
       markerName: "placeholder",
       activeMarker: {},
       selectedPlace: {},

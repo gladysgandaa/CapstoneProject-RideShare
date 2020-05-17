@@ -95,7 +95,7 @@ class BookingForm extends Component {
       <div>
         <form onSubmit={this.submitHandler}>
           <Typography variant="h4" gutterBottom>
-            Book a Car.
+            Book a Car
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>

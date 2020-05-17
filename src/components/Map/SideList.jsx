@@ -2,6 +2,7 @@ import React from "react";
 import List from "@material-ui/core/List";
 import { makeStyles } from "@material-ui/core/styles";
 import Car from "./Car";
+import AdminCar from "./AdminCar";
 
 const useStyles = makeStyles({
   root: {
@@ -10,7 +11,7 @@ const useStyles = makeStyles({
   }
 });
 
-const SideList = ({ cars }) => {
+const SideList = ({ cars, account }) => {
   const classes = useStyles();
   return (
     <List className={classes.root}>
@@ -18,6 +19,17 @@ const SideList = ({ cars }) => {
         <h1>No Cars Found.</h1>
       ) : (
         cars.map(car => {
+          if (account == "admin") {
+            return (
+              <AdminCar
+                key={car.carId}
+                carId={car.carId}
+                make={car.make}
+                model={car.model}
+                rentalCostPerHour={car.rentalCostPerHour}
+              />
+            );
+          }
           return (
             <Car
               key={car.carId}
