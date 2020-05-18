@@ -23,7 +23,8 @@ class BookingForm extends Component {
       make,
       model,
       currentLocation,
-      rentalCostPerHour
+      rentalCostPerHour,
+      returnDate
     } = props.location.state;
 
     this.state = {
@@ -33,6 +34,7 @@ class BookingForm extends Component {
       pickUpLocation: currentLocation,
       rentalCostPerHour: rentalCostPerHour,
       date: defaultDate,
+      returnDate: returnDate,
       duration: 1,
       errMessage: "",
       open: false
@@ -70,6 +72,20 @@ class BookingForm extends Component {
       });
   };
 
+  addReturnDate = () => {
+    const carId = this.state.carId;
+    axios
+      .put(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
+          carId,
+        JSON.stringify(this.state)
+      )
+      .then(function(response) {
+        console.log("response", response);
+      });
+    console.log("state for axios put", this.state);
+  };
+
   toPayment = () => {
     let path = `/payment`;
     this.props.history.push({
@@ -80,6 +96,7 @@ class BookingForm extends Component {
         duration: this.state.duration
       }
     });
+    // this.addReturnDate();
   };
 
   handleClose = () => {
@@ -95,7 +112,7 @@ class BookingForm extends Component {
       <div>
         <form onSubmit={this.submitHandler}>
           <Typography variant="h4" gutterBottom>
-            Book a Car.
+            Book a Car
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>

@@ -6,7 +6,9 @@ import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
 import Payment from "./components/Payment/Payment";
+import AdminDashboard from "./components/Admin/AdminDashboard";
 import { AppContext } from "./libs/contextLib";
+import TabPanel from "./components/Navigation/MaterialTabs.js";
 
 //TODO - this should call map now, which will then call map container
 const App = () => {
@@ -27,6 +29,8 @@ const App = () => {
 
   return (
     <div className="App">
+      {/* <p className="App-intro">Material Tab Panel:</p> */}
+      <TabPanel></TabPanel>
       <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
         <Router>
           <Switch>
@@ -42,6 +46,7 @@ const App = () => {
             <Route path="/signup" component={SignUp} />
             <Route path="/book" component={BookingForm} />
             <Route path="/payment" component={Payment} />
+            <Route path="/admin" component={AdminDashboard} />
           </Switch>
         </Router>
       </AppContext.Provider>
