@@ -5,6 +5,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 
 class AdminDashboard extends Component {
   //Need to decide where this component fits in
@@ -16,13 +18,13 @@ class AdminDashboard extends Component {
       callComplete: false,
       username: "",
       password: "",
-      model: "placeholder model",
+      model: "model",
       rentalCostPerHour: 10,
       numberOfSeats: 4,
       year: 2002,
       carId: "placeholder id",
       returnDate: null,
-      make: "placeholder make",
+      make: "make",
       Longitude: 144.3674938,
       Latitude: -37.3303708,
       dbVehicles: [
@@ -117,6 +119,15 @@ class AdminDashboard extends Component {
     this.addVehicle();
   };
 
+  onClick = (t, map, coord) => {
+    const { latLng } = coord;
+    const lat = latLng.lat();
+    const lng = latLng.lng();
+    console.log("position", lat);
+    this.setState({ Longitude: lng });
+    this.setState({ Latitude: lat });
+  };
+
   render() {
     const useStyles = makeStyles(theme => ({
       inline: {
@@ -129,6 +140,7 @@ class AdminDashboard extends Component {
         <div>
           {this.state.loggedIn == false && (
             <form>
+              <br />
               <input
                 name="username"
                 placeholder="Username"
@@ -156,74 +168,99 @@ class AdminDashboard extends Component {
           {this.state.loggedIn && (
             <div>
               <div>
-                Add New
-                <form>
-                  <input
-                    name="model"
-                    placeholder="model"
-                    value={this.state.model}
-                    onChange={e => this.change(e)}
-                  />
-                  <br />
-                  <input
-                    name="make"
-                    placeholder="make"
-                    value={this.state.make}
-                    onChange={e => this.change(e)}
-                  />
-                  <br />
-                  <input
-                    name="cost"
-                    placeholder="cost per hour"
-                    value={this.state.rentalCostPerHour}
-                    onChange={e =>
-                      this.setState({ rentalCostPerHour: e.target.value })
-                    }
-                  />
-                  <br />
-                  <input
-                    name="seats"
-                    placeholder="seats"
-                    value={this.state.numberOfSeats}
-                    onChange={e =>
-                      this.setState({ numberOfSeats: e.target.value })
-                    }
-                  />
-                  <br />
-                  <input
-                    name="year"
-                    placeholder="year"
-                    value={this.state.year}
-                    onChange={e => this.change(e)}
-                  />
-                  <br />
-                  <input
-                    name="longitude"
-                    placeholder="Longitude"
-                    value={this.state.Longitude}
-                    onChange={e => this.setState({ Longitude: e.target.value })}
-                  />
-                  <br />
-                  <input
-                    name="latitude"
-                    placeholder="Latitude"
-                    value={this.state.Latitude}
-                    onChange={e => this.setState({ Latitude: e.target.value })}
-                  />
-                  <br />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={e => this.submitVehicle(e)}
-                  >
-                    Add Car
-                  </Button>
-                </form>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={4}>
+                    <div>
+                      <br />
+                      Add New
+                      <form>
+                        <input
+                          name="model"
+                          placeholder="model"
+                          value={this.state.model}
+                          onChange={e => this.change(e)}
+                        />
+                        <br />
+                        <input
+                          name="make"
+                          placeholder="make"
+                          value={this.state.make}
+                          onChange={e => this.change(e)}
+                        />
+                        <br />
+                        <input
+                          name="cost"
+                          placeholder="cost per hour"
+                          value={this.state.rentalCostPerHour}
+                          onChange={e =>
+                            this.setState({ rentalCostPerHour: e.target.value })
+                          }
+                        />
+                        <br />
+                        <input
+                          name="seats"
+                          placeholder="seats"
+                          value={this.state.numberOfSeats}
+                          onChange={e =>
+                            this.setState({ numberOfSeats: e.target.value })
+                          }
+                        />
+                        <br />
+                        <input
+                          name="year"
+                          placeholder="year"
+                          value={this.state.year}
+                          onChange={e => this.change(e)}
+                        />
+                        <br />
+                        <input
+                          name="longitude"
+                          placeholder="Longitude"
+                          value={this.state.Longitude}
+                          onChange={e =>
+                            this.setState({ Longitude: e.target.value })
+                          }
+                        />
+                        <br />
+                        <input
+                          name="latitude"
+                          placeholder="Latitude"
+                          value={this.state.Latitude}
+                          onChange={e =>
+                            this.setState({ Latitude: e.target.value })
+                          }
+                        />
+                        <br />
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={e => this.submitVehicle(e)}
+                        >
+                          Add Car
+                        </Button>
+                      </form>
+                      <SideList
+                        cars={this.state.dbVehicles}
+                        account={this.state.account}
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} sm={8}>
+                    <Map
+                      google={this.props.google}
+                      zoom={12}
+                      initialCenter={{ lat: -37.8136, lng: 144.9631 }}
+                      center={this.props.userLocation}
+                      onClick={this.onClick}
+                    >
+                      <Marker
+                        onClick={this.onMarkerClick}
+                        name={"Current location"}
+                      />
+                    </Map>
+                  </Grid>
+                </Grid>
               </div>
-              <SideList
-                cars={this.state.dbVehicles}
-                account={this.state.account}
-              />
             </div>
           )}
         </div>
@@ -241,4 +278,7 @@ class AdminDashboard extends Component {
 const style = {
   margin: 15
 };
-export default AdminDashboard;
+
+export default GoogleApiWrapper({
+  apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"
+})(AdminDashboard);
