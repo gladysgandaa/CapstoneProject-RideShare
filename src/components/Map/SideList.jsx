@@ -26,6 +26,7 @@ const SideList = ({ cars, account }) => {
                 carId={car.carId}
                 make={car.make}
                 model={car.model}
+                returnDate={car.returnDate}
                 rentalCostPerHour={car.rentalCostPerHour}
               />
             );
@@ -37,6 +38,7 @@ const SideList = ({ cars, account }) => {
               make={car.make}
               model={car.model}
               distance={car.distance}
+              returnDate={car.returnDate}
               rentalCostPerHour={car.rentalCostPerHour}
             />
           );
