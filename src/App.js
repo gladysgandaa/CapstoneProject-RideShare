@@ -35,7 +35,6 @@ const App = () => {
         <Router>
           <Switch>
             <Route exact path="/">
-              {/* <AdminDashboard /> */}
               <MapContainer
                 map={MapContainer}
                 userLocation={userlocation}
