@@ -112,10 +112,6 @@ class AdminCar extends Component {
                   margin="normal"
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
                   autoFocus
                 />
                 <TextField
@@ -123,10 +119,6 @@ class AdminCar extends Component {
                   margin="normal"
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
                   autoFocus
                 />
                 <TextField
@@ -134,10 +126,6 @@ class AdminCar extends Component {
                   margin="normal"
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
                   autoFocus
                 />
               </form>

@@ -169,7 +169,7 @@ class AdminDashboard extends Component {
             <div>
               <div>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={4}>
+                  <Grid item xs={12} sm={6}>
                     <div>
                       <br />
                       Add New
@@ -245,7 +245,7 @@ class AdminDashboard extends Component {
                       />
                     </div>
                   </Grid>
-                  <Grid item xs={12} sm={8}>
+                  <Grid item xs={12} sm={6}>
                     <Map
                       google={this.props.google}
                       zoom={12}

@@ -224,7 +224,7 @@ class MapContainer extends Component {
               onClick={this.onMapClicked}
               user={this.state.user}
               google={this.props.google}
-              zoom={7}
+              zoom={15}
               style={mapStyles}
               onReady={this.setUserLocation}
               initialCenter={this.state.centre}
