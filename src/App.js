@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+
+import "./App.css";
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
-
 import Payment from "./components/Payment/Payment";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import { AppContext } from "./libs/contextLib";
-import TabPanel from "./components/Navigation/MaterialTabs.js";
 import { Auth } from "aws-amplify";
 import { Link, useHistory } from "react-router-dom";
 import { onError } from "./libs/errorLib";
@@ -85,12 +85,12 @@ const App = () => {
                   <Button onClick={handleLogout}>Logout</Button>
                 ) : (
                   <>
-                    <LinkContainer to="/signup">
+                    <Link to="/signup">
                       <Button>Signup</Button>
-                    </LinkContainer>
-                    <LinkContainer to="/login">
+                    </Link>
+                    <Link to="/login">
                       <Button>Login</Button>
-                    </LinkContainer>
+                    </Link>
                   </>
                 )}
               </AppContext.Provider>
