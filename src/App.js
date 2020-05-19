@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -6,51 +5,54 @@ import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
+
+import Payment from "./components/Payment/Payment";
+import AdminDashboard from "./components/Admin/AdminDashboard";
 import { AppContext } from "./libs/contextLib";
+import TabPanel from "./components/Navigation/MaterialTabs.js";
 import { Auth } from "aws-amplify";
 
 //TODO - this should call map now, which will then call map container
-const [isAuthenticated, userHasAuthenticated] = useState(false);
-const [isAuthenticating, setIsAuthenticating] = useState(true);
+const App = () => {
+  const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [user, setUser] = useState({ Latitude: -8.0, Longitude: -190.0 });
 
-useEffect(() => {
-  onLoad();
-}, []);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
 
-async function onLoad() {
-  try {
-    await Auth.currentSession();
-    userHasAuthenticated(true);
-  } catch (e) {
-    if (e !== "No current user") {
-      alert(e);
+  useEffect(() => {
+    onLoad();
+  }, []);
+
+  async function onLoad() {
+    try {
+      await Auth.currentSession();
+      userHasAuthenticated(true);
+    } catch (e) {
+      if (e !== "No current user") {
+        alert(e);
+      }
     }
+
+    setIsAuthenticating(false);
   }
 
-  setIsAuthenticating(false);
-}
-
-class App extends Component {
-  state = {
-    user: { Latitude: -8.0, Longitude: -190.0 }
-  };
-
-  setUserLocation = () => {
+  const setUserLocation = () => {
     navigator.geolocation.getCurrentPosition(position => {
-      const user = { ...this.state.user };
-      user.Latitude = position.coords.latitude;
-      user.Longitude = position.coords.longitude;
-      this.setState({ user });
-      console.log("user location form App.js:", this.state.user);
+      const currentUser = { ...user };
+      currentUser.Latitude = position.coords.latitude;
+      currentUser.Longitude = position.coords.longitude;
+      setUser({ currentUser });
     });
   };
 
-  render() {
-    this.setUserLocation();
-    console.log("state.user", this.state.user);
-    const userlocation = { lat: -37.8303789, lng: 144.9674638 };
-    return (
-      <div className="App">
+  setUserLocation();
+  const userlocation = { lat: -37.8303789, lng: 144.9674638 };
+
+  return (
+    <div className="App">
+      {/* <p className="App-intro">Material Tab Panel:</p> */}
+      <TabPanel></TabPanel>
+      <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
         <Router>
           <Switch>
             <Route exact path="/">
@@ -67,11 +69,13 @@ class App extends Component {
             </AppContext.Provider>
             <Route path="/signup" component={SignUp} />
             <Route path="/book" component={BookingForm} />
+            <Route path="/payment" component={Payment} />
+            <Route path="/admin" component={AdminDashboard} />
           </Switch>
         </Router>
-      </div>
-    );
-  }
-}
+      </AppContext.Provider>
+    </div>
+  );
+};
 
 export default App;
