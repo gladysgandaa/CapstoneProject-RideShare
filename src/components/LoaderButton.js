@@ -1,5 +1,6 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
+import { Button, Glyphicon } from "react-bootstrap";
+import "./LoaderButton.css";
 
 export default function LoaderButton({
   isLoading,
@@ -13,7 +14,7 @@ export default function LoaderButton({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading}
+      {isLoading && <Glyphicon glyph="refresh" className="spinning" />}
       {props.children}
     </Button>
   );

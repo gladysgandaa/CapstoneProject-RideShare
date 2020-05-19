@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Auth } from "aws-amplify";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -12,6 +13,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { useAppContext } from "../libs/contextLib";
+import { useHistory } from "react-router-dom";
+import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import LoaderButton from "../components/LoaderButton";
+import { onError } from "../libs/errorLib";
 
 function Copyright() {
   return (
@@ -46,18 +52,34 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const history = useHistory();
+const [isLoading, setIsLoading] = useState(false);
 export default function SignIn() {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { userHasAuthenticated } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [fields, handleFieldChange] = useFormFields({
+    email: "",
+    password: ""
+  });
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+
+    try {
+      await Auth.signIn(email, password);
+      userHasAuthenticated(true);
+      history.push("/");
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -71,46 +93,51 @@ export default function SignIn() {
           Sign In
         </Typography>
         <form onSubmit={handleSubmit} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            onChange={e => setEmail(e.target.value)}
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={e => setPassword(e.target.value)}
-          />
+          <FormGroup controlId="email" bsSize="large">
+            <ControlLabel>Email</ControlLabel>
+            <FormControl
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              value={fields.email}
+              autoComplete="email"
+              onChange={e => setEmail(e.target.value)}
+              autoFocus
+            />
+          </FormGroup>
+          <FormGroup controlId="password" bsSize="large">
+            <ControlLabel>Password</ControlLabel>
+            <FormControl
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              value={fields.password}
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={e => setPassword(e.target.value)}
+            />
+          </FormGroup>
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          <Button
+          <LoaderButton
+            block
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
+            bsSize="large"
             isLoading={isLoading}
             disabled={!validateForm()}
-            href="/"
           >
-            Sign In
-          </Button>
+            Login
+          </LoaderButton>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
