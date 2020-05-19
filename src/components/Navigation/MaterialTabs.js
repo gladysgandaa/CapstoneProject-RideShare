@@ -60,9 +60,8 @@ export default function SimpleTabs() {
           onChange={handleChange}
           aria-label="simple tabs example"
         >
-          <Tab label="Ride Share" href="/" {...a11yProps(0)} />
-          <Tab label="Sign In" href="/signin" {...a11yProps(1)} />
-          <Tab label="Sign Up" href="/signup" {...a11yProps(2)} />
+          <Tab label="Admin" href="admin" {...a11yProps(0)} />
+          <Tab label="Home" href="/" {...a11yProps(0)} />
         </Tabs>
       </AppBar>
     </div>

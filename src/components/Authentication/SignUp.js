@@ -1,6 +1,4 @@
-import React, { Component } from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
+import React, { useState } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -8,10 +6,15 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import LoaderButton from "../LoaderButton";
+import { useAppContext } from "../../libs/contextLib";
+import { useFormFields } from "../../libs/hooksLib";
+import { onError } from "../../libs/errorLib";
+import { Auth } from "aws-amplify";
+import { useHistory } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -46,101 +49,193 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const emailRegex = RegExp(
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-);
+const passwordValidator = require("password-validator");
 
-const formValid = ({ formErrors, ...rest }) => {
-  let valid = true;
+// create a password schema
+const schema = new passwordValidator();
 
-  Object.values(formErrors).forEach(val => {
-    val.length > 0 && (valid = false);
+schema
+  .is()
+  .min(8)
+  .has()
+  .uppercase()
+  .has()
+  .lowercase()
+  .has()
+  .digits()
+  .has()
+  .symbols();
+
+export default function SignUp() {
+  const classes = useStyles();
+  const [fields, handleFieldChange] = useFormFields({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    confirmationCode: ""
   });
+  const [newUser, setNewUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordConfirmed, setIsPasswordConfirmed] = useState(false);
+  const [passwordConfirmError, setPasswordConfirmError] = useState("");
+  const [validPassword, setValidPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const { userHasAuthenticated } = useAppContext();
+  const history = useHistory();
 
-  Object.values(rest).forEach(val => {
-    val === null && (valid = false);
-  });
-
-  return valid;
-};
-
-class SignUp extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      firstName: null,
-      lastName: null,
-      email: null,
-      password: null,
-      formErrors: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: ""
-      }
-    };
+  function validateForm() {
+    return (
+      fields.firstName.length > 0 &&
+      fields.lastName.length > 0 &&
+      fields.email.length > 0 &&
+      validPassword === true &&
+      isPasswordConfirmed === true
+    );
   }
 
-  handleSubmit = e => {
-    e.preventDefault();
-
-    if (formValid(this.state)) {
-      console.log(`
-        --SUBMITTING--
-        First Name: ${this.state.firstName}
-        Last Name: ${this.state.lastName}
-        Email: ${this.state.email}
-        Password: ${this.state.password}
-      `);
+  function confirmPassword() {
+    if (fields.confirmPassword && fields.confirmPassword !== fields.password) {
+      return setPasswordConfirmError("Passwords do not match.");
+    } else if (
+      fields.password.length === 0 ||
+      fields.confirmPassword.length === 0
+    ) {
+      return setPasswordConfirmError("Please enter a password.");
     } else {
-      console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
+      setPasswordConfirmError("");
+      return setIsPasswordConfirmed(true);
     }
-  };
+  }
 
-  handleChange = e => {
-    e.preventDefault();
-    const { name, value } = e.target;
-    let formErrors = { ...this.state.formErrors };
+  function validatePassword() {
+    const validationRulesErrors = schema.validate(fields.password, {
+      list: true
+    });
 
-    switch (name) {
-      case "firstName":
-        formErrors.firstName =
-          value.length < 3 ? "minimum 3 characaters required" : "";
-        break;
-      case "lastName":
-        formErrors.lastName =
-          value.length < 3 ? "minimum 3 characaters required" : "";
-        break;
-      case "email":
-        formErrors.email = emailRegex.test(value)
-          ? ""
-          : "invalid email address";
-        break;
-      case "password":
-        formErrors.password =
-          value.length < 6 ? "minimum 6 characaters required" : "";
-        break;
-      default:
-        break;
+    if (validationRulesErrors.length > 0) {
+      return setPasswordError(
+        formatPasswordValidateError(validationRulesErrors)
+      );
+    } else {
+      setPasswordError("");
+      return setValidPassword(true);
     }
+  }
 
-    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
-  };
+  function formatPasswordValidateError(errors) {
+    for (let i = 0; i < errors.length; i++) {
+      if (errors[i] === "min") {
+        return "Invalid password. Password needs to contain at least 8 characters.";
+      } else if (errors[i] === "lowercase") {
+        return "Invalid password. Password needs to contain at least 1 lowercase letter.";
+      } else if (errors[i] === "uppercase") {
+        return "Invalid password. Password needs to contain at least 1 uppercase letter.";
+      } else if (errors[i] === "digits") {
+        return "Invalid password. Password needs to contain at least 1 number.";
+      } else if (errors[i] === "symbols") {
+        return "Invalid password. Password needs to contain at least 1 symbol.";
+      }
+    }
+  }
 
-  render() {
-    const { formErrors } = this.state;
+  function validateConfirmationForm() {
+    return fields.confirmationCode.length > 0;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    setIsLoading(true);
+
+    try {
+      const newUser = await Auth.signUp({
+        username: fields.email,
+        password: fields.password
+      });
+      setIsLoading(false);
+      setNewUser(newUser);
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  async function handleConfirmationSubmit(event) {
+    event.preventDefault();
+
+    setIsLoading(true);
+
+    try {
+      await Auth.confirmSignUp(fields.email, fields.confirmationCode);
+      await Auth.signIn(fields.email, fields.password);
+
+      userHasAuthenticated(true);
+      history.push("/");
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
+
+  function renderConfirmationForm() {
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <Typography component="h1" variant="h5">
+            Validation
+          </Typography>
+          <br></br>
+          <form onSubmit={handleConfirmationSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  autoComplete="confirmationCode"
+                  name="confirmationCode"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={fields.confirmationCode}
+                  onChange={handleFieldChange}
+                  id="confirmationCode"
+                  label="Confirmation Code"
+                  autoFocus
+                />
+                <Typography>
+                  Please check your email for validation code
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <LoaderButton
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                isLoading={isLoading}
+                disabled={!validateConfirmationForm()}
+              >
+                Verify
+              </LoaderButton>
+            </Grid>
+          </form>
+        </div>
+      </Container>
+    );
+  }
+
+  function renderForm() {
+    return (
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
-          <form onSubmit={this.handleSubmit} noValidate>
+          <form className={classes.form} onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -149,9 +244,10 @@ class SignUp extends Component {
                   variant="outlined"
                   required
                   fullWidth
+                  value={fields.firstName}
+                  onChange={handleFieldChange}
                   id="firstName"
                   label="First Name"
-                  onChange={this.handleChange}
                   autoFocus
                 />
               </Grid>
@@ -160,10 +256,11 @@ class SignUp extends Component {
                   variant="outlined"
                   required
                   fullWidth
+                  value={fields.lastName}
+                  onChange={handleFieldChange}
                   id="lastName"
                   label="Last Name"
                   name="lastName"
-                  onChange={this.handleChange}
                   autoComplete="lname"
                 />
               </Grid>
@@ -172,11 +269,13 @@ class SignUp extends Component {
                   variant="outlined"
                   required
                   fullWidth
+                  value={fields.email}
+                  onChange={handleFieldChange}
                   id="email"
+                  type="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  onChange={this.handleChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -184,12 +283,33 @@ class SignUp extends Component {
                   variant="outlined"
                   required
                   fullWidth
+                  value={fields.password}
                   name="password"
                   label="Password"
                   type="password"
                   id="password"
                   autoComplete="current-password"
-                  onChange={this.handleChange}
+                  error={passwordError !== ""}
+                  helperText={passwordError}
+                  onChange={handleFieldChange}
+                  onBlur={validatePassword}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  value={fields.confirmPassword}
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  autoComplete="current-password"
+                  error={passwordConfirmError !== ""}
+                  helperText={passwordConfirmError}
+                  onBlur={confirmPassword}
+                  onChange={handleFieldChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -201,16 +321,18 @@ class SignUp extends Component {
                 />
               </Grid>
             </Grid>
-            <Button
+            <LoaderButton
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              href="/signin"
+              isLoading={isLoading}
+              disabled={!validateForm()}
+              // href="/signin"
             >
               Sign Up
-            </Button>
+            </LoaderButton>
             <Grid container justify="flex-end">
               <Grid item>
                 <Link href="/signin" variant="body2">
@@ -226,4 +348,8 @@ class SignUp extends Component {
       </Container>
     );
   }
+
+  return (
+    <div>{newUser === null ? renderForm() : renderConfirmationForm()}</div>
+  );
 }
