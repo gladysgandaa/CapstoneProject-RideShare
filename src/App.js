@@ -1,12 +1,35 @@
 import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
+import { AppContext } from "./libs/contextLib";
+import { Auth } from "aws-amplify";
 
 //TODO - this should call map now, which will then call map container
+const [isAuthenticated, userHasAuthenticated] = useState(false);
+const [isAuthenticating, setIsAuthenticating] = useState(true);
+
+useEffect(() => {
+  onLoad();
+}, []);
+
+async function onLoad() {
+  try {
+    await Auth.currentSession();
+    userHasAuthenticated(true);
+  } catch (e) {
+    if (e !== "No current user") {
+      alert(e);
+    }
+  }
+
+  setIsAuthenticating(false);
+}
+
 class App extends Component {
   state = {
     user: { Latitude: -8.0, Longitude: -190.0 }
@@ -37,8 +60,11 @@ class App extends Component {
                 centreFromProps={userlocation}
               />
             </Route>
-
-            <Route path="/signin" component={SignIn} />
+            <AppContext.Provider
+              value={{ isAuthenticated, userHasAuthenticated }}
+            >
+              <Route path="/signin" component={SignIn} />
+            </AppContext.Provider>
             <Route path="/signup" component={SignUp} />
             <Route path="/book" component={BookingForm} />
           </Switch>
