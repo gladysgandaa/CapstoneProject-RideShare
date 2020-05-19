@@ -51,26 +51,25 @@ const App = () => {
   return (
     <div className="App">
       {/* <p className="App-intro">Material Tab Panel:</p> */}
-      <TabPanel></TabPanel>
       <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
         <Router>
           <Switch>
-            <Route exact path="/">
-              <MapContainer
-                map={MapContainer}
-                userLocation={userlocation}
-                centreFromProps={userlocation}
-              />
-            </Route>
             <AppContext.Provider
               value={{ isAuthenticated, userHasAuthenticated }}
             >
+              <Route exact path="/">
+                <MapContainer
+                  map={MapContainer}
+                  userLocation={userlocation}
+                  centreFromProps={userlocation}
+                />
+              </Route>
               <Route path="/signin" component={SignIn} />
+              <Route path="/book" component={BookingForm} />
+              <Route path="/payment" component={Payment} />
+              <Route path="/admin" component={AdminDashboard} />
+              <Route path="/signup" component={SignUp} />
             </AppContext.Provider>
-            <Route path="/signup" component={SignUp} />
-            <Route path="/book" component={BookingForm} />
-            <Route path="/payment" component={Payment} />
-            <Route path="/admin" component={AdminDashboard} />
           </Switch>
         </Router>
       </AppContext.Provider>
