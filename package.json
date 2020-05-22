@@ -14,13 +14,16 @@
     "google-maps-react": "^2.0.2",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
+    "material-ui": "^0.20.2",
     "password-validator": "^5.0.3",
     "prettier": "^1.19.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-paypal-button-v2": "^2.6.2",
+    "react-rangeslider": "^2.2.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "react-tap-event-plugin": "^3.0.3"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
