@@ -253,10 +253,10 @@ class AdminDashboard extends Component {
                       center={this.props.userLocation}
                       onClick={this.onClick}
                     >
-                      <Marker
-                        onClick={this.onMarkerClick}
+                      {/* <Marker
+                        onClick={console.log("currentLocation")}
                         name={"Current location"}
-                      />
+                      /> */}
                     </Map>
                   </Grid>
                 </Grid>

@@ -18,7 +18,6 @@ class MapContainer extends Component {
       activeMarker: {},
       selectedPlace: {},
       showingInfoWindow: false,
-      centre: { lat: 17.7985769, lng: -144.8674427 },
       vehicleDistances: [],
       user: this.props.userLocation,
       dbVehicles: [
@@ -38,10 +37,6 @@ class MapContainer extends Component {
         }
       ]
     };
-  }
-
-  componentWillMount() {
-    // this.getVehicles();
   }
 
   componentDidMount() {
@@ -82,7 +77,6 @@ class MapContainer extends Component {
     }
   };
 
-  //Set state with variable length array to simulate DB connection. Works
   getVehicles = () => {
     axios
       .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
@@ -96,6 +90,7 @@ class MapContainer extends Component {
   };
 
   displayUser = () => {
+    console.log("display user called");
     return (
       <Marker
         name="User Marker"
@@ -147,7 +142,6 @@ class MapContainer extends Component {
       console.log("user position", this.state.user);
       this.setState({ updatedLocation: true });
       this.getVehicles();
-      this.displayUser();
     });
   };
 
@@ -198,15 +192,6 @@ class MapContainer extends Component {
     return d;
   };
 
-  setCentre = () => {
-    this.setState(prevState => {
-      let mapCenter = Object.assign({}, prevState.centre);
-      mapCenter.lat = this.state.user.lat;
-      mapCenter.lng = this.state.user.lng;
-      this.setState({ centre: mapCenter });
-    });
-  };
-
   render() {
     if (!this.props.loaded) return <div>Loading...</div>;
 
@@ -241,6 +226,7 @@ class MapContainer extends Component {
               >
                 {this.setUserLocation()}
                 {this.displayVehicles()}
+                {this.displayUser()}
                 <InfoWindow
                   marker={this.state.activeMarker}
                   onClose={this.onInfoWindowClose}
@@ -256,6 +242,7 @@ class MapContainer extends Component {
         </div>
       );
     } else {
+      console.log("user position before update", this.state.user);
       return <h3>Loading...</h3>;
     }
   }
