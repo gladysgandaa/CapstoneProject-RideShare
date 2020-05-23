@@ -25,7 +25,7 @@ const App = () => {
   };
 
   setUserLocation();
-  const userlocation = { lat: -37.8303789, lng: 144.9674638 };
+  const userlocation = { lat: -17.8303789, lng: 144.9674638 };
 
   return (
     <div className="App">

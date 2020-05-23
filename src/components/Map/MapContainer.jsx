@@ -12,6 +12,7 @@ class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      updatedLocation: false,
       search_distance: 10,
       markerName: "placeholder",
       activeMarker: {},
@@ -40,7 +41,12 @@ class MapContainer extends Component {
   }
 
   componentWillMount() {
-    this.getVehicles();
+    // this.getVehicles();
+  }
+
+  componentDidMount() {
+    this.setUserLocation();
+    console.log("component did mount");
   }
 
   //Marker Functions
@@ -96,8 +102,8 @@ class MapContainer extends Component {
       <Marker
         name="User Marker"
         position={{
-          lat: this.state.user.Latitude,
-          lng: this.state.user.Longitude
+          lat: this.state.user.lat,
+          lng: this.state.user.lng
         }}
         onClick={() => console.log("You clicked User Marker")}
       />
@@ -136,10 +142,14 @@ class MapContainer extends Component {
 
   setUserLocation = () => {
     navigator.geolocation.getCurrentPosition(position => {
-      const user = { ...this.state.user };
-      user.Latitude = position.coords.latitude;
-      user.Longitude = position.coords.longitude;
-      this.setState({ user });
+      const currentUser = { lat: 1.0, lng: 1.0 };
+      currentUser.lat = position.coords.latitude;
+      currentUser.lng = position.coords.longitude;
+      this.setState({ user: currentUser });
+      console.log("user position", this.state.user);
+      this.setState({ updatedLocation: true });
+      this.getVehicles();
+      this.displayUser();
     });
   };
 
@@ -212,41 +222,44 @@ class MapContainer extends Component {
         flexGrow: 1
       }
     }));
-    return (
-      <div style={useStyles.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={4}>
-            <SideList cars={this.state.dbVehicles} />
-          </Grid>
-          <Grid item xs={12} sm={8}>
-            <Map
-              google={this.props.google}
-              onClick={this.onMapClicked}
-              user={this.state.user}
-              google={this.props.google}
-              zoom={15}
-              style={mapStyles}
-              onReady={this.setUserLocation}
-              initialCenter={this.state.centre}
-              center={this.props.userLocation}
-            >
-              {this.setUserLocation()}
-              {this.displayUser()}
-              {this.displayVehicles()}
-              <InfoWindow
-                marker={this.state.activeMarker}
-                onClose={this.onInfoWindowClose}
-                visible={this.state.showingInfoWindow}
+    if (this.state.updatedLocation == true) {
+      return (
+        <div style={useStyles.root}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={4}>
+              <SideList cars={this.state.dbVehicles} />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+              <Map
+                google={this.props.google}
+                onClick={this.onMapClicked}
+                user={this.state.user}
+                google={this.props.google}
+                zoom={15}
+                style={mapStyles}
+                onReady={this.setUserLocation}
+                // initialCenter={this.state.centre}
+                center={this.state.user}
               >
-                <div>
-                  <h4>{this.state.markerName}</h4>
-                </div>
-              </InfoWindow>
-            </Map>
+                {this.setUserLocation()}
+                {this.displayVehicles()}
+                <InfoWindow
+                  marker={this.state.activeMarker}
+                  onClose={this.onInfoWindowClose}
+                  visible={this.state.showingInfoWindow}
+                >
+                  <div>
+                    <h4>{this.state.markerName}</h4>
+                  </div>
+                </InfoWindow>
+              </Map>
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
-    );
+        </div>
+      );
+    } else {
+      return <h3>Loading...</h3>;
+    }
   }
 }
 
