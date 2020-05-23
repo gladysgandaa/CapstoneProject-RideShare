@@ -72,7 +72,6 @@ class MapContainer extends Component {
       });
   };
 
-  //TODO - current problem is that copying state is altering it in some way
   removeFarVehicles = () => {
     var rmDbVehicles = JSON.parse(JSON.stringify(this.state.dbVehicles));
     for (var d in rmDbVehicles) {
@@ -81,7 +80,6 @@ class MapContainer extends Component {
         this.setState({ dbVehicles: rmDbVehicles });
       }
     }
-    console.log("state after delete:", this.state.dbVehicles);
   };
 
   //Set state with variable length array to simulate DB connection. Works
@@ -238,7 +236,7 @@ class MapContainer extends Component {
                 zoom={15}
                 style={mapStyles}
                 onReady={this.setUserLocation}
-                // initialCenter={this.state.centre}
+                initialCenter={this.state.user}
                 center={this.state.user}
               >
                 {this.setUserLocation()}
