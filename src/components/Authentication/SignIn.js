@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { Auth } from "aws-amplify";
 import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -12,6 +12,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { useAppContext } from "../../libs/contextLib";
+import { useHistory } from "react-router-dom";
+import LoaderButton from "../LoaderButton";
+import { onError } from "../../libs/errorLib";
+import { useFormFields } from "../../libs/hooksLib";
 
 function Copyright() {
   return (
@@ -48,6 +53,30 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const history = useHistory();
+  const { userHasAuthenticated } = useAppContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const [fields, handleFieldChange] = useFormFields({
+    email: "",
+    password: ""
+  });
+
+  function validateForm() {
+    return fields.email.length > 0 && fields.password.length > 0;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+      await Auth.signIn(fields.email, fields.password);
+      userHasAuthenticated(true);
+      history.push("/");
+    } catch (e) {
+      onError(e);
+      setIsLoading(false);
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +88,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign In
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={handleSubmit} noValidate>
           <TextField
             variant="outlined"
             margin="normal"
@@ -68,6 +97,8 @@ export default function SignIn() {
             id="email"
             label="Email Address"
             name="email"
+            value={fields.email}
+            onChange={handleFieldChange}
             autoComplete="email"
             autoFocus
           />
@@ -77,25 +108,26 @@ export default function SignIn() {
             required
             fullWidth
             name="password"
+            value={fields.password}
             label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={handleFieldChange}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          <Button
+          <LoaderButton
+            block
             type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            href="/"
+            bsSize="large"
+            isLoading={isLoading}
+            disabled={!validateForm()}
           >
-            Sign In
-          </Button>
+            Login
+          </LoaderButton>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
