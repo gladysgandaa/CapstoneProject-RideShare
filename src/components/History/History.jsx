@@ -7,7 +7,8 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import HistoryList from "./HistoryList.js";
 import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles(() => ({
@@ -37,46 +38,13 @@ const History = props => {
       <h2>Past Booking</h2>
       <ListItem alignItems="flex-start">
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={1}>
-            <ListItemAvatar>
-              <Avatar alt={model} src="" classes={{ root: classes.avatar }} />
-            </ListItemAvatar>
+          <Grid item xs={12} sm={12}>
+            <Typography component="h1" variant="h4">
+              Booking History
+            </Typography>
           </Grid>
-          <Grid item xs={12} sm={8}>
-            <ListItemText
-              classes={{ primary: classes.primary }}
-              primary={`${make} ${model}`}
-              secondary={
-                <Typography
-                  component="span"
-                  variant="body2"
-                  className={useStyles.inline}
-                  color="textPrimary"
-                >
-                  Booking date: {}
-                  <br></br>
-                  Booking time: {}
-                  <br></br>
-                  Location: {}
-                </Typography>
-              }
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Link
-              to={{
-                pathname: "/book",
-                state: {
-                  make: make,
-                  model: model,
-                  carId: carId
-                }
-              }}
-            >
-              <Button alignItems="flex-end" variant="contained" color="primary">
-                Book Again
-              </Button>
-            </Link>
+          <Grid item xs={12} sm={12}>
+            <HistoryList bookings={this.state.bookingHistory} />
           </Grid>
         </Grid>
       </ListItem>
