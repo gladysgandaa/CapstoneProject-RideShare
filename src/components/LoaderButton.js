@@ -1,6 +1,16 @@
 import React from "react";
-import { Button, Glyphicon } from "react-bootstrap";
-import "./LoaderButton.css";
+import { makeStyles } from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Button from "@material-ui/core/Button";
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: "flex",
+    "& > * + *": {
+      marginLeft: theme.spacing(2)
+    }
+  }
+}));
 
 export default function LoaderButton({
   isLoading,
@@ -8,13 +18,16 @@ export default function LoaderButton({
   disabled = false,
   ...props
 }) {
+  const classes = useStyles();
+
   return (
     <Button
-      className={`LoaderButton ${className}`}
+      fullWidth
+      className={`LoaderButton ${className} ${classes.root}`}
+      startIcon={isLoading && <CircularProgress size={8} />}
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading && <Glyphicon glyph="refresh" className="spinning" />}
       {props.children}
     </Button>
   );
