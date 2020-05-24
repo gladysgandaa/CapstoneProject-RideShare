@@ -50,7 +50,7 @@ const App = () => {
 
     userHasAuthenticated(false);
 
-    history.push("/login");
+    history.push("/");
   }
 
   return (

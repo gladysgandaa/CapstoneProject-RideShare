@@ -67,7 +67,7 @@ export default function SignIn() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-
+    setIsLoading(true);
     try {
       await Auth.signIn(fields.email, fields.password);
       userHasAuthenticated(true);
