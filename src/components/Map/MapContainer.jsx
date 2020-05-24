@@ -1,33 +1,25 @@
 /* global google */
 import React, { Component } from "react";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import SideList from "./SideList";
+import Slider from "react-rangeslider";
+import "react-rangeslider/lib/index.css";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      test: "test",
+      search_distance: 10,
+      markerName: "placeholder",
+      activeMarker: {},
+      selectedPlace: {},
+      showingInfoWindow: false,
       centre: { lat: 17.7985769, lng: -144.8674427 },
       vehicleDistances: [],
       user: this.props.userLocation,
-      vehicles: [
-        {
-          name: "car0",
-          coords: { lat: -37.7985769, lng: 144.8674427 },
-          available: false,
-          distance: 1.1
-        },
-        {
-          name: "car1",
-          coords: { lat: -37.8301784, lng: 144.9674227 },
-          available: false,
-          distance: 2.4
-        }
-      ],
       dbVehicles: [
         {
           model: "placeholder",
@@ -51,6 +43,41 @@ class MapContainer extends Component {
     this.getVehicles();
   }
 
+  //Marker Functions
+  onMarkerClick = (props, marker) =>
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      markerName: marker.name,
+      showingInfoWindow: true
+    });
+
+  onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false
+    });
+
+  onMapClicked = () => {
+    if (this.state.showingInfoWindow)
+      this.setState({
+        activeMarker: null,
+        showingInfoWindow: false
+      });
+  };
+
+  //TODO - current problem is that copying state is altering it in some way
+  removeFarVehicles = () => {
+    var rmDbVehicles = JSON.parse(JSON.stringify(this.state.dbVehicles));
+    for (var d in rmDbVehicles) {
+      if (rmDbVehicles[d].distance > this.state.search_distance) {
+        delete rmDbVehicles[d];
+        this.setState({ dbVehicles: rmDbVehicles });
+      }
+    }
+    console.log("state after delete:", this.state.dbVehicles);
+  };
+
   //Set state with variable length array to simulate DB connection. Works
   getVehicles = () => {
     axios
@@ -59,6 +86,7 @@ class MapContainer extends Component {
         const dbVehicles = res.data;
         this.setState({ dbVehicles }, () => {
           this.getDistances(this.state.user, this.state.dbVehicles);
+          this.removeFarVehicles();
         });
       });
   };
@@ -77,28 +105,32 @@ class MapContainer extends Component {
   };
 
   displayVehicles = () => {
+    //This doesn't work
+    if (!this.state.dbVehicles) {
+      console.log("no vehicles");
+      return null;
+    }
+
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      return (
-        <Marker
-          key={index}
-          id={index}
-          icon={{
-            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-            anchor: new google.maps.Point(0, 53),
-            labelOrigin: new google.maps.Point(14, 53)
-          }}
-          position={{
-            lat: dbVehicle.currentLocation.Latitude,
-            lng: dbVehicle.currentLocation.Longitude
-          }}
-          label={{
-            text: dbVehicle.make.concat(" ", dbVehicle.model),
-            fontFamily: "Arial",
-            fontSize: "14px"
-          }}
-          onClick={() => console.log(dbVehicle.make, dbVehicle.model)}
-        />
-      );
+      if (dbVehicle.distance < this.state.search_distance) {
+        return (
+          <Marker
+            name={dbVehicle.make.concat(" ", dbVehicle.model)}
+            key={index}
+            id={index}
+            icon={{
+              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+              anchor: new google.maps.Point(0, 53),
+              labelOrigin: new google.maps.Point(14, 53)
+            }}
+            position={{
+              lat: dbVehicle.currentLocation.Latitude,
+              lng: dbVehicle.currentLocation.Longitude
+            }}
+            onClick={this.onMarkerClick}
+          />
+        );
+      }
     });
   };
 
@@ -125,9 +157,7 @@ class MapContainer extends Component {
     }
 
     distances.sort((a, b) => (a.distance > b.distance ? 1 : -1));
-    this.setState({ vehicleDistances: distances });
 
-    //this is setting state somehow
     for (var d in distances) {
       for (var v in vehicleDbCopy) {
         if (vehicleDbCopy[v].carId === distances[d].carId) {
@@ -135,15 +165,12 @@ class MapContainer extends Component {
         }
       }
     }
-
-    this.setState({ vehicleDbCopy });
-
     return distances;
   };
 
   //DO NOT LEAVE IT LIKE THIS
   haversineDistance = (mk1, mk2) => {
-    var R = 3958.8; // Radius of the Earth in miles
+    var R = 6371; // Radius of the Earth in miles
     var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
     var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
@@ -169,13 +196,11 @@ class MapContainer extends Component {
       mapCenter.lat = this.state.user.lat;
       mapCenter.lng = this.state.user.lng;
       this.setState({ centre: mapCenter });
-      console.log("setCentre called, state = ", this.state);
     });
   };
 
   render() {
-    const initialCentreFromProps = this.props.userLocation;
-    const centre = this.state.centre;
+    if (!this.props.loaded) return <div>Loading...</div>;
 
     const mapStyles = {
       width: "100%",
@@ -187,8 +212,6 @@ class MapContainer extends Component {
         flexGrow: 1
       }
     }));
-
-    console.log("render - state", this.state);
     return (
       <div style={useStyles.root}>
         <Grid container spacing={3}>
@@ -197,22 +220,31 @@ class MapContainer extends Component {
           </Grid>
           <Grid item xs={12} sm={8}>
             <Map
+              google={this.props.google}
+              onClick={this.onMapClicked}
               user={this.state.user}
               google={this.props.google}
-              zoom={7}
+              zoom={15}
               style={mapStyles}
               onReady={this.setUserLocation}
-              initialCenter={this.state.centre} //Work out how to set this dynamically
+              initialCenter={this.state.centre}
               center={this.props.userLocation}
             >
               {this.setUserLocation()}
               {this.displayUser()}
               {this.displayVehicles()}
+              <InfoWindow
+                marker={this.state.activeMarker}
+                onClose={this.onInfoWindowClose}
+                visible={this.state.showingInfoWindow}
+              >
+                <div>
+                  <h4>{this.state.markerName}</h4>
+                </div>
+              </InfoWindow>
             </Map>
           </Grid>
         </Grid>
-        {console.log("centre from props :", initialCentreFromProps)}
-        {console.log("render - state", this.state.user)}
       </div>
     );
   }

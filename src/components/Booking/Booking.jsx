@@ -5,17 +5,39 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
+import ErrorDialog from "../Dialog/ErrorDialog";
+import { withRouter } from "react-router-dom";
+import { Link, BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Payment from "../Payment/Payment";
 
 class BookingForm extends Component {
   constructor(props) {
     super(props);
-    const { carId, make, model } = props.location.state;
+    this.toPayment = this.toPayment.bind(this);
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    const localISOTime = new Date(Date.now() - tzoffset);
+    localISOTime.setSeconds(0);
+    const defaultDate = localISOTime.toISOString().slice(0, -5);
+    const {
+      carId,
+      make,
+      model,
+      currentLocation,
+      rentalCostPerHour,
+      returnDate
+    } = props.location.state;
+
     this.state = {
       carId: carId,
       make: make,
       model: model,
-      date: "2020-04-28T15:30:00",
-      duration: 1
+      pickUpLocation: currentLocation,
+      rentalCostPerHour: rentalCostPerHour,
+      date: defaultDate,
+      returnDate: returnDate,
+      duration: 1,
+      errMessage: "",
+      open: false
     };
   }
 
@@ -26,15 +48,71 @@ class BookingForm extends Component {
   submitHandler = e => {
     e.preventDefault();
     console.log(this.state);
+    const postData = {
+      body: JSON.stringify(this.state)
+    };
+
+    console.log(postData);
+    axios
+      .post(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+        JSON.stringify(this.state)
+      )
+      .then(response => {
+        console.log(`Response => ${response}`);
+      })
+      .catch(error => {
+        console.log(`Error => ${error}`);
+        if (error.response.status === 500) {
+          this.setState({
+            errorMessage: `Selected time for the ${this.state.make} ${this.state.model} is unavailable. Please select another time.`,
+            open: true
+          });
+        }
+      });
+  };
+
+  addReturnDate = () => {
+    const carId = this.state.carId;
+    axios
+      .put(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
+          carId,
+        JSON.stringify(this.state)
+      )
+      .then(function(response) {
+        console.log("response", response);
+      });
+    console.log("state for axios put", this.state);
+  };
+
+  toPayment = () => {
+    let path = `/payment`;
+    this.props.history.push({
+      pathname: path,
+      state: {
+        carId: this.state.carId,
+        rentalCostPerHour: this.state.rentalCostPerHour,
+        duration: this.state.duration
+      }
+    });
+    // this.addReturnDate();
+  };
+
+  handleClose = () => {
+    this.setState({
+      errorMessage: "",
+      open: false
+    });
   };
 
   render() {
-    const { make, model, date, duration } = this.state;
+    const { make, model, date, duration, rentalCostPerHour } = this.state;
     return (
       <div>
         <form onSubmit={this.submitHandler}>
           <Typography variant="h4" gutterBottom>
-            Book a Car.
+            Book a Car
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
@@ -118,7 +196,18 @@ class BookingForm extends Component {
               </TextField>
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Button type="submit">Book</Button>
+              {this.state.errorMessage && (
+                <ErrorDialog
+                  errorMessage={this.state.errorMessage}
+                  open={this.state.open}
+                  handleClose={this.handleClose}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button type="submit" onClick={this.toPayment}>
+                Book
+              </Button>
             </Grid>
           </Grid>
         </form>

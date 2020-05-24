@@ -8,7 +8,6 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
-import BookingForm from "../Booking/Booking";
 
 const useStyles = makeStyles(theme => ({
   inline: {
@@ -17,8 +16,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  console.log(props);
-  const { carId, make, model, rentalCostPerHour, distance } = props;
+  // console.log(props);
+  const {
+    carId,
+    make,
+    model,
+    rentalCostPerHour,
+    distance,
+    currentLocation,
+    returnDate
+  } = props;
+
+  const available = returnDate ? { returnDate }.returnDate : "now";
+  var trunc_dist = Math.trunc(distance);
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -34,9 +44,10 @@ const Car = props => {
               className={useStyles.inline}
               color="textPrimary"
             >
-              {model}, From : ${rentalCostPerHour} hourly
+              From : ${rentalCostPerHour} hourly
+              <br></br>Available: {available}
               <br></br>
-              Miles from you: {distance}
+              Kilometres from you: {trunc_dist}
               <div>
                 <Link
                   to={{
@@ -44,7 +55,9 @@ const Car = props => {
                     state: {
                       make: make,
                       model: model,
-                      carId: carId
+                      carId: carId,
+                      currentLocation: currentLocation,
+                      rentalCostPerHour: rentalCostPerHour
                     }
                   }}
                 >
