@@ -13,11 +13,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { useAppContext } from "../libs/contextLib";
+import { useAppContext } from "../../libs/contextLib";
 import { useHistory } from "react-router-dom";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import LoaderButton from "../components/LoaderButton";
-import { onError } from "../libs/errorLib";
+import LoaderButton from "../LoaderButton";
+import { onError } from "../../libs/errorLib";
 
 function Copyright() {
   return (
