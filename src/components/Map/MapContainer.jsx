@@ -41,7 +41,6 @@ class MapContainer extends Component {
 
   componentDidMount() {
     this.setUserLocation();
-    console.log("component did mount");
   }
 
   //Marker Functions
@@ -98,7 +97,6 @@ class MapContainer extends Component {
           lat: this.state.user.lat,
           lng: this.state.user.lng
         }}
-        onClick={() => console.log("You clicked User Marker")}
       />
     );
   };

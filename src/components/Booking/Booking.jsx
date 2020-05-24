@@ -18,23 +18,30 @@ class BookingForm extends Component {
     const localISOTime = new Date(Date.now() - tzoffset);
     localISOTime.setSeconds(0);
     const defaultDate = localISOTime.toISOString().slice(0, -5);
+
     const {
       carId,
       make,
       model,
       currentLocation,
       rentalCostPerHour,
-      returnDate
+      returnDate,
+      numberOfSeats,
+      year,
+      retired
     } = props.location.state;
 
     this.state = {
       carId: carId,
       make: make,
       model: model,
-      pickUpLocation: currentLocation,
+      currentLocation: currentLocation,
       rentalCostPerHour: rentalCostPerHour,
       date: defaultDate,
       returnDate: returnDate,
+      numberOfSeats: numberOfSeats,
+      year: year,
+      retired: retired,
       duration: 1,
       errMessage: "",
       open: false
@@ -43,6 +50,7 @@ class BookingForm extends Component {
 
   changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
+    console.log("e.target.value", e.target.value);
   };
 
   submitHandler = e => {
@@ -53,11 +61,10 @@ class BookingForm extends Component {
     };
 
     console.log(postData);
-    axios
-      .post(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-        JSON.stringify(this.state)
-      )
+    axios(
+      "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+      JSON.stringify(this.state)
+    )
       .then(response => {
         console.log(`Response => ${response}`);
       })
@@ -74,16 +81,51 @@ class BookingForm extends Component {
 
   addReturnDate = () => {
     const carId = this.state.carId;
-    axios
-      .put(
+    const duration = this.state.duration;
+    var dateObj = new Date(this.state.date);
+    dateObj.setHours(dateObj.getHours() + duration);
+
+    const formatPost =
+      '{\
+      "model": "' +
+      this.state.model +
+      '",\
+      "carId": "' +
+      this.state.carId +
+      '",\
+      "rentalCostPerHour": ' +
+      this.state.rentalCostPerHour +
+      ',\
+      "numberOfSeats": ' +
+      this.state.numberOfSeats +
+      ',\
+      "year": ' +
+      this.state.year +
+      ',\
+      "make": "' +
+      this.state.make +
+      '",\
+      "returnDate": "' +
+      dateObj +
+      '",\
+      "currentLocation": {\
+          "Longitude": ' +
+      this.state.currentLocation.Longitude +
+      ',\
+          "Latitude": ' +
+      this.state.currentLocation.Latitude +
+      "\
+      }\
+  }";
+    console.log("put contents", formatPost);
+    axios({
+      method: "put",
+      url:
         "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
-          carId,
-        JSON.stringify(this.state)
-      )
-      .then(function(response) {
-        console.log("response", response);
-      });
-    console.log("state for axios put", this.state);
+        carId,
+      headers: {},
+      data: formatPost
+    });
   };
 
   toPayment = () => {
@@ -93,10 +135,11 @@ class BookingForm extends Component {
       state: {
         carId: this.state.carId,
         rentalCostPerHour: this.state.rentalCostPerHour,
-        duration: this.state.duration
+        duration: this.state.duration,
+        returnDate: 88888
       }
     });
-    // this.addReturnDate();
+    this.addReturnDate();
   };
 
   handleClose = () => {
@@ -107,7 +150,14 @@ class BookingForm extends Component {
   };
 
   render() {
-    const { make, model, date, duration, rentalCostPerHour } = this.state;
+    const {
+      make,
+      model,
+      date,
+      duration,
+      rentalCostPerHour,
+      returnDate
+    } = this.state;
     return (
       <div>
         <form onSubmit={this.submitHandler}>
