@@ -78,7 +78,9 @@ class MapContainer extends Component {
 
   getVehicles = () => {
     axios
-      .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
+      .get(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars/available"
+      )
       .then(res => {
         const dbVehicles = res.data;
         this.setState({ dbVehicles }, () => {
@@ -89,7 +91,6 @@ class MapContainer extends Component {
   };
 
   displayUser = () => {
-    console.log("display user called");
     return (
       <Marker
         name="User Marker"
@@ -109,25 +110,23 @@ class MapContainer extends Component {
     }
 
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      if (dbVehicle.distance < this.state.search_distance) {
-        return (
-          <Marker
-            name={dbVehicle.make.concat(" ", dbVehicle.model)}
-            key={index}
-            id={index}
-            icon={{
-              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-              anchor: new google.maps.Point(0, 53),
-              labelOrigin: new google.maps.Point(14, 53)
-            }}
-            position={{
-              lat: dbVehicle.currentLocation.Latitude,
-              lng: dbVehicle.currentLocation.Longitude
-            }}
-            onClick={this.onMarkerClick}
-          />
-        );
-      }
+      return (
+        <Marker
+          name={dbVehicle.make.concat(" ", dbVehicle.model)}
+          key={index}
+          id={index}
+          icon={{
+            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
+          }}
+          position={{
+            lat: dbVehicle.currentLocation.Latitude,
+            lng: dbVehicle.currentLocation.Longitude
+          }}
+          onClick={this.onMarkerClick}
+        />
+      );
     });
   };
 

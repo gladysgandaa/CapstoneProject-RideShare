@@ -57,7 +57,8 @@ class AdminCar extends Component {
       make,
       model,
       rentalCostPerHour,
-      currentLocation
+      currentLocation,
+      returnDate
     } = this.props;
     const useStyles = makeStyles(theme => ({
       inline: {
@@ -79,16 +80,17 @@ class AdminCar extends Component {
                 className={useStyles.inline}
                 color="textPrimary"
               >
-                ${rentalCostPerHour} hourly
+                ${rentalCostPerHour} hourly <br></br> Expected Return:{" "}
+                {returnDate}
                 <br></br>
                 <div>
-                  <Button
+                  {/* <Button
                     variant="contained"
                     color="primary"
                     onClick={() => this.testFunction(carId)}
                   >
                     Edit
-                  </Button>
+                  </Button> */}
                   &nbsp;
                   <Button
                     variant="contained"
