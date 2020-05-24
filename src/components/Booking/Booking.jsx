@@ -6,9 +6,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import ErrorDialog from "../Dialog/ErrorDialog";
-import { withRouter } from "react-router-dom";
-import { Link, BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Payment from "../Payment/Payment";
 
 class BookingForm extends Component {
   constructor(props) {
@@ -135,8 +132,7 @@ class BookingForm extends Component {
       state: {
         carId: this.state.carId,
         rentalCostPerHour: this.state.rentalCostPerHour,
-        duration: this.state.duration,
-        returnDate: 88888
+        duration: this.state.duration
       }
     });
     this.addReturnDate();
