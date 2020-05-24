@@ -7,6 +7,9 @@ import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
+import AddCar from "./components/Admin/AddCar";
+import ReturnCar from "./components/Admin/ReturnCar";
+
 import Payment from "./components/Payment/Payment";
 import AdminDashboard from "./components/Admin/AdminDashboard";
 import { AppContext } from "./libs/contextLib";
@@ -79,6 +82,8 @@ const App = () => {
                 <Route path="/signin" component={SignIn} />
                 <Route path="/book" component={BookingForm} />
                 <Route path="/payment" component={Payment} />
+                <Route path="/addcar" component={AddCar} />
+                <Route path="/returncar" component={ReturnCar} />
                 <Route path="/admin" component={AdminDashboard} />
                 <Route path="/signup" component={SignUp} />
                 {isAuthenticated ? (
