@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  console.log("props", props);
+  // console.log(props);
   const {
     carId,
     make,
@@ -24,8 +24,6 @@ const Car = props => {
     rentalCostPerHour,
     distance,
     currentLocation,
-    year,
-    numberOfSeats,
     returnDate
   } = props;
 
@@ -58,9 +56,6 @@ const Car = props => {
                       make: make,
                       model: model,
                       carId: carId,
-                      year: year,
-                      returnDate: returnDate,
-                      numberOfSeats: numberOfSeats,
                       currentLocation: currentLocation,
                       rentalCostPerHour: rentalCostPerHour
                     }

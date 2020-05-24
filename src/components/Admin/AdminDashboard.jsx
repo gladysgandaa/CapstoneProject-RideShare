@@ -252,7 +252,12 @@ class AdminDashboard extends Component {
                       initialCenter={{ lat: -37.8136, lng: 144.9631 }}
                       center={this.props.userLocation}
                       onClick={this.onClick}
-                    ></Map>
+                    >
+                      <Marker
+                        onClick={this.onMarkerClick}
+                        name={"Current location"}
+                      />
+                    </Map>
                   </Grid>
                 </Grid>
               </div>
