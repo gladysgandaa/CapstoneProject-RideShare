@@ -26,12 +26,8 @@ const SideList = ({ cars, account }) => {
                 carId={car.carId}
                 make={car.make}
                 model={car.model}
-                distance={car.distance}
-                year={car.year}
-                numberOfSeats={car.numberOfSeats}
                 returnDate={car.returnDate}
                 rentalCostPerHour={car.rentalCostPerHour}
-                currentLocation={car.currentLocation}
               />
             );
           }
@@ -42,11 +38,8 @@ const SideList = ({ cars, account }) => {
               make={car.make}
               model={car.model}
               distance={car.distance}
-              year={car.year}
-              numberOfSeats={car.numberOfSeats}
               returnDate={car.returnDate}
               rentalCostPerHour={car.rentalCostPerHour}
-              currentLocation={car.currentLocation}
             />
           );
         })
