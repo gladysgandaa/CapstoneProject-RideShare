@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import "./App.css";
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
+import History from "./components/History/History";
 import MapContainer from "./components/Map/MapContainer";
 import BookingForm from "./components/Booking/Booking";
 import AddCar from "./components/Admin/AddCar";
@@ -85,6 +86,7 @@ const App = () => {
                 <Route path="/addcar" component={AddCar} />
                 <Route path="/returncar" component={ReturnCar} />
                 <Route path="/admin" component={AdminDashboard} />
+                <Route path="/history" component={History} />
                 <Route path="/signup" component={SignUp} />
                 {isAuthenticated ? (
                   <Button onClick={handleLogout}>Logout</Button>
