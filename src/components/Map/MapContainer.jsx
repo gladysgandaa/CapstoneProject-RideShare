@@ -192,23 +192,30 @@ class MapContainer extends Component {
     if (!this.props.loaded) return <div>Loading...</div>;
 
     const mapStyles = {
-      width: "inherit",
-      height: "inherit"
+      width: "70vw",
+      height: "100%"
     };
 
     const useStyles = makeStyles(theme => ({
       root: {
         flexGrow: 1
+      },
+      map: {
+        margin: "auto",
+        display: "block",
+        maxWidth: "100%",
+        maxHeight: "100%"
       }
     }));
+
     if (this.state.updatedLocation === true) {
       return (
-        <div style={useStyles.root}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={4}>
+        <div>
+          <Grid container>
+            <Grid item xs={6} sm={4}>
               <SideList cars={this.state.dbVehicles} />
             </Grid>
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={18} sm={8}>
               <Map
                 google={this.props.google}
                 onClick={this.onMapClicked}
@@ -218,6 +225,7 @@ class MapContainer extends Component {
                 onReady={this.setUserLocation}
                 initialCenter={this.state.user}
                 center={this.state.user}
+                className={useStyles.map}
               >
                 {this.setUserLocation()}
                 {this.displayVehicles()}
