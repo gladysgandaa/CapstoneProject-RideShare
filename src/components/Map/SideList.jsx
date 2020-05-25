@@ -19,7 +19,7 @@ const SideList = ({ cars, account }) => {
         <h1>No Cars Found.</h1>
       ) : (
         cars.map(car => {
-          if (account == "admin") {
+          if (account === "admin") {
             return (
               <AdminCar
                 key={car.carId}

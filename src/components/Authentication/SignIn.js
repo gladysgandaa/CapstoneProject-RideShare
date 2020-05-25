@@ -115,10 +115,6 @@ export default function SignIn() {
             autoComplete="current-password"
             onChange={handleFieldChange}
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
           <LoaderButton
             block
             type="submit"

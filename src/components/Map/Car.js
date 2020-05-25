@@ -75,7 +75,7 @@ const Car = props => {
           }
         />
       </ListItem>
-      <Divider variant="inset" component="li" />
+      <Divider />
     </div>
   );
 };

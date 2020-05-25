@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import SideList from "./SideList";
-import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 
 class MapContainer extends Component {
@@ -193,8 +192,8 @@ class MapContainer extends Component {
     if (!this.props.loaded) return <div>Loading...</div>;
 
     const mapStyles = {
-      width: "100%",
-      height: "100%"
+      width: "inherit",
+      height: "inherit"
     };
 
     const useStyles = makeStyles(theme => ({
@@ -202,7 +201,7 @@ class MapContainer extends Component {
         flexGrow: 1
       }
     }));
-    if (this.state.updatedLocation == true) {
+    if (this.state.updatedLocation === true) {
       return (
         <div style={useStyles.root}>
           <Grid container spacing={3}>
@@ -214,7 +213,6 @@ class MapContainer extends Component {
                 google={this.props.google}
                 onClick={this.onMapClicked}
                 user={this.state.user}
-                google={this.props.google}
                 zoom={15}
                 style={mapStyles}
                 onReady={this.setUserLocation}
