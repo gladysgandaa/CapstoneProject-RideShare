@@ -1,7 +1,7 @@
+/* global google */
 import React, { Component } from "react";
 import axios from "axios";
 import SideList from "../Map/SideList";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -13,6 +13,9 @@ class AdminDashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      markerName: "placeholder",
+      activeMarker: {},
+      selectedPlace: {},
       loggedIn: false,
       account: "admin",
       callComplete: false,
@@ -45,6 +48,48 @@ class AdminDashboard extends Component {
       ]
     };
   }
+
+  //Marker Functions
+  onMarkerClick = (props, marker) =>
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      markerName: marker.name,
+      showingInfoWindow: true
+    });
+
+  onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false
+    });
+
+  displayVehicles = () => {
+    if (!this.state.dbVehicles) {
+      console.log("no vehicles");
+      return null;
+    }
+
+    return this.state.dbVehicles.map((dbVehicle, index) => {
+      return (
+        <Marker
+          name={dbVehicle.make.concat(" ", dbVehicle.model)}
+          key={index}
+          id={index}
+          icon={{
+            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
+          }}
+          position={{
+            lat: dbVehicle.currentLocation.Latitude,
+            lng: dbVehicle.currentLocation.Longitude
+          }}
+          onClick={this.onMarkerClick}
+        />
+      );
+    });
+  };
 
   componentWillMount() {
     this.getVehicles();
@@ -253,10 +298,16 @@ class AdminDashboard extends Component {
                       center={this.props.userLocation}
                       onClick={this.onClick}
                     >
-                      <Marker
-                        onClick={this.onMarkerClick}
-                        name={"Current location"}
-                      />
+                      {this.displayVehicles()}
+                      <InfoWindow
+                        marker={this.state.activeMarker}
+                        onClose={this.onInfoWindowClose}
+                        visible={this.state.showingInfoWindow}
+                      >
+                        <div>
+                          <h4>{this.state.markerName}</h4>
+                        </div>
+                      </InfoWindow>
                     </Map>
                   </Grid>
                 </Grid>

@@ -12,12 +12,12 @@ class MapContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      updatedLocation: false,
       search_distance: 10,
       markerName: "placeholder",
       activeMarker: {},
       selectedPlace: {},
       showingInfoWindow: false,
-      centre: { lat: 17.7985769, lng: -144.8674427 },
       vehicleDistances: [],
       user: this.props.userLocation,
       dbVehicles: [
@@ -39,8 +39,8 @@ class MapContainer extends Component {
     };
   }
 
-  componentWillMount() {
-    this.getVehicles();
+  componentDidMount() {
+    this.setUserLocation();
   }
 
   //Marker Functions
@@ -66,7 +66,6 @@ class MapContainer extends Component {
       });
   };
 
-  //TODO - current problem is that copying state is altering it in some way
   removeFarVehicles = () => {
     var rmDbVehicles = JSON.parse(JSON.stringify(this.state.dbVehicles));
     for (var d in rmDbVehicles) {
@@ -75,13 +74,13 @@ class MapContainer extends Component {
         this.setState({ dbVehicles: rmDbVehicles });
       }
     }
-    console.log("state after delete:", this.state.dbVehicles);
   };
 
-  //Set state with variable length array to simulate DB connection. Works
   getVehicles = () => {
     axios
-      .get("https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars")
+      .get(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars/available"
+      )
       .then(res => {
         const dbVehicles = res.data;
         this.setState({ dbVehicles }, () => {
@@ -96,10 +95,9 @@ class MapContainer extends Component {
       <Marker
         name="User Marker"
         position={{
-          lat: this.state.user.Latitude,
-          lng: this.state.user.Longitude
+          lat: this.state.user.lat,
+          lng: this.state.user.lng
         }}
-        onClick={() => console.log("You clicked User Marker")}
       />
     );
   };
@@ -112,34 +110,35 @@ class MapContainer extends Component {
     }
 
     return this.state.dbVehicles.map((dbVehicle, index) => {
-      if (dbVehicle.distance < this.state.search_distance) {
-        return (
-          <Marker
-            name={dbVehicle.make.concat(" ", dbVehicle.model)}
-            key={index}
-            id={index}
-            icon={{
-              url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-              anchor: new google.maps.Point(0, 53),
-              labelOrigin: new google.maps.Point(14, 53)
-            }}
-            position={{
-              lat: dbVehicle.currentLocation.Latitude,
-              lng: dbVehicle.currentLocation.Longitude
-            }}
-            onClick={this.onMarkerClick}
-          />
-        );
-      }
+      return (
+        <Marker
+          name={dbVehicle.make.concat(" ", dbVehicle.model)}
+          key={index}
+          id={index}
+          icon={{
+            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
+          }}
+          position={{
+            lat: dbVehicle.currentLocation.Latitude,
+            lng: dbVehicle.currentLocation.Longitude
+          }}
+          onClick={this.onMarkerClick}
+        />
+      );
     });
   };
 
   setUserLocation = () => {
     navigator.geolocation.getCurrentPosition(position => {
-      const user = { ...this.state.user };
-      user.Latitude = position.coords.latitude;
-      user.Longitude = position.coords.longitude;
-      this.setState({ user });
+      const currentUser = { lat: 1.0, lng: 1.0 };
+      currentUser.lat = position.coords.latitude;
+      currentUser.lng = position.coords.longitude;
+      this.setState({ user: currentUser });
+      console.log("user position", this.state.user);
+      this.setState({ updatedLocation: true });
+      this.getVehicles();
     });
   };
 
@@ -190,15 +189,6 @@ class MapContainer extends Component {
     return d;
   };
 
-  setCentre = () => {
-    this.setState(prevState => {
-      let mapCenter = Object.assign({}, prevState.centre);
-      mapCenter.lat = this.state.user.lat;
-      mapCenter.lng = this.state.user.lng;
-      this.setState({ centre: mapCenter });
-    });
-  };
-
   render() {
     if (!this.props.loaded) return <div>Loading...</div>;
 
@@ -212,41 +202,46 @@ class MapContainer extends Component {
         flexGrow: 1
       }
     }));
-    return (
-      <div style={useStyles.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={4}>
-            <SideList cars={this.state.dbVehicles} />
-          </Grid>
-          <Grid item xs={12} sm={8}>
-            <Map
-              google={this.props.google}
-              onClick={this.onMapClicked}
-              user={this.state.user}
-              google={this.props.google}
-              zoom={15}
-              style={mapStyles}
-              onReady={this.setUserLocation}
-              initialCenter={this.state.centre}
-              center={this.props.userLocation}
-            >
-              {this.setUserLocation()}
-              {this.displayUser()}
-              {this.displayVehicles()}
-              <InfoWindow
-                marker={this.state.activeMarker}
-                onClose={this.onInfoWindowClose}
-                visible={this.state.showingInfoWindow}
+    if (this.state.updatedLocation == true) {
+      return (
+        <div style={useStyles.root}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={4}>
+              <SideList cars={this.state.dbVehicles} />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+              <Map
+                google={this.props.google}
+                onClick={this.onMapClicked}
+                user={this.state.user}
+                google={this.props.google}
+                zoom={15}
+                style={mapStyles}
+                onReady={this.setUserLocation}
+                initialCenter={this.state.user}
+                center={this.state.user}
               >
-                <div>
-                  <h4>{this.state.markerName}</h4>
-                </div>
-              </InfoWindow>
-            </Map>
+                {this.setUserLocation()}
+                {this.displayVehicles()}
+                {this.displayUser()}
+                <InfoWindow
+                  marker={this.state.activeMarker}
+                  onClose={this.onInfoWindowClose}
+                  visible={this.state.showingInfoWindow}
+                >
+                  <div>
+                    <h4>{this.state.markerName}</h4>
+                  </div>
+                </InfoWindow>
+              </Map>
+            </Grid>
           </Grid>
-        </Grid>
-      </div>
-    );
+        </div>
+      );
+    } else {
+      console.log("user position before update", this.state.user);
+      return <h3>Loading...</h3>;
+    }
   }
 }
 
