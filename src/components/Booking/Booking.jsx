@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -6,51 +6,40 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import ErrorDialog from "../Dialog/ErrorDialog";
+import { useAppContext } from "../../libs/contextLib";
 
-class BookingForm extends Component {
-  constructor(props) {
-    super(props);
-    this.toPayment = this.toPayment.bind(this);
-    const tzoffset = new Date().getTimezoneOffset() * 60000;
-    const localISOTime = new Date(Date.now() - tzoffset);
-    localISOTime.setSeconds(0);
-    const defaultDate = localISOTime.toISOString().slice(0, -5);
+const BookingForm = props => {
+  const { userHasAuthenticated } = useAppContext();
+  const [carId, setCarId] = useState(props.location.state.carId);
+  const [make, setMake] = useState(props.location.state.make);
+  const [model, setModel] = useState(props.location.state.model);
+  const [currentLocation, setCurrentLocation] = useState(
+    props.location.state.currentLocation
+  );
+  const [rentalCostPerHour, setRentalCostPerHour] = useState(
+    props.location.state.rentalCostPerHour
+  );
+  const [returnDate, setReturnDate] = useState(props.location.state.returnDate);
+  const [numberOfSeats, setNumberOfSeats] = useState(
+    props.location.state.numberOfSeats
+  );
+  const [year, setYear] = useState(props.location.state.year);
+  const [retired, setRetired] = useState(props.location.state.retired);
+  const tzoffset = new Date().getTimezoneOffset() * 60000;
+  const localISOTime = new Date(Date.now() - tzoffset);
+  localISOTime.setSeconds(0);
+  const defaultDate = localISOTime.toISOString().slice(0, -5);
+  const [date, setDate] = useState(defaultDate);
+  const [duration, setDuration] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-    const {
-      carId,
-      make,
-      model,
-      currentLocation,
-      rentalCostPerHour,
-      returnDate,
-      numberOfSeats,
-      year,
-      retired
-    } = props.location.state;
-
-    this.state = {
-      carId: carId,
-      make: make,
-      model: model,
-      currentLocation: currentLocation,
-      rentalCostPerHour: rentalCostPerHour,
-      date: defaultDate,
-      returnDate: returnDate,
-      numberOfSeats: numberOfSeats,
-      year: year,
-      retired: retired,
-      duration: 1,
-      errMessage: "",
-      open: false
-    };
-  }
-
-  changeHandler = e => {
+  const changeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
     console.log("e.target.value", e.target.value);
   };
 
-  submitHandler = e => {
+  const submitHandler = e => {
     e.preventDefault();
     console.log(this.state);
     const postData = {
@@ -76,56 +65,36 @@ class BookingForm extends Component {
       });
   };
 
-  addReturnDate = () => {
+  const addReturnDate = () => {
     const carId = this.state.carId;
     const duration = this.state.duration;
     var dateObj = new Date(this.state.date);
     dateObj.setHours(dateObj.getHours() + duration);
 
-    const formatPost =
-      '{\
-      "model": "' +
-      this.state.model +
-      '",\
-      "carId": "' +
-      this.state.carId +
-      '",\
-      "rentalCostPerHour": ' +
-      this.state.rentalCostPerHour +
-      ',\
-      "numberOfSeats": ' +
-      this.state.numberOfSeats +
-      ',\
-      "year": ' +
-      this.state.year +
-      ',\
-      "make": "' +
-      this.state.make +
-      '",\
-      "returnDate": "' +
-      dateObj +
-      '",\
-      "currentLocation": {\
-          "Longitude": ' +
-      this.state.currentLocation.Longitude +
-      ',\
-          "Latitude": ' +
-      this.state.currentLocation.Latitude +
-      "\
-      }\
-  }";
-    console.log("put contents", formatPost);
+    const carData = {
+      carId: this.state.carId,
+      model: this.state.model,
+      make: this.state.make,
+      rentalCostPerHour: this.state.rentalCostPerHour,
+      returnDate: dateObj,
+      numberOfSeats: this.state.numberOfSeats,
+      year: this.state.year,
+      currentLocation: {
+        Latitude: this.state.currentLocation.Latitude,
+        Longitude: this.state.currentLocation.Longitude
+      }
+    };
+
+    console.log("put contents", JSON.stringify(carData));
     axios({
       method: "put",
-      url:
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
-        carId,
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
       headers: {},
-      data: formatPost
+      data: JSON.stringify(carData)
     });
   };
 
-  toPayment = () => {
+  const toPayment = () => {
     let path = `/payment`;
     this.props.history.push({
       pathname: path,
@@ -138,127 +107,139 @@ class BookingForm extends Component {
     this.addReturnDate();
   };
 
-  handleClose = () => {
+  const handleClose = () => {
     this.setState({
       errorMessage: "",
       open: false
     });
   };
 
-  render() {
-    const {
-      make,
-      model,
-      date,
-      duration,
-      rentalCostPerHour,
-      returnDate
-    } = this.state;
-    return (
-      <div>
-        <form onSubmit={this.submitHandler}>
-          <Typography variant="h4" gutterBottom>
-            Book a Car
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="firstName"
-                name="firstName"
-                label="First name"
-                fullWidth
-                autoComplete="fname"
+  const formSpacing = {
+    margin: 35
+  };
+  return (
+    <div style={formSpacing}>
+      <form onSubmit={this.submitHandler}>
+        <Typography variant="h4" gutterBottom>
+          Book a Car
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="firstName"
+              name="firstName"
+              label="First name"
+              fullWidth
+              autoComplete="fname"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="lastName"
+              name="lastName"
+              label="Last name"
+              fullWidth
+              autoComplete="lname"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="phone"
+              name="phone"
+              label="Mobile"
+              fullWidth
+              autoComplete="phone"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="email"
+              name="email"
+              label="Email ID"
+              fullWidth
+              autoComplete="email"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              disabled
+              id="selected-car"
+              label="Selected Car"
+              fullWidth
+              defaultValue={`${make} ${model}`}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="datetime-local"
+              label="Select Date and Time"
+              name="date"
+              type="datetime-local"
+              fullWidth
+              value={date}
+              onChange={this.changeHandler}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="select"
+              name="duration"
+              label="Duration (hours)"
+              fullWidth
+              value={duration}
+              onChange={this.changeHandler}
+              select
+            >
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={3}>3</MenuItem>
+              <MenuItem value={6}>6</MenuItem>
+              <MenuItem value={12}>12</MenuItem>
+              <MenuItem value={24}>24</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="rate"
+              label="Hourly Rate:"
+              name="rate"
+              type="text"
+              fullWidth
+              value={`A$${rentalCostPerHour}`}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            {this.state.errorMessage && (
+              <ErrorDialog
+                errorMessage={this.state.errorMessage}
+                open={this.state.open}
+                handleClose={this.handleClose}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="lastName"
-                name="lastName"
-                label="Last name"
+            )}
+          </Grid>
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Grid item xs={12} sm={2}>
+              <Button
+                type="submit"
+                variant="outlined"
+                onClick={this.toPayment}
                 fullWidth
-                autoComplete="lname"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="phone"
-                name="phone"
-                label="Mobile"
-                fullWidth
-                autoComplete="phone"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="email"
-                name="email"
-                label="Email ID"
-                fullWidth
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                disabled
-                id="selected-car"
-                label="Selected Car"
-                fullWidth
-                defaultValue={`${make} ${model}`}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="datetime-local"
-                label="Select Date and Time"
-                name="date"
-                type="datetime-local"
-                fullWidth
-                value={date}
-                onChange={this.changeHandler}
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="select"
-                name="duration"
-                label="Duration (hrs)"
-                fullWidth
-                value={duration}
-                onChange={this.changeHandler}
-                select
               >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={6}>6</MenuItem>
-                <MenuItem value={12}>12</MenuItem>
-                <MenuItem value={24}>24</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              {this.state.errorMessage && (
-                <ErrorDialog
-                  errorMessage={this.state.errorMessage}
-                  open={this.state.open}
-                  handleClose={this.handleClose}
-                />
-              )}
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <Button type="submit" onClick={this.toPayment}>
                 Book
               </Button>
             </Grid>
           </Grid>
-        </form>
-      </div>
-    );
-  }
-}
+        </Grid>
+      </form>
+    </div>
+  );
+};
+
 export default BookingForm;
