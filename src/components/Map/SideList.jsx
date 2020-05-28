@@ -14,7 +14,7 @@ const useStyles = makeStyles({
 const SideList = ({ cars, account }) => {
   const classes = useStyles();
   return (
-    <List className={classes.root}>
+    <List className={classes.root} disablePadding={true}>
       {!cars.length ? (
         <h1>No Cars Found.</h1>
       ) : (

@@ -46,7 +46,12 @@ const App = () => {
     !isAuthenticating && (
       <div className="App">
         {/* <p className="App-intro">Material Tab Panel:</p> */}
-        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
+        <AppContext.Provider
+          value={{
+            isAuthenticated,
+            userHasAuthenticated
+          }}
+        >
           <NavigationMenu />
           <Routes />
         </AppContext.Provider>

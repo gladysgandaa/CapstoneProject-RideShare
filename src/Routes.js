@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
 
 import SignIn from "./components/Authentication/SignIn";
 import SignUp from "./components/Authentication/SignUp";
@@ -14,6 +15,7 @@ import AdminDashboard from "./components/Admin/AdminDashboard";
 
 export default function Routes() {
   const userlocation = { lat: -37.8303789, lng: 144.9674638 };
+
   return (
     <Switch>
       <Route exact path="/">

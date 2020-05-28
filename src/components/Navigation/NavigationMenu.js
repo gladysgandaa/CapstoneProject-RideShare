@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -39,7 +40,6 @@ const useStyles = makeStyles(theme => ({
   menuButton: {
     marginRight: theme.spacing(2)
   },
-  // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth
@@ -73,7 +73,7 @@ function ResponsiveDrawer(props) {
 
   const drawer = (
     <div>
-      <List>
+      <List disablePadding={true}>
         <ListItem>
           <Typography
             align="right"
@@ -88,7 +88,7 @@ function ResponsiveDrawer(props) {
         </ListItem>
       </List>
       <Divider />
-      <List>
+      <List disablePadding={true}>
         {isAuthenticated ? (
           <ListItem button onClick={handleLogout}>
             <ListItemText primary="Sign Out" />
@@ -105,7 +105,7 @@ function ResponsiveDrawer(props) {
         )}
       </List>
       <Divider />
-      <List>
+      <List disablePadding={true}>
         <ListItem button component="a" href="/admin">
           <ListItemText primary="Admin" />
         </ListItem>
@@ -117,7 +117,7 @@ function ResponsiveDrawer(props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} id="nav">
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
@@ -157,7 +157,7 @@ function ResponsiveDrawer(props) {
           </Drawer>
         </Hidden>
       </nav>
-      <main className={classes.content}></main>
+      <div className={classes.toolbar}></div>
     </div>
   );
 }
