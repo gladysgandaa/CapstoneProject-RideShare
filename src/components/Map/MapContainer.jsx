@@ -218,11 +218,9 @@ class MapContainer extends Component {
                 google={this.props.google}
                 zoom={15}
                 style={mapStyles}
-                onReady={this.setUserLocation}
                 initialCenter={this.state.user}
                 center={this.state.user}
               >
-                {this.setUserLocation()}
                 {this.displayVehicles()}
                 {this.displayUser()}
                 <InfoWindow
