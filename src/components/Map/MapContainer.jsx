@@ -7,10 +7,14 @@ import axios from "axios";
 import SideList from "./SideList";
 import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
+import MapFunctions from "./MapFunctions";
+
+export const test = "asdf";
 
 class MapContainer extends Component {
   constructor(props) {
     super(props);
+    this.lastUpdateDate = new Date();
     this.state = {
       updatedLocation: false,
       search_distance: 10,
@@ -38,11 +42,19 @@ class MapContainer extends Component {
       ]
     };
   }
-
   componentDidMount() {
     this.setUserLocation();
   }
 
+  // shouldComponentUpdate() {
+  //   const now = new Date();
+  //   var seconds = (now.getTime() - this.lastUpdateDate.getTime()) / 1000;
+  //   return seconds >= 1;
+  // }
+
+  // componentDidUpdate() {
+  //   this.lastUpdateDate = new Date();
+  // }
   //Marker Functions
   onMarkerClick = (props, marker) =>
     this.setState({
@@ -151,7 +163,10 @@ class MapContainer extends Component {
       for (var b in args[a]) {
         distances.push({
           carId: args[a][b].carId,
-          distance: this.haversineDistance(user, args[a][b].currentLocation)
+          distance: MapFunctions.haversineDistance(
+            user,
+            args[a][b].currentLocation
+          )
         });
       }
     }
@@ -166,28 +181,6 @@ class MapContainer extends Component {
       }
     }
     return distances;
-  };
-
-  //DO NOT LEAVE IT LIKE THIS
-  haversineDistance = (mk1, mk2) => {
-    var R = 6371; // Radius of the Earth in miles
-    var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
-    var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
-    var difflat = rlat2 - rlat1; // Radian difference (latitudes)
-    var difflon = (mk2.Longitude - mk1.lng) * (Math.PI / 180); // Radian difference (longitudes)
-    var d =
-      2 *
-      R *
-      Math.asin(
-        Math.sqrt(
-          Math.sin(difflat / 2) * Math.sin(difflat / 2) +
-            Math.cos(rlat1) *
-              Math.cos(rlat2) *
-              Math.sin(difflon / 2) *
-              Math.sin(difflon / 2)
-        )
-      );
-    return d;
   };
 
   render() {
@@ -218,11 +211,9 @@ class MapContainer extends Component {
                 google={this.props.google}
                 zoom={15}
                 style={mapStyles}
-                onReady={this.setUserLocation}
                 initialCenter={this.state.user}
                 center={this.state.user}
               >
-                {this.setUserLocation()}
                 {this.displayVehicles()}
                 {this.displayUser()}
                 <InfoWindow
