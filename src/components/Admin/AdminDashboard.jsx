@@ -107,40 +107,26 @@ class AdminDashboard extends Component {
 
   addVehicle = () => {
     console.log("state before post", this.state);
-    const formatPost =
-      '{\
-      "model": "' +
-      this.state.model +
-      '",\
-      "rentalCostPerHour": ' +
-      this.state.rentalCostPerHour +
-      ',\
-      "numberOfSeats": ' +
-      this.state.numberOfSeats +
-      ',\
-      "year": ' +
-      this.state.year +
-      ',\
-      "carId": "",\
-      "returnDate": null,\
-      "make": "' +
-      this.state.make +
-      '",\
-      "currentLocation": {\
-          "Longitude": ' +
-      this.state.Longitude +
-      ',\
-          "Latitude": ' +
-      this.state.Latitude +
-      "\
-      }\
-  }";
+
+    const vehicleData = {
+      make: this.state.make,
+      model: this.state.model,
+      rentalCostPerHour: this.state.rentalCostPerHour,
+      numberOfSeats: this.state.numberOfSeats,
+      year: this.state.year,
+      returnDate: null,
+      retired: false,
+      currentLocation: {
+        Longitude: this.state.Longitude,
+        Latitude: this.state.Latitude
+      }
+    };
 
     axios({
       method: "post",
       url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
       headers: {},
-      data: formatPost
+      data: vehicleData
     });
   };
 
@@ -218,6 +204,7 @@ class AdminDashboard extends Component {
                       <br />
                       Add New
                       <form>
+                        Model:
                         <input
                           name="model"
                           placeholder="model"
@@ -225,6 +212,7 @@ class AdminDashboard extends Component {
                           onChange={e => this.change(e)}
                         />
                         <br />
+                        Make:
                         <input
                           name="make"
                           placeholder="make"
@@ -232,6 +220,7 @@ class AdminDashboard extends Component {
                           onChange={e => this.change(e)}
                         />
                         <br />
+                        Hourly Rate:
                         <input
                           name="cost"
                           placeholder="cost per hour"
@@ -241,6 +230,7 @@ class AdminDashboard extends Component {
                           }
                         />
                         <br />
+                        Number of Seats:
                         <input
                           name="seats"
                           placeholder="seats"
@@ -250,6 +240,7 @@ class AdminDashboard extends Component {
                           }
                         />
                         <br />
+                        Year:
                         <input
                           name="year"
                           placeholder="year"
@@ -257,6 +248,7 @@ class AdminDashboard extends Component {
                           onChange={e => this.change(e)}
                         />
                         <br />
+                        Longitude:
                         <input
                           name="longitude"
                           placeholder="Longitude"
@@ -266,6 +258,7 @@ class AdminDashboard extends Component {
                           }
                         />
                         <br />
+                        Latitude:
                         <input
                           name="latitude"
                           placeholder="Latitude"
