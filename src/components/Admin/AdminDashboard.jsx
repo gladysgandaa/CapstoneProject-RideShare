@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import SideList from "../Map/SideList";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 
@@ -138,7 +137,6 @@ class AdminDashboard extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    this.state.loggedIn = true;
     this.setState({
       loggedIn: true
     });
@@ -154,21 +152,14 @@ class AdminDashboard extends Component {
     const lat = latLng.lat();
     const lng = latLng.lng();
     console.log("position", lat);
-    this.setState({ Longitude: lng });
-    this.setState({ Latitude: lat });
+    this.setState({ Longitude: lng, Latitude: lat });
   };
 
   render() {
-    const useStyles = makeStyles(theme => ({
-      inline: {
-        display: "inline"
-      }
-    }));
-
-    if (this.state.callComplete == true) {
+    if (this.state.callComplete === true) {
       return (
         <div>
-          {this.state.loggedIn == false && (
+          {this.state.loggedIn === false && (
             <form>
               <br />
               <input
@@ -317,10 +308,6 @@ class AdminDashboard extends Component {
     }
   }
 }
-
-const style = {
-  margin: 15
-};
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"

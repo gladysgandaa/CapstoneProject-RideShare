@@ -60,9 +60,7 @@ export default function SignIn() {
   const {
     userHasAuthenticated,
     userHasRegistered,
-    currentSession,
     setCurrentSession,
-    isAdmin,
     setIsAdmin
   } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,12 +79,16 @@ export default function SignIn() {
     try {
       let session = await Auth.signIn(fields.email, fields.password);
       userHasAuthenticated(true);
+      console.log(session);
       setCurrentSession(session);
       setIsLoading(false);
-      if (session.idToken.payload["cognito:groups"][0] === "admin") {
+      if (
+        session.signInUserSession.idToken.payload["cognito:groups"][0] ===
+        "admin"
+      ) {
         setIsAdmin(true);
       }
-      history.replace(from, { userHasAuthenticated: true });
+      history.replace(from);
     } catch (e) {
       onError(e);
       setIsLoading(false);
