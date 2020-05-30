@@ -23,12 +23,9 @@ const App = () => {
 
   async function onLoad() {
     try {
-      let session = await Auth.currentSession();
-      setCurrentSession(session);
+      await Auth.currentSession();
+
       userHasAuthenticated(true);
-      if (session.idToken.payload["cognito:groups"][0] === "admin") {
-        setIsAdmin(true);
-      }
     } catch (e) {
       if (e !== "No current user") {
         onError(e);
@@ -60,7 +57,9 @@ const App = () => {
             isRegistered,
             userHasRegistered,
             isAdmin,
-            currentSession
+            setIsAdmin,
+            currentSession,
+            setCurrentSession
           }}
         >
           <NavigationMenu />

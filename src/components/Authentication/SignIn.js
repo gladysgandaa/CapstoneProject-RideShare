@@ -57,7 +57,14 @@ export default function SignIn() {
 
   let { from } = location.state || { from: { pathname: "/" } };
 
-  const { userHasAuthenticated, userHasRegistered } = useAppContext();
+  const {
+    userHasAuthenticated,
+    userHasRegistered,
+    currentSession,
+    setCurrentSession,
+    isAdmin,
+    setIsAdmin
+  } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -72,9 +79,13 @@ export default function SignIn() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await Auth.signIn(fields.email, fields.password);
+      let session = await Auth.signIn(fields.email, fields.password);
       userHasAuthenticated(true);
+      setCurrentSession(session);
       setIsLoading(false);
+      if (session.idToken.payload["cognito:groups"][0] === "admin") {
+        setIsAdmin(true);
+      }
       history.replace(from, { userHasAuthenticated: true });
     } catch (e) {
       onError(e);
