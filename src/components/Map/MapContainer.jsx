@@ -9,8 +9,6 @@ import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 import MapFunctions from "./MapFunctions";
 
-export const test = "asdf";
-
 class MapContainer extends Component {
   constructor(props) {
     super(props);
@@ -46,15 +44,6 @@ class MapContainer extends Component {
     this.setUserLocation();
   }
 
-  // shouldComponentUpdate() {
-  //   const now = new Date();
-  //   var seconds = (now.getTime() - this.lastUpdateDate.getTime()) / 1000;
-  //   return seconds >= 1;
-  // }
-
-  // componentDidUpdate() {
-  //   this.lastUpdateDate = new Date();
-  // }
   //Marker Functions
   onMarkerClick = (props, marker) =>
     this.setState({

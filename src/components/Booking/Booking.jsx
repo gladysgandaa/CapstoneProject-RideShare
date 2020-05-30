@@ -51,13 +51,13 @@ class BookingForm extends Component {
   };
 
   submitHandler = e => {
-    e.preventDefault();
-    console.log(this.state);
+    // e.preventDefault();
+    console.log("submitHandler", this.state);
     const postData = {
       body: JSON.stringify(this.state)
     };
 
-    console.log(postData);
+    console.log("postData", postData);
     axios(
       "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
       JSON.stringify(this.state)
