@@ -7,7 +7,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   inline: {
@@ -28,6 +28,25 @@ const Car = props => {
     numberOfSeats,
     returnDate
   } = props;
+
+  const handleBook = e => {
+    e.preventDefault();
+    history.push({
+      pathname: "/book",
+      state: {
+        make: make,
+        model: model,
+        carId: carId,
+        year: year,
+        returnDate: returnDate,
+        numberOfSeats: numberOfSeats,
+        currentLocation: currentLocation,
+        rentalCostPerHour: rentalCostPerHour
+      }
+    });
+  };
+
+  const history = useHistory();
 
   const available = returnDate ? { returnDate }.returnDate : "now";
   var trunc_dist = Math.trunc(distance);
@@ -51,25 +70,13 @@ const Car = props => {
               <br></br>
               Kilometres from you: {trunc_dist}
               <div>
-                <Link
-                  to={{
-                    pathname: "/book",
-                    state: {
-                      make: make,
-                      model: model,
-                      carId: carId,
-                      year: year,
-                      returnDate: returnDate,
-                      numberOfSeats: numberOfSeats,
-                      currentLocation: currentLocation,
-                      rentalCostPerHour: rentalCostPerHour
-                    }
-                  }}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleBook}
                 >
-                  <Button variant="contained" color="primary">
-                    Book
-                  </Button>
-                </Link>
+                  Book
+                </Button>
               </div>
             </Typography>
           }
