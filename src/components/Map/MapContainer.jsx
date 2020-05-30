@@ -190,6 +190,7 @@ class MapContainer extends Component {
   };
 
   render() {
+    console.log(this.props);
     if (!this.props.loaded) return <div>Loading...</div>;
     const navHeight = document.getElementById("nav").clientHeight;
     const containerStyle = {

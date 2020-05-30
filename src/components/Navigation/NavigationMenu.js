@@ -108,7 +108,13 @@ function ResponsiveDrawer(props) {
         <div>
           <Divider />
           <List disablePadding={true}>
-            <ListItem button component="a" href="/admin">
+            <ListItem
+              button
+              component="a"
+              onClick={() => {
+                history.push("/admin", { admin: isAdmin });
+              }}
+            >
               <ListItemText primary="Admin" />
             </ListItem>
           </List>
