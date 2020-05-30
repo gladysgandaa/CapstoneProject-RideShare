@@ -43,7 +43,7 @@ const App = () => {
     });
   };
 
-  // setUserLocation();
+  setUserLocation();
 
   async function handleLogout() {
     await Auth.signOut();
