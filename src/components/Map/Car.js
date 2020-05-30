@@ -29,6 +29,8 @@ const Car = props => {
     returnDate
   } = props;
 
+  const history = useHistory();
+
   const handleBook = e => {
     e.preventDefault();
     history.push({
@@ -45,8 +47,6 @@ const Car = props => {
       }
     });
   };
-
-  const history = useHistory();
 
   const available = returnDate ? { returnDate }.returnDate : "now";
   var trunc_dist = Math.trunc(distance);
