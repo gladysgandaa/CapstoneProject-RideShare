@@ -58,7 +58,7 @@ function ResponsiveDrawer(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated, userHasAuthenticated } = useAppContext();
+  const { isAuthenticated, userHasAuthenticated, isAdmin } = useAppContext();
   const history = useHistory();
 
   async function handleLogout() {
@@ -104,12 +104,16 @@ function ResponsiveDrawer(props) {
           </>
         )}
       </List>
-      <Divider />
-      <List disablePadding={true}>
-        <ListItem button component="a" href="/admin">
-          <ListItemText primary="Admin" />
-        </ListItem>
-      </List>
+      {isAdmin && (
+        <div>
+          <Divider />
+          <List disablePadding={true}>
+            <ListItem button component="a" href="/admin">
+              <ListItemText primary="Admin" />
+            </ListItem>
+          </List>
+        </div>
+      )}
     </div>
   );
 
