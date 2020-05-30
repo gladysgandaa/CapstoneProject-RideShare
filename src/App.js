@@ -12,7 +12,10 @@ import Routes from "./Routes";
 const App = () => {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [user, setUser] = useState({ Latitude: -8.0, Longitude: -190.0 });
+  const [isRegistered, userHasRegistered] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const [currentSession, setCurrentSession] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     onLoad();
@@ -20,8 +23,12 @@ const App = () => {
 
   async function onLoad() {
     try {
-      await Auth.currentSession();
+      let session = await Auth.currentSession();
+      setCurrentSession(session);
       userHasAuthenticated(true);
+      if (session.idToken.payload["cognito:groups"][0] === "admin") {
+        setIsAdmin(true);
+      }
     } catch (e) {
       if (e !== "No current user") {
         onError(e);
@@ -49,7 +56,11 @@ const App = () => {
         <AppContext.Provider
           value={{
             isAuthenticated,
-            userHasAuthenticated
+            userHasAuthenticated,
+            isRegistered,
+            userHasRegistered,
+            isAdmin,
+            currentSession
           }}
         >
           <NavigationMenu />

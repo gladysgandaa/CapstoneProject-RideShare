@@ -80,7 +80,7 @@ export default function SignUp() {
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
   const [validPassword, setValidPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const { userHasAuthenticated } = useAppContext();
+  const { userHasAuthenticated, userHasRegistered } = useAppContext();
   const history = useHistory();
 
   function validateForm() {
@@ -325,7 +325,7 @@ export default function SignUp() {
             </LoaderButton>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link href="/signin" variant="body2">
+                <Link onClick={e => userHasRegistered(true)} variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

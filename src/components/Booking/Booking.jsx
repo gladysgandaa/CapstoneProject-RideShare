@@ -1,55 +1,73 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
-import ErrorDialog from "../Dialog/ErrorDialog";
+import { useHistory } from "react-router-dom";
+
+import MaterialDialog from "../Dialog/Dialog";
 import { useAppContext } from "../../libs/contextLib";
+import { useFormFields } from "../../libs/hooksLib";
+import SignIn from "../Authentication/SignIn";
+import SignUp from "../Authentication/SignUp";
 
 const BookingForm = props => {
-  const { userHasAuthenticated } = useAppContext();
-  const [carId, setCarId] = useState(props.location.state.carId);
-  const [make, setMake] = useState(props.location.state.make);
-  const [model, setModel] = useState(props.location.state.model);
-  const [currentLocation, setCurrentLocation] = useState(
-    props.location.state.currentLocation
-  );
-  const [rentalCostPerHour, setRentalCostPerHour] = useState(
-    props.location.state.rentalCostPerHour
-  );
-  const [returnDate, setReturnDate] = useState(props.location.state.returnDate);
-  const [numberOfSeats, setNumberOfSeats] = useState(
-    props.location.state.numberOfSeats
-  );
-  const [year, setYear] = useState(props.location.state.year);
-  const [retired, setRetired] = useState(props.location.state.retired);
+  const {
+    carId,
+    make,
+    model,
+    numberOfSeats,
+    year,
+    rentalCostPerHour,
+    currentLocation
+  } = props.location.state;
+  const { userHasAuthenticated, isRegistered } = useAppContext();
+
+  const [returnDate, setReturnDate] = useState("");
+
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
   const defaultDate = localISOTime.toISOString().slice(0, -5);
-  const [date, setDate] = useState(defaultDate);
-  const [duration, setDuration] = useState(1);
+  const defaultDuration = 1;
+  const defaultUserId = 1;
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const history = useHistory();
 
-  const changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
-    console.log("e.target.value", e.target.value);
+  const [fields, handleFieldChange] = useFormFields({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    date: defaultDate,
+    duration: defaultDuration
+  });
+
+  const handleOpen = e => {
+    setOpen(true);
+  };
+
+  const handleClose = e => {
+    setOpen(false);
   };
 
   const submitHandler = e => {
     e.preventDefault();
-    console.log(this.state);
-    const postData = {
-      body: JSON.stringify(this.state)
+    const bookingData = {
+      carId: carId,
+      duration: fields.duration,
+      date: fields.date,
+      pickUpLocation: currentLocation,
+      userId: defaultUserId
     };
 
-    console.log(postData);
+    console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
     axios(
       "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-      JSON.stringify(this.state)
+      bookingData
     )
       .then(response => {
         console.log(`Response => ${response}`);
@@ -57,31 +75,30 @@ const BookingForm = props => {
       .catch(error => {
         console.log(`Error => ${error}`);
         if (error.response.status === 500) {
-          this.setState({
-            errorMessage: `Selected time for the ${this.state.make} ${this.state.model} is unavailable. Please select another time.`,
-            open: true
-          });
+          setErrorMessage(
+            `Selected time for the ${make} ${model} is unavailable. Please select another time.`
+          );
+          handleOpen();
         }
       });
   };
 
   const addReturnDate = () => {
-    const carId = this.state.carId;
-    const duration = this.state.duration;
-    var dateObj = new Date(this.state.date);
-    dateObj.setHours(dateObj.getHours() + duration);
+    var dateObj = new Date(fields.date);
+    dateObj.setHours(dateObj.getHours() + fields.duration);
+    setReturnDate(dateObj);
 
     const carData = {
-      carId: this.state.carId,
-      model: this.state.model,
-      make: this.state.make,
-      rentalCostPerHour: this.state.rentalCostPerHour,
-      returnDate: dateObj,
-      numberOfSeats: this.state.numberOfSeats,
-      year: this.state.year,
+      carId: carId,
+      model: model,
+      make: make,
+      rentalCostPerHour: rentalCostPerHour,
+      returnDate: returnDate,
+      numberOfSeats: numberOfSeats,
+      year: year,
       currentLocation: {
-        Latitude: this.state.currentLocation.Latitude,
-        Longitude: this.state.currentLocation.Longitude
+        Latitude: currentLocation.Latitude,
+        Longitude: currentLocation.Longitude
       }
     };
 
@@ -90,36 +107,30 @@ const BookingForm = props => {
       method: "put",
       url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
       headers: {},
-      data: JSON.stringify(carData)
+      data: carData
     });
   };
 
   const toPayment = () => {
     let path = `/payment`;
-    this.props.history.push({
+    history.push({
       pathname: path,
       state: {
-        carId: this.state.carId,
-        rentalCostPerHour: this.state.rentalCostPerHour,
-        duration: this.state.duration
+        carId: carId,
+        rentalCostPerHour: rentalCostPerHour,
+        duration: fields.duration
       }
     });
-    this.addReturnDate();
-  };
-
-  const handleClose = () => {
-    this.setState({
-      errorMessage: "",
-      open: false
-    });
+    addReturnDate();
   };
 
   const formSpacing = {
     margin: 35
   };
+
   return (
     <div style={formSpacing}>
-      <form onSubmit={this.submitHandler}>
+      <form onSubmit={submitHandler}>
         <Typography variant="h4" gutterBottom>
           Book a Car
         </Typography>
@@ -131,7 +142,8 @@ const BookingForm = props => {
               name="firstName"
               label="First name"
               fullWidth
-              autoComplete="fname"
+              autoComplete="firstName"
+              onChange={handleFieldChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -141,7 +153,8 @@ const BookingForm = props => {
               name="lastName"
               label="Last name"
               fullWidth
-              autoComplete="lname"
+              autoComplete="lastName"
+              onChange={handleFieldChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -152,6 +165,7 @@ const BookingForm = props => {
               label="Mobile"
               fullWidth
               autoComplete="phone"
+              onChange={handleFieldChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -162,26 +176,29 @@ const BookingForm = props => {
               label="Email ID"
               fullWidth
               autoComplete="email"
+              onChange={handleFieldChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              disabled
               id="selected-car"
               label="Selected Car"
               fullWidth
               defaultValue={`${make} ${model}`}
+              InputProps={{
+                readOnly: true
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="datetime-local"
+              id="date"
               label="Select Date and Time"
               name="date"
               type="datetime-local"
               fullWidth
-              value={date}
-              onChange={this.changeHandler}
+              value={fields.date}
+              onChange={handleFieldChange}
               InputLabelProps={{
                 shrink: true
               }}
@@ -189,12 +206,12 @@ const BookingForm = props => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              id="select"
+              id="duration"
               name="duration"
               label="Duration (hours)"
               fullWidth
-              value={duration}
-              onChange={this.changeHandler}
+              value={fields.duration}
+              onChange={handleFieldChange}
               select
             >
               <MenuItem value={1}>1</MenuItem>
@@ -212,29 +229,56 @@ const BookingForm = props => {
               type="text"
               fullWidth
               value={`A$${rentalCostPerHour}`}
-              disabled
+              InputProps={{
+                readOnly: true
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={2}>
-            {this.state.errorMessage && (
-              <ErrorDialog
-                errorMessage={this.state.errorMessage}
-                open={this.state.open}
-                handleClose={this.handleClose}
+            {errorMessage && (
+              <MaterialDialog
+                title="Sorry"
+                content={errorMessage}
+                open={open}
+                handleClose={handleClose}
               />
             )}
           </Grid>
           <Grid container direction="row" justify="center" alignItems="center">
-            <Grid item xs={12} sm={2}>
-              <Button
-                type="submit"
-                variant="outlined"
-                onClick={this.toPayment}
-                fullWidth
-              >
-                Book
-              </Button>
-            </Grid>
+            {userHasAuthenticated === true ? (
+              <Grid item xs={12} sm={2}>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  onClick={toPayment}
+                  fullWidth
+                >
+                  Book
+                </Button>
+              </Grid>
+            ) : (
+              <div>
+                <h4>Please register or login to confirm booking.</h4>
+                {isRegistered === true ? (
+                  <Button onClick={handleOpen}>Login</Button>
+                ) : (
+                  <Button onClick={handleOpen}>Register</Button>
+                )}
+              </div>
+            )}
+            {isRegistered === true ? (
+              <MaterialDialog
+                content={<SignIn />}
+                open={open}
+                handleClose={handleClose}
+              />
+            ) : (
+              <MaterialDialog
+                content={<SignUp />}
+                open={open}
+                handleClose={handleClose}
+              />
+            )}
           </Grid>
         </Grid>
       </form>

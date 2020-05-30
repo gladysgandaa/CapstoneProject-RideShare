@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useAppContext } from "../../libs/contextLib";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import LoaderButton from "../LoaderButton";
 import { onError } from "../../libs/errorLib";
 import { useFormFields } from "../../libs/hooksLib";
@@ -53,7 +53,11 @@ const useStyles = makeStyles(theme => ({
 export default function SignIn() {
   const classes = useStyles();
   const history = useHistory();
-  const { userHasAuthenticated } = useAppContext();
+  let location = useLocation();
+
+  let { from } = location.state || { from: { pathname: "/" } };
+
+  const { userHasAuthenticated, userHasRegistered } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -70,7 +74,8 @@ export default function SignIn() {
     try {
       await Auth.signIn(fields.email, fields.password);
       userHasAuthenticated(true);
-      history.push("/");
+      setIsLoading(false);
+      history.replace(from, { userHasAuthenticated: true });
     } catch (e) {
       onError(e);
       setIsLoading(false);
@@ -115,9 +120,7 @@ export default function SignIn() {
             onChange={handleFieldChange}
           />
           <LoaderButton
-            block
             type="submit"
-            bsSize="large"
             isLoading={isLoading}
             disabled={!validateForm()}
           >
@@ -130,7 +133,7 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" variant="body2">
+              <Link variant="body2" onClick={e => userHasRegistered(false)}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
