@@ -66,7 +66,10 @@ const BookingForm = props => {
       carId: carId,
       duration: duration,
       date: fields.date,
-      pickUpLocation: currentLocation,
+      pickUpLocation: {
+        Latitude: currentLocation.Latitude,
+        Longitude: currentLocation.Longitude
+      },
       userId: userId || defaultUserId
     };
 
