@@ -24,12 +24,10 @@ const BookingForm = props => {
     rentalCostPerHour,
     currentLocation
   } = location.state;
-  const { isAuthenticated, isRegistered, currentSession } = useAppContext();
+  const { isAuthenticated, isRegistered, currentUser } = useAppContext();
 
   const [returnDate, setReturnDate] = useState("");
-  console.log(`Session:`);
-  console.log(currentSession);
-  const userId = currentSession.idToken.payload["cognito:username"];
+  const userId = currentUser.id;
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);

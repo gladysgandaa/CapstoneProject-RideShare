@@ -15,6 +15,7 @@ const App = () => {
   const [isRegistered, userHasRegistered] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [currentSession, setCurrentSession] = useState("");
+  const [currentUser, setCurrentUser] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,8 @@ const App = () => {
   async function onLoad() {
     try {
       const session = await Auth.currentSession();
+      const userInfo = await Auth.currentUserInfo();
+      setCurrentUser(userInfo);
       setCurrentSession(session);
       userHasAuthenticated(true);
     } catch (e) {
@@ -58,7 +61,9 @@ const App = () => {
             isAdmin,
             setIsAdmin,
             currentSession,
-            setCurrentSession
+            setCurrentSession,
+            currentUser,
+            setCurrentUser
           }}
         >
           <NavigationMenu />
