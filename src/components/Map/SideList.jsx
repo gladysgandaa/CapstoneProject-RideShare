@@ -12,6 +12,7 @@ const useStyles = makeStyles({
 });
 
 const SideList = ({ cars, account }) => {
+  console.log("logging from sidelist");
   const classes = useStyles();
   return (
     <List className={classes.root}>

@@ -51,17 +51,23 @@ class BookingForm extends Component {
   };
 
   submitHandler = e => {
-    e.preventDefault();
-    console.log(this.state);
-    const postData = {
-      body: JSON.stringify(this.state)
+    console.log("submitHandler", this.state);
+    const bookingData = {
+      userId: null,
+      carId: this.state.carId,
+      date: this.state.date,
+      duration: this.state.duration,
+      pickUpLocation: {
+        Latitude: this.state.currentLocation.Latitude,
+        Longitude: this.state.currentLocation.Longitude
+      }
     };
 
-    console.log(postData);
-    axios(
-      "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-      JSON.stringify(this.state)
-    )
+    axios
+      .post(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+        bookingData
+      )
       .then(response => {
         console.log(`Response => ${response}`);
       })
@@ -74,6 +80,7 @@ class BookingForm extends Component {
           });
         }
       });
+    this.toPayment();
   };
 
   addReturnDate = () => {
@@ -252,7 +259,7 @@ class BookingForm extends Component {
               )}
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Button type="submit" onClick={this.toPayment}>
+              <Button type="submit" onClick={this.submitHandler}>
                 Book
               </Button>
             </Grid>

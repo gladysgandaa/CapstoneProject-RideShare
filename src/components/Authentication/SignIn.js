@@ -17,6 +17,7 @@ import { useHistory } from "react-router-dom";
 import LoaderButton from "../LoaderButton";
 import { onError } from "../../libs/errorLib";
 import { useFormFields } from "../../libs/hooksLib";
+import { withStyles } from "@material-ui/core/styles";
 
 function Copyright() {
   return (
@@ -51,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignIn() {
+function SignIn() {
   const classes = useStyles();
   const history = useHistory();
   const { userHasAuthenticated } = useAppContext();
@@ -148,3 +149,5 @@ export default function SignIn() {
     </Container>
   );
 }
+
+export default withStyles({})(SignIn);
