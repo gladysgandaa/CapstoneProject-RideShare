@@ -29,6 +29,13 @@ const App = () => {
       setCurrentUser(userInfo);
       setCurrentSession(session);
       userHasAuthenticated(true);
+      console.log(session);
+      if (
+        session.idToken.payload.hasOwnProperty("cognito:groups") &&
+        session.idToken.payload["cognito:groups"][0] === "admin"
+      ) {
+        setIsAdmin(true);
+      }
     } catch (e) {
       if (e !== "No current user") {
         onError(e);

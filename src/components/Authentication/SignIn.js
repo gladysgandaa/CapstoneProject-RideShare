@@ -43,14 +43,14 @@ const useStyles = makeStyles(theme => ({
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(3)
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
+    margin: theme.spacing(2, 0, 2)
   }
 }));
 
-export default function SignIn() {
+export default function SignIn(props) {
   const classes = useStyles();
   const history = useHistory();
   let location = useLocation();
@@ -59,7 +59,6 @@ export default function SignIn() {
 
   const {
     userHasAuthenticated,
-    userHasRegistered,
     setCurrentSession,
     setIsAdmin
   } = useAppContext();
@@ -109,47 +108,54 @@ export default function SignIn() {
           Sign In
         </Typography>
         <form onSubmit={handleSubmit} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            value={fields.email}
-            onChange={handleFieldChange}
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            value={fields.password}
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={handleFieldChange}
-          />
+          <Grid container>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={fields.email}
+                onChange={handleFieldChange}
+                autoComplete="email"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                value={fields.password}
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={handleFieldChange}
+              />
+            </Grid>
+          </Grid>
           <LoaderButton
             type="submit"
+            fullWidth
+            className={classes.submit}
             isLoading={isLoading}
             disabled={!validateForm()}
           >
             Login
           </LoaderButton>
           <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link variant="body2" onClick={e => userHasRegistered(false)}>
+            <Grid item xs={12}>
+              <Link
+                variant="body2"
+                component="button"
+                onClick={props.handleClick}
+              >
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

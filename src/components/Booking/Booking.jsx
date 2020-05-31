@@ -24,9 +24,15 @@ const BookingForm = props => {
     rentalCostPerHour,
     currentLocation
   } = location.state;
-  const { isAuthenticated, isRegistered, currentUser } = useAppContext();
+  const {
+    isAuthenticated,
+    isRegistered,
+    currentUser,
+    userHasRegistered
+  } = useAppContext();
 
   const [returnDate, setReturnDate] = useState("");
+  console.log(currentUser);
   const userId = currentUser.id;
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
@@ -272,13 +278,15 @@ const BookingForm = props => {
             )}
             {isRegistered === true ? (
               <MaterialDialog
-                content={<SignIn />}
+                content={
+                  <SignIn handleClick={() => userHasRegistered(false)} />
+                }
                 open={open}
                 handleClose={handleClose}
               />
             ) : (
               <MaterialDialog
-                content={<SignUp />}
+                content={<SignUp handleClick={() => userHasRegistered(true)} />}
                 open={open}
                 handleClose={handleClose}
               />
