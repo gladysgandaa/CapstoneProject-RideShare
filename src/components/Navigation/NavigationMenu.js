@@ -58,12 +58,18 @@ function ResponsiveDrawer(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated, userHasAuthenticated, isAdmin } = useAppContext();
+  const {
+    isAuthenticated,
+    userHasAuthenticated,
+    isAdmin,
+    setIsAdmin
+  } = useAppContext();
   const history = useHistory();
 
   async function handleLogout() {
     await Auth.signOut();
     userHasAuthenticated(false);
+    setIsAdmin(false);
     history.push("/");
   }
 
