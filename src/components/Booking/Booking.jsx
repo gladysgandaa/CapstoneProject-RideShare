@@ -27,14 +27,16 @@ const BookingForm = props => {
   const { isAuthenticated, isRegistered, currentSession } = useAppContext();
 
   const [returnDate, setReturnDate] = useState("");
-  const userId = currentSession.username;
+  console.log(`Session:`);
+  console.log(currentSession);
+  const userId = currentSession.idToken.payload["cognito:username"];
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
   const defaultDate = localISOTime.toISOString().slice(0, -5);
-  const defaultDuration = 1;
-  // const defaultUserId = 1;
+  const defaultUserId = 1;
   const [open, setOpen] = useState(false);
+  const [duration, setDuration] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const history = useHistory();
 
@@ -43,9 +45,12 @@ const BookingForm = props => {
     lastName: "",
     phone: "",
     email: "",
-    date: defaultDate,
-    duration: defaultDuration
+    date: defaultDate
   });
+
+  const handleChange = event => {
+    setDuration(event.target.value);
+  };
 
   const handleOpen = e => {
     setOpen(true);
@@ -59,10 +64,10 @@ const BookingForm = props => {
     e.preventDefault();
     const bookingData = {
       carId: carId,
-      duration: fields.duration,
+      duration: duration,
       date: fields.date,
       pickUpLocation: currentLocation,
-      userId: userId
+      userId: userId || defaultUserId
     };
 
     console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
@@ -72,6 +77,7 @@ const BookingForm = props => {
     )
       .then(response => {
         console.log(`Response => ${response}`);
+        toPayment();
       })
       .catch(error => {
         console.log(`Error => ${error}`);
@@ -94,13 +100,14 @@ const BookingForm = props => {
       model: model,
       make: make,
       rentalCostPerHour: rentalCostPerHour,
-      returnDate: returnDate,
+      returnDate: returnDate || null,
       numberOfSeats: numberOfSeats,
       year: year,
       currentLocation: {
         Latitude: currentLocation.Latitude,
         Longitude: currentLocation.Longitude
-      }
+      },
+      retired: false
     };
 
     console.log("put contents", JSON.stringify(carData));
@@ -211,8 +218,8 @@ const BookingForm = props => {
               name="duration"
               label="Duration (hours)"
               fullWidth
-              value={fields.duration}
-              onChange={handleFieldChange}
+              value={duration}
+              onChange={handleChange}
               select
             >
               <MenuItem value={1}>1</MenuItem>
@@ -248,12 +255,7 @@ const BookingForm = props => {
           <Grid container direction="row" justify="center" alignItems="center">
             {isAuthenticated === true ? (
               <Grid item xs={12} sm={2}>
-                <Button
-                  type="submit"
-                  variant="outlined"
-                  onClick={toPayment}
-                  fullWidth
-                >
+                <Button type="submit" variant="outlined" fullWidth>
                   Book
                 </Button>
               </Grid>

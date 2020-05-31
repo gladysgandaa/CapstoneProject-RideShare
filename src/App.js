@@ -23,7 +23,8 @@ const App = () => {
 
   async function onLoad() {
     try {
-      await Auth.currentSession();
+      const session = await Auth.currentSession();
+      setCurrentSession(session);
       userHasAuthenticated(true);
     } catch (e) {
       if (e !== "No current user") {
