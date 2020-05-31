@@ -15,12 +15,12 @@ const SideList = ({ cars, account }) => {
   console.log("logging from sidelist");
   const classes = useStyles();
   return (
-    <List className={classes.root}>
+    <List className={classes.root} disablePadding={true}>
       {!cars.length ? (
         <h1>No Cars Found.</h1>
       ) : (
         cars.map(car => {
-          if (account == "admin") {
+          if (account === "admin") {
             return (
               <AdminCar
                 key={car.carId}

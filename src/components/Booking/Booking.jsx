@@ -1,272 +1,290 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
-import ErrorDialog from "../Dialog/ErrorDialog";
+import { useHistory } from "react-router-dom";
 
-class BookingForm extends Component {
-  constructor(props) {
-    super(props);
-    this.toPayment = this.toPayment.bind(this);
-    const tzoffset = new Date().getTimezoneOffset() * 60000;
-    const localISOTime = new Date(Date.now() - tzoffset);
-    localISOTime.setSeconds(0);
-    const defaultDate = localISOTime.toISOString().slice(0, -5);
+import MaterialDialog from "../Dialog/Dialog";
+import { useAppContext } from "../../libs/contextLib";
+import { useFormFields } from "../../libs/hooksLib";
+import SignIn from "../Authentication/SignIn";
+import SignUp from "../Authentication/SignUp";
 
-    const {
-      carId,
-      make,
-      model,
-      currentLocation,
-      rentalCostPerHour,
-      returnDate,
-      numberOfSeats,
-      year,
-      retired
-    } = props.location.state;
+const BookingForm = props => {
+  const {
+    carId,
+    make,
+    model,
+    numberOfSeats,
+    year,
+    rentalCostPerHour,
+    currentLocation
+  } = props.location.state;
+  const { userHasAuthenticated, isRegistered } = useAppContext();
 
-    this.state = {
-      carId: carId,
-      make: make,
-      model: model,
-      currentLocation: currentLocation,
-      rentalCostPerHour: rentalCostPerHour,
-      date: defaultDate,
-      returnDate: returnDate,
-      numberOfSeats: numberOfSeats,
-      year: year,
-      retired: retired,
-      duration: 1,
-      errMessage: "",
-      open: false
-    };
-  }
+  const [returnDate, setReturnDate] = useState("");
 
-  changeHandler = e => {
-    this.setState({ [e.target.name]: e.target.value });
-    console.log("e.target.value", e.target.value);
+  const tzoffset = new Date().getTimezoneOffset() * 60000;
+  const localISOTime = new Date(Date.now() - tzoffset);
+  localISOTime.setSeconds(0);
+  const defaultDate = localISOTime.toISOString().slice(0, -5);
+  const defaultDuration = 1;
+  const defaultUserId = 1;
+  const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const history = useHistory();
+
+  const [fields, handleFieldChange] = useFormFields({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    date: defaultDate,
+    duration: defaultDuration
+  });
+
+  const handleOpen = e => {
+    setOpen(true);
   };
 
-  submitHandler = e => {
-    console.log("submitHandler", this.state);
+  const handleClose = e => {
+    setOpen(false);
+  };
+
+  const submitHandler = e => {
+    e.preventDefault();
     const bookingData = {
-      userId: null,
-      carId: this.state.carId,
-      date: this.state.date,
-      duration: this.state.duration,
-      pickUpLocation: {
-        Latitude: this.state.currentLocation.Latitude,
-        Longitude: this.state.currentLocation.Longitude
-      }
+      carId: carId,
+      duration: fields.duration,
+      date: fields.date,
+      pickUpLocation: currentLocation,
+      userId: defaultUserId
     };
 
-    axios
-      .post(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-        bookingData
-      )
+    console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
+    axios(
+      "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+      bookingData
+    )
       .then(response => {
         console.log(`Response => ${response}`);
       })
       .catch(error => {
         console.log(`Error => ${error}`);
         if (error.response.status === 500) {
-          this.setState({
-            errorMessage: `Selected time for the ${this.state.make} ${this.state.model} is unavailable. Please select another time.`,
-            open: true
-          });
+          setErrorMessage(
+            `Selected time for the ${make} ${model} is unavailable. Please select another time.`
+          );
+          handleOpen();
         }
       });
     this.toPayment();
   };
 
-  addReturnDate = () => {
-    const carId = this.state.carId;
-    const duration = this.state.duration;
-    var dateObj = new Date(this.state.date);
-    dateObj.setHours(dateObj.getHours() + duration);
+  const addReturnDate = () => {
+    var dateObj = new Date(fields.date);
+    dateObj.setHours(dateObj.getHours() + fields.duration);
+    setReturnDate(dateObj);
 
-    const formatPost =
-      '{\
-      "model": "' +
-      this.state.model +
-      '",\
-      "carId": "' +
-      this.state.carId +
-      '",\
-      "rentalCostPerHour": ' +
-      this.state.rentalCostPerHour +
-      ',\
-      "numberOfSeats": ' +
-      this.state.numberOfSeats +
-      ',\
-      "year": ' +
-      this.state.year +
-      ',\
-      "make": "' +
-      this.state.make +
-      '",\
-      "returnDate": "' +
-      dateObj +
-      '",\
-      "currentLocation": {\
-          "Longitude": ' +
-      this.state.currentLocation.Longitude +
-      ',\
-          "Latitude": ' +
-      this.state.currentLocation.Latitude +
-      "\
-      }\
-  }";
-    console.log("put contents", formatPost);
+    const carData = {
+      carId: carId,
+      model: model,
+      make: make,
+      rentalCostPerHour: rentalCostPerHour,
+      returnDate: returnDate,
+      numberOfSeats: numberOfSeats,
+      year: year,
+      currentLocation: {
+        Latitude: currentLocation.Latitude,
+        Longitude: currentLocation.Longitude
+      }
+    };
+
+    console.log("put contents", JSON.stringify(carData));
     axios({
       method: "put",
-      url:
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
-        carId,
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
       headers: {},
-      data: formatPost
+      data: carData
     });
   };
 
-  toPayment = () => {
+  const toPayment = () => {
     let path = `/payment`;
-    this.props.history.push({
+    history.push({
       pathname: path,
       state: {
-        carId: this.state.carId,
-        rentalCostPerHour: this.state.rentalCostPerHour,
-        duration: this.state.duration,
-        returnDate: 88888
+        carId: carId,
+        rentalCostPerHour: rentalCostPerHour,
+        duration: fields.duration
       }
     });
-    this.addReturnDate();
+    addReturnDate();
   };
 
-  handleClose = () => {
-    this.setState({
-      errorMessage: "",
-      open: false
-    });
+  const formSpacing = {
+    margin: 35
   };
 
-  render() {
-    const {
-      make,
-      model,
-      date,
-      duration,
-      rentalCostPerHour,
-      returnDate
-    } = this.state;
-    return (
-      <div>
-        <form onSubmit={this.submitHandler}>
-          <Typography variant="h4" gutterBottom>
-            Book a Car
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="firstName"
-                name="firstName"
-                label="First name"
-                fullWidth
-                autoComplete="fname"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="lastName"
-                name="lastName"
-                label="Last name"
-                fullWidth
-                autoComplete="lname"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="phone"
-                name="phone"
-                label="Mobile"
-                fullWidth
-                autoComplete="phone"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                id="email"
-                name="email"
-                label="Email ID"
-                fullWidth
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                disabled
-                id="selected-car"
-                label="Selected Car"
-                fullWidth
-                defaultValue={`${make} ${model}`}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="datetime-local"
-                label="Select Date and Time"
-                name="date"
-                type="datetime-local"
-                fullWidth
-                value={date}
-                onChange={this.changeHandler}
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="select"
-                name="duration"
-                label="Duration (hrs)"
-                fullWidth
-                value={duration}
-                onChange={this.changeHandler}
-                select
-              >
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={6}>6</MenuItem>
-                <MenuItem value={12}>12</MenuItem>
-                <MenuItem value={24}>24</MenuItem>
-              </TextField>
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              {this.state.errorMessage && (
-                <ErrorDialog
-                  errorMessage={this.state.errorMessage}
-                  open={this.state.open}
-                  handleClose={this.handleClose}
-                />
-              )}
-            </Grid>
-            <Grid item xs={12} sm={2}>
-              <Button type="submit" onClick={this.submitHandler}>
-                Book
-              </Button>
-            </Grid>
+  return (
+    <div style={formSpacing}>
+      <form onSubmit={submitHandler}>
+        <Typography variant="h4" gutterBottom>
+          Book a Car
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="firstName"
+              name="firstName"
+              label="First name"
+              fullWidth
+              autoComplete="firstName"
+              onChange={handleFieldChange}
+            />
           </Grid>
-        </form>
-      </div>
-    );
-  }
-}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="lastName"
+              name="lastName"
+              label="Last name"
+              fullWidth
+              autoComplete="lastName"
+              onChange={handleFieldChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="phone"
+              name="phone"
+              label="Mobile"
+              fullWidth
+              autoComplete="phone"
+              onChange={handleFieldChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="email"
+              name="email"
+              label="Email ID"
+              fullWidth
+              autoComplete="email"
+              onChange={handleFieldChange}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="selected-car"
+              label="Selected Car"
+              fullWidth
+              defaultValue={`${make} ${model}`}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="date"
+              label="Select Date and Time"
+              name="date"
+              type="datetime-local"
+              fullWidth
+              value={fields.date}
+              onChange={handleFieldChange}
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="duration"
+              name="duration"
+              label="Duration (hours)"
+              fullWidth
+              value={fields.duration}
+              onChange={handleFieldChange}
+              select
+            >
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={3}>3</MenuItem>
+              <MenuItem value={6}>6</MenuItem>
+              <MenuItem value={12}>12</MenuItem>
+              <MenuItem value={24}>24</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="rate"
+              label="Hourly Rate:"
+              name="rate"
+              type="text"
+              fullWidth
+              value={`A$${rentalCostPerHour}`}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            {errorMessage && (
+              <MaterialDialog
+                title="Sorry"
+                content={errorMessage}
+                open={open}
+                handleClose={handleClose}
+              />
+            )}
+          </Grid>
+          <Grid container direction="row" justify="center" alignItems="center">
+            {userHasAuthenticated === true ? (
+              <Grid item xs={12} sm={2}>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  onClick={toPayment}
+                  fullWidth
+                >
+                  Book
+                </Button>
+              </Grid>
+            ) : (
+              <div>
+                <h4>Please register or login to confirm booking.</h4>
+                {isRegistered === true ? (
+                  <Button onClick={handleOpen}>Login</Button>
+                ) : (
+                  <Button onClick={handleOpen}>Register</Button>
+                )}
+              </div>
+            )}
+            {isRegistered === true ? (
+              <MaterialDialog
+                content={<SignIn />}
+                open={open}
+                handleClose={handleClose}
+              />
+            ) : (
+              <MaterialDialog
+                content={<SignUp />}
+                open={open}
+                handleClose={handleClose}
+              />
+            )}
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+  );
+};
+
 export default BookingForm;

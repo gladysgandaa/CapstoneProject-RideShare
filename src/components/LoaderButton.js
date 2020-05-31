@@ -23,6 +23,8 @@ export default function LoaderButton({
   return (
     <Button
       fullWidth
+      variant="contained"
+      color="primary"
       className={`LoaderButton ${className} ${classes.root}`}
       startIcon={isLoading && <CircularProgress size={8} />}
       disabled={disabled || isLoading}

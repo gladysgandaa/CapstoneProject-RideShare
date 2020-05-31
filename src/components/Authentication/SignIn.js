@@ -3,8 +3,7 @@ import { Auth } from "aws-amplify";
 import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -13,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useAppContext } from "../../libs/contextLib";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import LoaderButton from "../LoaderButton";
 import { onError } from "../../libs/errorLib";
 import { useFormFields } from "../../libs/hooksLib";
@@ -55,7 +54,16 @@ const useStyles = makeStyles(theme => ({
 function SignIn() {
   const classes = useStyles();
   const history = useHistory();
-  const { userHasAuthenticated } = useAppContext();
+  let location = useLocation();
+
+  let { from } = location.state || { from: { pathname: "/" } };
+
+  const {
+    userHasAuthenticated,
+    userHasRegistered,
+    setCurrentSession,
+    setIsAdmin
+  } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
     email: "",
@@ -68,11 +76,20 @@ function SignIn() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-
+    setIsLoading(true);
     try {
-      await Auth.signIn(fields.email, fields.password);
+      let session = await Auth.signIn(fields.email, fields.password);
       userHasAuthenticated(true);
-      history.push("/");
+      console.log(session);
+      setCurrentSession(session);
+      setIsLoading(false);
+      if (
+        session.signInUserSession.idToken.payload["cognito:groups"][0] ===
+        "admin"
+      ) {
+        setIsAdmin(true);
+      }
+      history.replace(from);
     } catch (e) {
       onError(e);
       setIsLoading(false);
@@ -116,14 +133,8 @@ function SignIn() {
             autoComplete="current-password"
             onChange={handleFieldChange}
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
           <LoaderButton
-            block
             type="submit"
-            bsSize="large"
             isLoading={isLoading}
             disabled={!validateForm()}
           >
@@ -136,7 +147,7 @@ function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/signup" variant="body2">
+              <Link variant="body2" onClick={e => userHasRegistered(false)}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

@@ -1,11 +1,11 @@
 /* global google */
 import React, { Component } from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
+
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+
 import SideList from "./SideList";
-import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 import MapFunctions from "./MapFunctions";
 
@@ -92,7 +92,6 @@ class MapContainer extends Component {
   };
 
   displayUser = () => {
-    console.log("display user called");
     return (
       <Marker
         name="User Marker"
@@ -173,51 +172,46 @@ class MapContainer extends Component {
   };
 
   render() {
+    console.log(this.props);
     if (!this.props.loaded) return <div>Loading...</div>;
-
-    const mapStyles = {
-      width: "100%",
-      height: "100%"
+    const navHeight = document.getElementById("nav").clientHeight;
+    const containerStyle = {
+      flexGrow: "inherit",
+      maxWidth: "inherit",
+      maxHeight: `calc(100% - ${navHeight}px)`,
+      flexBasis: "inherit"
     };
 
-    const useStyles = makeStyles(theme => ({
-      root: {
-        flexGrow: 1
-      }
-    }));
-    if (this.state.updatedLocation == true) {
+    if (this.state.updatedLocation === true) {
       return (
-        <div style={useStyles.root}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={4}>
-              <SideList cars={this.state.dbVehicles} />
-            </Grid>
-            <Grid item xs={12} sm={8}>
-              <Map
-                google={this.props.google}
-                onClick={this.onMapClicked}
-                user={this.state.user}
-                google={this.props.google}
-                zoom={15}
-                style={mapStyles}
-                initialCenter={this.state.user}
-                center={this.state.user}
-              >
-                {this.displayVehicles()}
-                {this.displayUser()}
-                <InfoWindow
-                  marker={this.state.activeMarker}
-                  onClose={this.onInfoWindowClose}
-                  visible={this.state.showingInfoWindow}
-                >
-                  <div>
-                    <h4>{this.state.markerName}</h4>
-                  </div>
-                </InfoWindow>
-              </Map>
-            </Grid>
+        <Grid container>
+          <Grid item xs={12} sm={4}>
+            <SideList cars={this.state.dbVehicles} />
           </Grid>
-        </div>
+          <Grid item xs={12} sm={8}>
+            <Map
+              google={this.props.google}
+              onClick={this.onMapClicked}
+              user={this.state.user}
+              zoom={15}
+              initialCenter={this.state.user}
+              center={this.state.user}
+              containerStyle={containerStyle}
+            >
+              {this.displayVehicles()}
+              {this.displayUser()}
+              <InfoWindow
+                marker={this.state.activeMarker}
+                onClose={this.onInfoWindowClose}
+                visible={this.state.showingInfoWindow}
+              >
+                <div>
+                  <h4>{this.state.markerName}</h4>
+                </div>
+              </InfoWindow>
+            </Map>
+          </Grid>
+        </Grid>
       );
     } else {
       console.log("user position before update", this.state.user);

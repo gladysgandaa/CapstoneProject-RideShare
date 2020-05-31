@@ -1,17 +1,14 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import axios from "axios";
+
+import { useFormFields } from "../../libs/hooksLib";
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -29,8 +26,43 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignIn() {
+export default function AddCar() {
   const classes = useStyles();
+
+  const [fields, handleFieldChange] = useFormFields({
+    make: "",
+    model: "",
+    rentalCostPerHour: "",
+    numberOfSeats: "",
+    year: "",
+    Longitude: "",
+    Latitude: ""
+  });
+
+  const submitVehicle = e => {
+    e.preventDefault();
+    const vehicleData = {
+      make: fields.make,
+      model: fields.model,
+      rentalCostPerHour: fields.rentalCostPerHour,
+      numberOfSeats: fields.numberOfSeats,
+      year: fields.year,
+      returnDate: null,
+      retired: false,
+      currentLocation: {
+        Latitude: fields.Latitude,
+        Longitude: fields.Longitude
+      }
+    };
+
+    console.log(vehicleData);
+    axios({
+      method: "post",
+      url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
+      headers: {},
+      data: vehicleData
+    });
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -39,7 +71,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Add a Car
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={submitVehicle} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
               <TextField
@@ -52,6 +84,7 @@ export default function SignIn() {
                 name="make"
                 autoComplete="make"
                 autoFocus
+                onChange={handleFieldChange}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
@@ -65,6 +98,7 @@ export default function SignIn() {
                 name="model"
                 autoComplete="model"
                 autoFocus
+                onChange={handleFieldChange}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
@@ -73,11 +107,12 @@ export default function SignIn() {
                 margin="normal"
                 required
                 fullWidth
-                id="price"
+                id="rentalCostPerHour"
                 label="Price per hour"
-                name="price"
-                autoComplete="price"
+                name="rentalCostPerHour"
+                autoComplete="rentalCostPerHour"
                 autoFocus
+                onChange={handleFieldChange}
               />
             </Grid>
             <Grid item xs={12} sm={12}>
@@ -86,11 +121,54 @@ export default function SignIn() {
                 margin="normal"
                 required
                 fullWidth
-                id="location"
-                label="Car location"
-                name="location"
-                autoComplete="location"
+                id="numberOfSeats"
+                label="Number of Seats"
+                name="numberOfSeats"
+                autoComplete="numberOfSeats"
                 autoFocus
+                onChange={handleFieldChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="year"
+                label="Make Year"
+                name="year"
+                autoComplete="year"
+                autoFocus
+                onChange={handleFieldChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="Latitude"
+                label="Latitude"
+                name="Latitude"
+                autoComplete="Latitude"
+                autoFocus
+                onChange={handleFieldChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="Longitude"
+                label="Longitude"
+                name="Longitude"
+                autoComplete="Longitude"
+                autoFocus
+                onChange={handleFieldChange}
               />
             </Grid>
           </Grid>
@@ -100,7 +178,6 @@ export default function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            href="/"
           >
             Add Car
           </Button>

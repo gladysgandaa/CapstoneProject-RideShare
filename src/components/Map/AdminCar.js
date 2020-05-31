@@ -7,7 +7,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
 
@@ -35,7 +34,7 @@ class AdminCar extends Component {
 
   testFunction = carId => {
     console.log("carId from function", carId);
-    if (this.state.editing == false) {
+    if (this.state.editing === false) {
       this.setState({ editing: true });
     } else {
       this.setState({ editing: false });
@@ -52,14 +51,7 @@ class AdminCar extends Component {
   };
 
   render() {
-    const {
-      carId,
-      make,
-      model,
-      rentalCostPerHour,
-      currentLocation,
-      returnDate
-    } = this.props;
+    const { carId, make, model, rentalCostPerHour, returnDate } = this.props;
     const useStyles = makeStyles(theme => ({
       inline: {
         display: "inline"
