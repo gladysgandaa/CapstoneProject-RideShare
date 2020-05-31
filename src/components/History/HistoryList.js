@@ -26,6 +26,8 @@ const HistoryList = ({ bookings }) => {
               carId={booking.carId}
               duration={booking.duration}
               userId={booking.userId}
+              make={booking.car.make}
+              model={booking.car.model}
             />
           );
         })

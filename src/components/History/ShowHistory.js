@@ -41,33 +41,14 @@ const ShowHistory = props => {
     pickupLocation,
     carId,
     duration,
-    userId
+    userId,
+    make,
+    model
   } = props;
-
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  function getCar() {
-    try {
-      axios
-        .get(
-          `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`
-        )
-        .then(response => {
-          setMake(response.data.make);
-          setModel(response.data.model);
-          setIsLoading(false);
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  getCar();
 
   return (
     <div>
-      {!isLoading && (
+      {
         <ListItem alignItems="flex-start">
           <Grid container spacing={3}>
             <Grid item xs={12} sm={1}>
@@ -121,7 +102,7 @@ const ShowHistory = props => {
             </Grid>
           </Grid>
         </ListItem>
-      )}
+      }
       <Divider variant="inset" classes={{ root: classes.root }} />
     </div>
   );
