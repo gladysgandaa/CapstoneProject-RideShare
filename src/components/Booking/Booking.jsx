@@ -81,7 +81,7 @@ const BookingForm = props => {
           handleOpen();
         }
       });
-    this.toPayment();
+    toPayment();
   };
 
   const addReturnDate = () => {
