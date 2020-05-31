@@ -34,17 +34,6 @@ const App = () => {
     setIsAuthenticating(false);
   }
 
-  const setUserLocation = () => {
-    navigator.geolocation.getCurrentPosition(position => {
-      const currentUser = { ...user };
-      currentUser.Latitude = position.coords.latitude;
-      currentUser.Longitude = position.coords.longitude;
-      setUser({ currentUser });
-    });
-  };
-
-  setUserLocation();
-
   async function handleLogout() {
     await Auth.signOut();
 

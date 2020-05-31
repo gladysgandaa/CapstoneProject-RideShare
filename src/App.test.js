@@ -9,8 +9,3 @@ it("renders without crashing", () => {
   const div = document.createElement("div");
   ReactDOM.render(<App />, div);
 });
-
-it("Initial loading state", () => {
-  const tree = renderer.create(<MapContainer />).toJSON();
-  expect(tree).toMatchSnapshot();
-});
