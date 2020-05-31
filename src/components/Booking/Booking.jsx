@@ -5,7 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import MaterialDialog from "../Dialog/Dialog";
 import { useAppContext } from "../../libs/contextLib";
@@ -14,6 +14,7 @@ import SignIn from "../Authentication/SignIn";
 import SignUp from "../Authentication/SignUp";
 
 const BookingForm = props => {
+  let location = useLocation();
   const {
     carId,
     make,
@@ -22,11 +23,11 @@ const BookingForm = props => {
     year,
     rentalCostPerHour,
     currentLocation
-  } = props.location.state;
-  const { userHasAuthenticated, isRegistered } = useAppContext();
+  } = location.state;
+  const { isAuthenticated, isRegistered, currentSession } = useAppContext();
 
   const [returnDate, setReturnDate] = useState("");
-
+  console.log(currentSession);
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
@@ -245,7 +246,7 @@ const BookingForm = props => {
             )}
           </Grid>
           <Grid container direction="row" justify="center" alignItems="center">
-            {userHasAuthenticated === true ? (
+            {isAuthenticated === true ? (
               <Grid item xs={12} sm={2}>
                 <Button
                   type="submit"
