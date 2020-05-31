@@ -27,13 +27,13 @@ const BookingForm = props => {
   const { isAuthenticated, isRegistered, currentSession } = useAppContext();
 
   const [returnDate, setReturnDate] = useState("");
-  console.log(currentSession);
+  const userId = currentSession.username;
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
   const defaultDate = localISOTime.toISOString().slice(0, -5);
   const defaultDuration = 1;
-  const defaultUserId = 1;
+  // const defaultUserId = 1;
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const history = useHistory();
@@ -62,7 +62,7 @@ const BookingForm = props => {
       duration: fields.duration,
       date: fields.date,
       pickUpLocation: currentLocation,
-      userId: defaultUserId
+      userId: userId
     };
 
     console.log(`Booking Data: ${JSON.stringify(bookingData)}`);

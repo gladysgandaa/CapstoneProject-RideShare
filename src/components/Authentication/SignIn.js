@@ -83,8 +83,11 @@ export default function SignIn() {
       setCurrentSession(session);
       setIsLoading(false);
       if (
+        session.signInUserSession.idToken.payload.hasOwnProperty(
+          "cognito:groups"
+        ) &&
         session.signInUserSession.idToken.payload["cognito:groups"][0] ===
-        "admin"
+          "admin"
       ) {
         setIsAdmin(true);
       }
