@@ -87,7 +87,14 @@ function ResponsiveDrawer(props) {
             variant="h6"
             noWrap
           >
-            <MaterialLink href="/" color="inherit" underline="none">
+            <MaterialLink
+              onClick={e => {
+                e.preventDefault();
+                history.push("/");
+              }}
+              color="inherit"
+              underline="none"
+            >
               RideShare
             </MaterialLink>
           </Typography>

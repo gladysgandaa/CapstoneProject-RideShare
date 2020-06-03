@@ -15,6 +15,7 @@ const App = () => {
   const [isRegistered, userHasRegistered] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [currentSession, setCurrentSession] = useState("");
+  const [currentUser, setCurrentUser] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -23,15 +24,23 @@ const App = () => {
 
   async function onLoad() {
     try {
-      await Auth.currentSession();
-
+      const session = await Auth.currentSession();
+      const userInfo = await Auth.currentUserInfo();
+      setCurrentUser(userInfo);
+      setCurrentSession(session);
       userHasAuthenticated(true);
+      console.log(session);
+      if (
+        session.idToken.payload.hasOwnProperty("cognito:groups") &&
+        session.idToken.payload["cognito:groups"][0] === "admin"
+      ) {
+        setIsAdmin(true);
+      }
     } catch (e) {
       if (e !== "No current user") {
         onError(e);
       }
     }
-
     setIsAuthenticating(false);
   }
 
@@ -48,7 +57,9 @@ const App = () => {
             isAdmin,
             setIsAdmin,
             currentSession,
-            setCurrentSession
+            setCurrentSession,
+            currentUser,
+            setCurrentUser
           }}
         >
           <NavigationMenu />

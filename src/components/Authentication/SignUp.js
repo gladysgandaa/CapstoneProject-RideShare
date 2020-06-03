@@ -7,12 +7,15 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { Auth } from "aws-amplify";
+import { useHistory } from "react-router-dom";
+import PersonIcon from "@material-ui/icons/Person";
+import Avatar from "@material-ui/core/Avatar";
+
 import LoaderButton from "../LoaderButton";
 import { useAppContext } from "../../libs/contextLib";
 import { useFormFields } from "../../libs/hooksLib";
 import { onError } from "../../libs/errorLib";
-import { Auth } from "aws-amplify";
-import { useHistory } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -64,7 +67,7 @@ schema
   .has()
   .symbols();
 
-export default function SignUp() {
+export default function SignUp(props) {
   const classes = useStyles();
   const [fields, handleFieldChange] = useFormFields({
     firstName: "",
@@ -80,7 +83,7 @@ export default function SignUp() {
   const [passwordConfirmError, setPasswordConfirmError] = useState("");
   const [validPassword, setValidPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const { userHasAuthenticated, userHasRegistered } = useAppContext();
+  const { userHasAuthenticated } = useAppContext();
   const history = useHistory();
 
   function validateForm() {
@@ -183,7 +186,7 @@ export default function SignUp() {
         <CssBaseline />
         <div className={classes.paper}>
           <Typography component="h1" variant="h5">
-            Validation
+            Confirmation
           </Typography>
           <br></br>
           <form onSubmit={handleConfirmationSubmit}>
@@ -230,6 +233,9 @@ export default function SignUp() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <PersonIcon />
+          </Avatar>
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
@@ -325,7 +331,11 @@ export default function SignUp() {
             </LoaderButton>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link onClick={e => userHasRegistered(true)} variant="body2">
+                <Link
+                  onClick={props.handleClick}
+                  component="button"
+                  variant="body2"
+                >
                   Already have an account? Sign in
                 </Link>
               </Grid>

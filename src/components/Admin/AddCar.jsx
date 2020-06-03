@@ -41,6 +41,7 @@ export default function AddCar() {
 
   const submitVehicle = e => {
     e.preventDefault();
+
     const vehicleData = {
       make: fields.make,
       model: fields.model,
