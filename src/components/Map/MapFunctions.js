@@ -4,7 +4,7 @@ const MapFunctions = {
     return true;
   },
   haversineDistance(mk1, mk2) {
-    var R = 6371; // Radius of the Earth in miles
+    var R = 6371; // Radius of the Earth in km
     var rlat1 = mk1.lat * (Math.PI / 180); // Convert degrees to radians
     var rlat2 = mk2.Latitude * (Math.PI / 180); // Convert degrees to radians
     var difflat = rlat2 - rlat1; // Radian difference (latitudes)
