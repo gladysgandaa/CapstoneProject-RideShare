@@ -9,6 +9,76 @@ import mapFunctions from "./MapFunctions";
 
 configure({ adapter: new Adapter() });
 
+const mockState = {
+  updatedLocation: false,
+  search_distance: 10,
+  markerName: "placeholder",
+  activeMarker: {},
+  selectedPlace: {},
+  showingInfoWindow: false,
+  vehicleDistances: [],
+  user: {
+    Longitude: 144.3674938,
+    Latitude: -37.3303708
+  },
+  dbVehicles: [
+    {
+      model: "placeholder",
+      rentalCostPerHour: 10,
+      distance: 1.1,
+      numberOfSeats: 4,
+      year: 2002,
+      carId: "aaaaaaapBQkWvaS8XIk-_A",
+      returnDate: null,
+      make: "Camry",
+      currentLocation: {
+        Longitude: 144.3674938,
+        Latitude: -37.3303708
+      }
+    }
+  ]
+};
+
+const mockProps = {
+  updatedLocation: false,
+  search_distance: 10,
+  markerName: "placeholder",
+  activeMarker: {},
+  selectedPlace: {},
+  showingInfoWindow: false,
+  vehicleDistances: [],
+  userLocation: {
+    Longitude: 144.3674938,
+    Latitude: -37.3303708
+  },
+  dbVehicles: [
+    {
+      model: "placeholder",
+      rentalCostPerHour: 10,
+      distance: 1.1,
+      numberOfSeats: 4,
+      year: 2002,
+      carId: "aaaaaaapBQkWvaS8XIk-_A",
+      returnDate: null,
+      make: "Camry",
+      currentLocation: {
+        Longitude: 144.3674938,
+        Latitude: -37.3303708
+      }
+    }
+  ]
+};
+
+function getMockProps() {
+  console.log("1");
+  const wrapper = shallow(<MapContainer {...mockProps} />);
+  console.log("2");
+  wrapper.setProps({ ...mockState });
+  wrapper.setState({ ...mockState });
+  console.log("3", wrapper.props);
+  return wrapper;
+}
+
 //Haversine Distance Tests
 test("Distance between a point and itself should be 0", () => {
   const marker1 = { lat: 1.0, lng: 1.0 };
@@ -58,10 +128,9 @@ describe("MapContainer", () => {
   });
 });
 
-// //Axios Tests WONT' WORK BECAUSE OF FUCKING VERSION
-// it("Should increase the number of vehicles from the one mock entry to > 1", () => {
-//   const wrapper = mount(<MapContainer />);
-//   const instance = wrapper.instance();
-//   expect(wrapper.state("dbVehicles")).toHaveLength(1);
-//   expect(wrapper.state("dbVehicles")).toBeGreaterThan(1);
-// });
+//Axios Tests WONT' WORK BECAUSE OF FUCKING VERSION
+it("Should increase the number of vehicles from the one mock entry to > 1", () => {
+  // const wrapper = mount(<MapContainer />);
+  const wrapper = getMockProps();
+  expect(wrapper.state("dbVehicles")).toHaveLength(1);
+});

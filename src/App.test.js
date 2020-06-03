@@ -4,6 +4,7 @@ import App from "./App";
 import renderer from "react-test-renderer";
 import BookingForm from "./components/Booking/Booking";
 import MapContainer from "./components/Map/MapContainer";
+import { ExpansionPanelActions } from "@material-ui/core";
 
 let realUseContext;
 let useContextMock;
