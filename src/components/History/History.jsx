@@ -46,10 +46,9 @@ const History = () => {
 
   return (
     <div>
-      <h2>Past Booking</h2>
       <ListItem alignItems="flex-start">
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={12}>
+          <Grid item xs={12} sm={12} justify="center">
             <Typography component="h1" variant="h4">
               Booking History
             </Typography>

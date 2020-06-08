@@ -103,9 +103,21 @@ function ResponsiveDrawer(props) {
       <Divider />
       <List disablePadding={true}>
         {isAuthenticated ? (
-          <ListItem button onClick={handleLogout}>
-            <ListItemText primary="Sign Out" />
-          </ListItem>
+          <div>
+            <ListItem button onClick={handleLogout}>
+              <ListItemText primary="Sign Out" />
+            </ListItem>
+            <Divider />
+            <ListItem
+              button
+              component="a"
+              onClick={() => {
+                history.push("/history");
+              }}
+            >
+              <ListItemText primary="My Bookings" />
+            </ListItem>
+          </div>
         ) : (
           <>
             <ListItem button component="a" href="/signin">
