@@ -70,12 +70,9 @@ const mockProps = {
 };
 
 function getMockProps() {
-  console.log("1");
   const wrapper = shallow(<MapContainer {...mockProps} />);
-  console.log("2");
   wrapper.setProps({ ...mockState });
   wrapper.setState({ ...mockState });
-  console.log("3", wrapper.props);
   return wrapper;
 }
 
@@ -128,9 +125,10 @@ describe("MapContainer", () => {
   });
 });
 
-//Axios Tests WONT' WORK BECAUSE OF FUCKING VERSION
+//Axios Tests
 it("Should increase the number of vehicles from the one mock entry to > 1", () => {
   // const wrapper = mount(<MapContainer />);
   const wrapper = getMockProps();
   expect(wrapper.state("dbVehicles")).toHaveLength(1);
+  // wrapper.dive().instance.testFunction();
 });
