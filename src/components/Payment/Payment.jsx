@@ -3,8 +3,7 @@ import PayPalBtn from "./PayPalBtn";
 
 export default class PaymentExample extends Component {
   paymentHandler = (details, data) => {
-    /** Here you can call your backend API
-        endpoint and update the database */
+    /** Leave blank since we're not storing payments */
     console.log(details, data);
   };
 

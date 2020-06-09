@@ -1,18 +1,23 @@
+/* global google */
 import React, { Component } from "react";
 import axios from "axios";
-import SideList from "../Map/SideList";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
+
+import SideList from "../Map/SideList";
+import MaterialDialog from "../Dialog/Dialog";
+import SignIn from "../Authentication/SignIn";
+import AddCar from "./AddCar";
 
 class AdminDashboard extends Component {
   //Need to decide where this component fits in
   constructor(props) {
     super(props);
     this.state = {
+      markerName: "placeholder",
+      activeMarker: {},
+      selectedPlace: {},
       loggedIn: false,
       account: "admin",
       callComplete: false,
@@ -27,6 +32,7 @@ class AdminDashboard extends Component {
       make: "make",
       Longitude: 144.3674938,
       Latitude: -37.3303708,
+      open: false,
       dbVehicles: [
         {
           model: "Recognisable Name",
@@ -46,6 +52,48 @@ class AdminDashboard extends Component {
     };
   }
 
+  //Marker Functions
+  onMarkerClick = (props, marker) =>
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      markerName: marker.name,
+      showingInfoWindow: true
+    });
+
+  onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false
+    });
+
+  displayVehicles = () => {
+    if (!this.state.dbVehicles) {
+      console.log("no vehicles");
+      return null;
+    }
+
+    return this.state.dbVehicles.map((dbVehicle, index) => {
+      return (
+        <Marker
+          name={dbVehicle.make.concat(" ", dbVehicle.model)}
+          key={index}
+          id={index}
+          icon={{
+            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+            anchor: new google.maps.Point(0, 53),
+            labelOrigin: new google.maps.Point(14, 53)
+          }}
+          position={{
+            lat: dbVehicle.currentLocation.Latitude,
+            lng: dbVehicle.currentLocation.Longitude
+          }}
+          onClick={this.onMarkerClick}
+        />
+      );
+    });
+  };
+
   componentWillMount() {
     this.getVehicles();
   }
@@ -61,62 +109,19 @@ class AdminDashboard extends Component {
       });
   };
 
-  addVehicle = () => {
-    console.log("state before post", this.state);
-    const formatPost =
-      '{\
-      "model": "' +
-      this.state.model +
-      '",\
-      "rentalCostPerHour": ' +
-      this.state.rentalCostPerHour +
-      ',\
-      "numberOfSeats": ' +
-      this.state.numberOfSeats +
-      ',\
-      "year": ' +
-      this.state.year +
-      ',\
-      "carId": "",\
-      "returnDate": null,\
-      "make": "' +
-      this.state.make +
-      '",\
-      "currentLocation": {\
-          "Longitude": ' +
-      this.state.Longitude +
-      ',\
-          "Latitude": ' +
-      this.state.Latitude +
-      "\
-      }\
-  }";
-
-    axios({
-      method: "post",
-      url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
-      headers: {},
-      data: formatPost
-    });
+  handleOpen = () => {
+    this.setState({ open: true });
   };
 
-  change = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+  handleClose = () => {
+    this.setState({ open: false });
   };
 
   onSubmit = e => {
     e.preventDefault();
-    this.state.loggedIn = true;
     this.setState({
       loggedIn: true
     });
-  };
-
-  submitVehicle = e => {
-    // this.setState({inputVehicle: e});
-    this.addVehicle();
   };
 
   onClick = (t, map, coord) => {
@@ -124,121 +129,27 @@ class AdminDashboard extends Component {
     const lat = latLng.lat();
     const lng = latLng.lng();
     console.log("position", lat);
-    this.setState({ Longitude: lng });
-    this.setState({ Latitude: lat });
+    this.setState({ Longitude: lng, Latitude: lat });
   };
 
   render() {
-    const useStyles = makeStyles(theme => ({
-      inline: {
-        display: "inline"
-      }
-    }));
-
-    if (this.state.callComplete == true) {
+    if (this.state.callComplete === true) {
       return (
         <div>
-          {this.state.loggedIn == false && (
-            <form>
-              <br />
-              <input
-                name="username"
-                placeholder="Username"
-                value={this.state.username}
-                onChange={e => this.change(e)}
-              />
-              <br />
-              <input
-                name="password"
-                type="password"
-                placeholder="password"
-                value={this.state.password}
-                onChange={e => this.change(e)}
-              />
-              <br />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={e => this.onSubmit(e)}
-              >
-                Submit
-              </Button>
-            </form>
-          )}
-          {this.state.loggedIn && (
+          {this.props.admin === false && <SignIn />}
+          {this.props.admin === true && (
             <div>
               <div>
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
                     <div>
                       <br />
-                      Add New
-                      <form>
-                        <input
-                          name="model"
-                          placeholder="model"
-                          value={this.state.model}
-                          onChange={e => this.change(e)}
-                        />
-                        <br />
-                        <input
-                          name="make"
-                          placeholder="make"
-                          value={this.state.make}
-                          onChange={e => this.change(e)}
-                        />
-                        <br />
-                        <input
-                          name="cost"
-                          placeholder="cost per hour"
-                          value={this.state.rentalCostPerHour}
-                          onChange={e =>
-                            this.setState({ rentalCostPerHour: e.target.value })
-                          }
-                        />
-                        <br />
-                        <input
-                          name="seats"
-                          placeholder="seats"
-                          value={this.state.numberOfSeats}
-                          onChange={e =>
-                            this.setState({ numberOfSeats: e.target.value })
-                          }
-                        />
-                        <br />
-                        <input
-                          name="year"
-                          placeholder="year"
-                          value={this.state.year}
-                          onChange={e => this.change(e)}
-                        />
-                        <br />
-                        <input
-                          name="longitude"
-                          placeholder="Longitude"
-                          value={this.state.Longitude}
-                          onChange={e =>
-                            this.setState({ Longitude: e.target.value })
-                          }
-                        />
-                        <br />
-                        <input
-                          name="latitude"
-                          placeholder="Latitude"
-                          value={this.state.Latitude}
-                          onChange={e =>
-                            this.setState({ Latitude: e.target.value })
-                          }
-                        />
-                        <br />
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={e => this.submitVehicle(e)}
-                        >
-                          Add Car
-                        </Button>
-                      </form>
+                      <Button onClick={this.handleOpen}>Add a Car</Button>
+                      <MaterialDialog
+                        content={<AddCar />}
+                        open={this.state.open}
+                        handleClose={this.handleClose}
+                      />
                       <SideList
                         cars={this.state.dbVehicles}
                         account={this.state.account}
@@ -253,10 +164,16 @@ class AdminDashboard extends Component {
                       center={this.props.userLocation}
                       onClick={this.onClick}
                     >
-                      <Marker
-                        onClick={this.onMarkerClick}
-                        name={"Current location"}
-                      />
+                      {this.displayVehicles()}
+                      <InfoWindow
+                        marker={this.state.activeMarker}
+                        onClose={this.onInfoWindowClose}
+                        visible={this.state.showingInfoWindow}
+                      >
+                        <div>
+                          <h4>{this.state.markerName}</h4>
+                        </div>
+                      </InfoWindow>
                     </Map>
                   </Grid>
                 </Grid>
@@ -274,10 +191,6 @@ class AdminDashboard extends Component {
     }
   }
 }
-
-const style = {
-  margin: 15
-};
 
 export default GoogleApiWrapper({
   apiKey: "AIzaSyCrDVpHzeaPLfTOvbfNw2_0GRlce2YD2RI"

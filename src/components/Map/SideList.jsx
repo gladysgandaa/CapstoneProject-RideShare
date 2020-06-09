@@ -12,22 +12,27 @@ const useStyles = makeStyles({
 });
 
 const SideList = ({ cars, account }) => {
+  console.log("logging from sidelist");
   const classes = useStyles();
   return (
-    <List className={classes.root}>
+    <List className={classes.root} disablePadding={true}>
       {!cars.length ? (
         <h1>No Cars Found.</h1>
       ) : (
         cars.map(car => {
-          if (account == "admin") {
+          if (account === "admin") {
             return (
               <AdminCar
                 key={car.carId}
                 carId={car.carId}
                 make={car.make}
                 model={car.model}
+                distance={car.distance}
+                year={car.year}
+                numberOfSeats={car.numberOfSeats}
                 returnDate={car.returnDate}
                 rentalCostPerHour={car.rentalCostPerHour}
+                currentLocation={car.currentLocation}
               />
             );
           }
@@ -38,8 +43,11 @@ const SideList = ({ cars, account }) => {
               make={car.make}
               model={car.model}
               distance={car.distance}
+              year={car.year}
+              numberOfSeats={car.numberOfSeats}
               returnDate={car.returnDate}
               rentalCostPerHour={car.rentalCostPerHour}
+              currentLocation={car.currentLocation}
             />
           );
         })
