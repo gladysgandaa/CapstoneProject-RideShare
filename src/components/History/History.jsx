@@ -4,8 +4,10 @@ import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
-import HistoryList from "./HistoryList.js";
 import Grid from "@material-ui/core/Grid";
+
+import HistoryList from "./HistoryList.js";
+import { useAppContext } from "../../libs/contextLib";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -28,7 +30,10 @@ const useStyles = makeStyles(() => ({
 const History = () => {
   const classes = useStyles();
   const [bookings, setBookings] = useState("");
-  const userId = 1;
+  const { currentUser } = useAppContext();
+
+  const userId = currentUser.id;
+
   axios
     .get(
       `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/bookings?userId=${userId}`
