@@ -62,13 +62,17 @@ function ResponsiveDrawer(props) {
     isAuthenticated,
     userHasAuthenticated,
     isAdmin,
-    setIsAdmin
+    setIsAdmin,
+    setCurrentUser,
+    setCurrentSession
   } = useAppContext();
   const history = useHistory();
 
   async function handleLogout() {
     await Auth.signOut();
     userHasAuthenticated(false);
+    setCurrentUser("");
+    setCurrentSession("");
     setIsAdmin(false);
     history.push("/");
   }

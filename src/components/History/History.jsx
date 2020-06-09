@@ -58,12 +58,12 @@ const History = () => {
               Booking History
             </Typography>
           </Grid>
+          <Divider variant="inset" classes={{ root: classes.root }} />
           <Grid item xs={12} sm={12}>
             <HistoryList bookings={bookings} />
           </Grid>
         </Grid>
       </ListItem>
-      <Divider variant="inset" classes={{ root: classes.root }} />
     </div>
   );
 };

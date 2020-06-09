@@ -163,7 +163,7 @@ class AdminDashboard extends Component {
                         open={this.state.open}
                         handleClose={this.handleClose}
                       />
-                      <SideList cars={this.state.dbVehicles} />
+                      <SideList cars={this.state.dbVehicles} account="admin" />
                     </div>
                   </Grid>
                   <Grid item xs={12} sm={8}>

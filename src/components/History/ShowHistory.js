@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -41,9 +42,33 @@ const ShowHistory = props => {
     carId,
     duration,
     userId,
-    make,
-    model
+    car
   } = props;
+
+  const returnVehicle = () => {
+    const carData = {
+      carId: carId,
+      model: car.model,
+      make: car.make,
+      rentalCostPerHour: car.rentalCostPerHour,
+      returnDate: null,
+      numberOfSeats: car.numberOfSeats,
+      year: car.year,
+      currentLocation: {
+        Latitude: car.currentLocation.Latitude,
+        Longitude: car.currentLocation.Longitude
+      },
+      retired: false
+    };
+
+    console.log("put contents", JSON.stringify(carData));
+    axios({
+      method: "put",
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
+      headers: {},
+      data: carData
+    });
+  };
 
   return (
     <div>
@@ -58,7 +83,7 @@ const ShowHistory = props => {
             <Grid item xs={12} sm={8}>
               <ListItemText
                 classes={{ primary: classes.primary }}
-                primary={`${make} ${model}`}
+                primary={`${car.make} ${car.model}`}
                 secondary={
                   <Typography
                     component="span"
@@ -94,8 +119,9 @@ const ShowHistory = props => {
                   variant="contained"
                   color="primary"
                   classes={{ root: classes.button }}
+                  onClick={returnVehicle}
                 >
-                  Book Again
+                  Return
                 </Button>
               </Link>
             </Grid>

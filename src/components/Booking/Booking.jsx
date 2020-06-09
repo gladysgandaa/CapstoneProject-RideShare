@@ -15,6 +15,7 @@ import SignUp from "../Authentication/SignUp";
 
 const BookingForm = props => {
   let location = useLocation();
+
   const {
     carId,
     make,
@@ -24,21 +25,19 @@ const BookingForm = props => {
     rentalCostPerHour,
     currentLocation
   } = location.state;
+
   const {
     isAuthenticated,
     isRegistered,
-    currentUser,
+    currentSession,
     userHasRegistered
   } = useAppContext();
 
   const [returnDate, setReturnDate] = useState("");
-  console.log(currentUser);
-  const userId = currentUser.id;
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
   const defaultDate = localISOTime.toISOString().slice(0, -5);
-  const defaultUserId = 1;
   const [open, setOpen] = useState(false);
   const [duration, setDuration] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
@@ -57,6 +56,7 @@ const BookingForm = props => {
   };
 
   const handleOpen = e => {
+    e.preventDefault();
     setOpen(true);
   };
 
@@ -66,35 +66,45 @@ const BookingForm = props => {
 
   const submitHandler = e => {
     e.preventDefault();
-    const bookingData = {
-      carId: carId,
-      duration: duration,
-      date: fields.date,
-      pickUpLocation: {
-        Latitude: currentLocation.Latitude,
-        Longitude: currentLocation.Longitude
-      },
-      userId: userId || defaultUserId
-    };
+    if (isAuthenticated) {
+      const userId =
+        location.state.userId ||
+        currentSession.idToken.payload["cognito:username"];
+      const bookingData = {
+        carId: carId,
+        duration: duration,
+        date: fields.date,
+        pickUpLocation: {
+          Latitude: currentLocation.Latitude,
+          Longitude: currentLocation.Longitude
+        },
+        userId: userId
+      };
 
-    console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
-    axios(
-      "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-      bookingData
-    )
-      .then(response => {
-        console.log(`Response => ${response}`);
-        toPayment();
-      })
-      .catch(error => {
-        console.log(`Error => ${error}`);
-        if (error.response.status === 500) {
-          setErrorMessage(
-            `Selected time for the ${make} ${model} is unavailable. Please select another time.`
-          );
-          handleOpen();
+      console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
+      axios(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+        bookingData,
+        {
+          headers: {
+            "Access-Control-Allow-Origin": "*"
+          }
         }
-      });
+      )
+        .then(response => {
+          console.log(`Response => ${response}`);
+          toPayment();
+        })
+        .catch(error => {
+          console.log(`Error => ${error}`);
+          if (error.response.status === 500) {
+            setErrorMessage(
+              `Selected time for the ${make} ${model} is unavailable. Please select another time.`
+            );
+            handleOpen();
+          }
+        });
+    }
   };
 
   const addReturnDate = () => {
@@ -153,22 +163,22 @@ const BookingForm = props => {
           <Grid item xs={12} sm={6}>
             <TextField
               required
-              id="firstName"
-              name="firstName"
+              id="fname"
+              name="fname"
               label="First name"
               fullWidth
-              autoComplete="firstName"
+              autoComplete="fname"
               onChange={handleFieldChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               required
-              id="lastName"
-              name="lastName"
+              id="lname"
+              name="lname"
               label="Last name"
               fullWidth
-              autoComplete="lastName"
+              autoComplete="lname"
               onChange={handleFieldChange}
             />
           </Grid>
@@ -279,14 +289,24 @@ const BookingForm = props => {
             {isRegistered === true ? (
               <MaterialDialog
                 content={
-                  <SignIn handleClick={() => userHasRegistered(false)} />
+                  <SignIn
+                    handleClick={() => userHasRegistered(false)}
+                    handleClose={handleClose}
+                    state={location.state}
+                  />
                 }
                 open={open}
                 handleClose={handleClose}
               />
             ) : (
               <MaterialDialog
-                content={<SignUp handleClick={() => userHasRegistered(true)} />}
+                content={
+                  <SignUp
+                    handleClick={() => userHasRegistered(true)}
+                    handleClose={handleClose}
+                    state={location.state}
+                  />
+                }
                 open={open}
                 handleClose={handleClose}
               />
