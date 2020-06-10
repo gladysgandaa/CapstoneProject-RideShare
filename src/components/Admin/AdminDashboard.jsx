@@ -146,7 +146,7 @@ class AdminDashboard extends Component {
                       <br />
                       <Button onClick={this.handleOpen}>Add a Car</Button>
                       <MaterialDialog
-                        content={<AddCar />}
+                        content={<AddCar action="ADDING" />}
                         open={this.state.open}
                         handleClose={this.handleClose}
                       />

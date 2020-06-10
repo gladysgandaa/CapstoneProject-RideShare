@@ -26,8 +26,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function AddCar() {
+export default function AddCar(props) {
   const classes = useStyles();
+  console.log("These are the props:", props.carId);
 
   const [fields, handleFieldChange] = useFormFields({
     make: "",
@@ -55,14 +56,31 @@ export default function AddCar() {
         Longitude: fields.Longitude
       }
     };
+    console.log("Vehicle Date to Put", vehicleData);
 
-    console.log(vehicleData);
-    axios({
-      method: "post",
-      url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
-      headers: {},
-      data: vehicleData
-    });
+    if (props.action == "EDITING") {
+      axios({
+        method: "put",
+        url:
+          "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
+          props.carId,
+        headers: {},
+        data: vehicleData
+      }).then(res => {
+        window.location.reload();
+      });
+    } else if (props.action == "ADDING") {
+      console.log("there are no props");
+      console.log(vehicleData);
+      axios({
+        method: "post",
+        url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
+        headers: {},
+        data: vehicleData
+      }).then(res => {
+        window.location.reload();
+      });
+    }
   };
 
   return (
