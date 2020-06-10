@@ -43,11 +43,15 @@ class AdminCar extends Component {
 
   //delete k_s5tkTP091bmLqVY81Ppw
   removeVehicle = carId => {
-    axios.delete(
-      "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
-        carId
-    );
-    this.setState({ removed: true });
+    axios
+      .delete(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
+          carId
+      )
+      .then(res => {
+        this.setState({ removed: true });
+        window.location.reload();
+      });
   };
 
   render() {
