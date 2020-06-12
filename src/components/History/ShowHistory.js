@@ -32,7 +32,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ShowHistory = props => {
-  console.log(props);
   const classes = useStyles();
   const { startTime, bookingId, carId, duration, car } = props;
 
@@ -52,7 +51,6 @@ const ShowHistory = props => {
       retired: false
     };
 
-    console.log("put contents", JSON.stringify(carData));
     axios({
       method: "put",
       url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
@@ -92,14 +90,16 @@ const ShowHistory = props => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                classes={{ root: classes.button }}
-                onClick={returnVehicle}
-              >
-                Return
-              </Button>
+              {car.returnDate !== null && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  classes={{ root: classes.button }}
+                  onClick={returnVehicle}
+                >
+                  Return
+                </Button>
+              )}
             </Grid>
           </Grid>
         </ListItem>

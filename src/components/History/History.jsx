@@ -50,7 +50,7 @@ const History = () => {
         }
       });
   }, [userId]);
-  console.log(bookings);
+
   return (
     <div>
       <ListItem alignItems="flex-start">
