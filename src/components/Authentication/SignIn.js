@@ -94,7 +94,10 @@ export default function SignIn(props) {
       }
       console.log(`State => ${props.state}`);
       history.replace(from, { ...props.state, userId: session.username });
-      props.handleClose();
+      if (props.handleClose) {
+        props.handleClose();
+      }
+      history.go();
     } catch (e) {
       onError(e);
       setIsLoading(false);
