@@ -6,6 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import { useHistory, useLocation } from "react-router-dom";
+import { API } from "aws-amplify";
 
 import MaterialDialog from "../Dialog/Dialog";
 import { useAppContext } from "../../libs/contextLib";
@@ -55,12 +56,12 @@ const BookingForm = props => {
     setDuration(event.target.value);
   };
 
-  const handleOpen = e => {
-    e.preventDefault();
+  const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = e => {
+  const handleClose = () => {
+    setErrorMessage("");
     setOpen(false);
   };
 
@@ -82,26 +83,20 @@ const BookingForm = props => {
       };
 
       console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
-      axios({
-        method: "post",
-        url:
-          "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        },
-        data: bookingData
+
+      API.post("rideshare", "/booking/availability", {
+        body: bookingData
       })
         .then(response => {
-          console.log(`Response => ${response}`);
+          // console.log(`Response => ${response}`);
           toPayment();
         })
         .catch(error => {
-          console.log(`Error => ${error}`);
+          // console.log(`Error => ${error}`);
           if (error.response.status === 500) {
             setErrorMessage(
               `Selected time for the ${make} ${model} is unavailable. Please select another time.`
             );
-            handleOpen();
           }
         });
     }
@@ -308,6 +303,16 @@ const BookingForm = props => {
                   />
                 }
                 open={open}
+                handleClose={handleClose}
+              />
+            )}
+            {errorMessage && (
+              <MaterialDialog
+                title="Sorry"
+                content={
+                  "Please select another time, the car is unavailable for the selected booking time."
+                }
+                open={errorMessage !== null}
                 handleClose={handleClose}
               />
             )}
