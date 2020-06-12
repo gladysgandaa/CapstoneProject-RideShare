@@ -35,7 +35,6 @@ const SideList = ({ cars, account }) => {
                 distance={car.distance}
                 year={car.year}
                 numberOfSeats={car.numberOfSeats}
-                returnDate={car.returnDate}
                 rentalCostPerHour={car.rentalCostPerHour}
                 currentLocation={car.currentLocation}
               />

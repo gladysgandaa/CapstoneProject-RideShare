@@ -4,7 +4,6 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
 import { useHistory, useLocation } from "react-router-dom";
 import { API } from "aws-amplify";
 
@@ -21,8 +20,6 @@ const BookingForm = props => {
     carId,
     make,
     model,
-    numberOfSeats,
-    year,
     rentalCostPerHour,
     currentLocation
   } = location.state;
@@ -34,7 +31,6 @@ const BookingForm = props => {
     userHasRegistered
   } = useAppContext();
 
-  const [returnDate, setReturnDate] = useState("");
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
@@ -67,10 +63,16 @@ const BookingForm = props => {
 
   const submitHandler = e => {
     e.preventDefault();
+    var date = new Date(fields.date);
+    console.log(date.getHours());
+    date.setHours(date.getHours() + duration);
+    const returnDate = new Date(date - tzoffset).toISOString().slice(0, -5);
+
     if (isAuthenticated) {
       const userId =
         location.state.userId ||
         currentSession.idToken.payload["cognito:username"];
+
       const bookingData = {
         carId: carId,
         duration: duration,
@@ -79,17 +81,18 @@ const BookingForm = props => {
           Latitude: currentLocation.Latitude,
           Longitude: currentLocation.Longitude
         },
-        userId: userId
+        userId: userId,
+        returnDate: returnDate
       };
 
       console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
 
-      API.post("rideshare", "/booking/availability", {
+      API.post("rideshare", "/booking", {
         body: bookingData
       })
         .then(response => {
           // console.log(`Response => ${response}`);
-          toPayment();
+          // toPayment();
         })
         .catch(error => {
           // console.log(`Error => ${error}`);
@@ -102,35 +105,6 @@ const BookingForm = props => {
     }
   };
 
-  const addReturnDate = () => {
-    var dateObj = new Date(fields.date);
-    dateObj.setHours(dateObj.getHours() + fields.duration);
-    setReturnDate(dateObj);
-
-    const carData = {
-      carId: carId,
-      model: model,
-      make: make,
-      rentalCostPerHour: rentalCostPerHour,
-      returnDate: returnDate || null,
-      numberOfSeats: numberOfSeats,
-      year: year,
-      currentLocation: {
-        Latitude: currentLocation.Latitude,
-        Longitude: currentLocation.Longitude
-      },
-      retired: false
-    };
-
-    console.log("put contents", JSON.stringify(carData));
-    axios({
-      method: "put",
-      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
-      headers: {},
-      data: carData
-    });
-  };
-
   const toPayment = () => {
     let path = `/payment`;
     history.push({
@@ -141,7 +115,6 @@ const BookingForm = props => {
         duration: fields.duration
       }
     });
-    addReturnDate();
   };
 
   const formSpacing = {

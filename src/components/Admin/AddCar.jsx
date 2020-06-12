@@ -53,11 +53,10 @@ export default function AddCar() {
       rentalCostPerHour: parseInt(fields.rentalCostPerHour),
       numberOfSeats: parseInt(fields.numberOfSeats),
       year: parseInt(fields.year),
-      returnDate: null,
       retired: false,
       currentLocation: {
-        Latitude: parseInt(fields.Latitude),
-        Longitude: parseInt(fields.Longitude)
+        Latitude: parseFloat(fields.Latitude),
+        Longitude: parseFloat(fields.Longitude)
       }
     };
 
