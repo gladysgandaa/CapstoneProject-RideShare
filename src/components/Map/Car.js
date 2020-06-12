@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  console.log("props", props);
+  console.log("props Repeating many times", props);
   const {
     carId,
     make,
