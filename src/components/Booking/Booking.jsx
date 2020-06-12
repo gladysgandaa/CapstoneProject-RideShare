@@ -92,7 +92,7 @@ const BookingForm = props => {
       })
         .then(response => {
           // console.log(`Response => ${response}`);
-          // toPayment();
+          toPayment();
         })
         .catch(error => {
           // console.log(`Error => ${error}`);
