@@ -50,14 +50,14 @@ export default function AddCar() {
     const vehicleData = {
       make: fields.make,
       model: fields.model,
-      rentalCostPerHour: fields.rentalCostPerHour,
-      numberOfSeats: fields.numberOfSeats,
-      year: fields.year,
+      rentalCostPerHour: parseInt(fields.rentalCostPerHour),
+      numberOfSeats: parseInt(fields.numberOfSeats),
+      year: parseInt(fields.year),
       returnDate: null,
       retired: false,
       currentLocation: {
-        Latitude: fields.Latitude,
-        Longitude: fields.Longitude
+        Latitude: parseInt(fields.Latitude),
+        Longitude: parseInt(fields.Longitude)
       }
     };
 
