@@ -7,8 +7,8 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -32,18 +32,32 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ShowHistory = props => {
-  console.log(props);
   const classes = useStyles();
-  const {
-    startTime,
-    bookingId,
-    pickupLocation,
-    carId,
-    duration,
-    userId,
-    make,
-    model
-  } = props;
+  const { startTime, bookingId, carId, duration, car } = props;
+
+  const returnVehicle = () => {
+    const carData = {
+      carId: carId,
+      model: car.model,
+      make: car.make,
+      rentalCostPerHour: car.rentalCostPerHour,
+      returnDate: null,
+      numberOfSeats: car.numberOfSeats,
+      year: car.year,
+      currentLocation: {
+        Latitude: car.currentLocation.Latitude,
+        Longitude: car.currentLocation.Longitude
+      },
+      retired: false
+    };
+
+    axios({
+      method: "put",
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
+      headers: {},
+      data: carData
+    });
+  };
 
   return (
     <div>
@@ -58,7 +72,7 @@ const ShowHistory = props => {
             <Grid item xs={12} sm={8}>
               <ListItemText
                 classes={{ primary: classes.primary }}
-                primary={`${make} ${model}`}
+                primary={`${car.make} ${car.model}`}
                 secondary={
                   <Typography
                     component="span"
@@ -76,28 +90,16 @@ const ShowHistory = props => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <Link
-                to={{
-                  pathname: "/book",
-                  state: {
-                    startTime: startTime,
-                    bookingId: bookingId,
-                    pickupLocation: pickupLocation,
-                    carId: carId,
-                    duration: duration,
-                    userId: userId
-                  }
-                }}
-              >
+              {car.returnDate !== null && (
                 <Button
-                  alignItems="flex-end"
                   variant="contained"
                   color="primary"
                   classes={{ root: classes.button }}
+                  onClick={returnVehicle}
                 >
-                  Book Again
+                  Return
                 </Button>
-              </Link>
+              )}
             </Grid>
           </Grid>
         </ListItem>

@@ -62,13 +62,17 @@ function ResponsiveDrawer(props) {
     isAuthenticated,
     userHasAuthenticated,
     isAdmin,
-    setIsAdmin
+    setIsAdmin,
+    setCurrentUser,
+    setCurrentSession
   } = useAppContext();
   const history = useHistory();
 
   async function handleLogout() {
     await Auth.signOut();
     userHasAuthenticated(false);
+    setCurrentUser("");
+    setCurrentSession("");
     setIsAdmin(false);
     history.push("/");
   }
@@ -103,9 +107,21 @@ function ResponsiveDrawer(props) {
       <Divider />
       <List disablePadding={true}>
         {isAuthenticated ? (
-          <ListItem button onClick={handleLogout}>
-            <ListItemText primary="Sign Out" />
-          </ListItem>
+          <div>
+            <ListItem button onClick={handleLogout}>
+              <ListItemText primary="Sign Out" />
+            </ListItem>
+            <Divider />
+            <ListItem
+              button
+              component="a"
+              onClick={() => {
+                history.push("/history");
+              }}
+            >
+              <ListItemText primary="My Bookings" />
+            </ListItem>
+          </div>
         ) : (
           <>
             <ListItem button component="a" href="/signin">

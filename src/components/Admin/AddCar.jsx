@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -7,12 +7,12 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import axios from "axios";
-
+import { useHistory } from "react-router";
 import { useFormFields } from "../../libs/hooksLib";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -23,12 +23,15 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  successMessage: {
+    color: theme.palette.success.main
   }
 }));
 
 export default function AddCar() {
   const classes = useStyles();
-
+  const history = useHistory();
   const [fields, handleFieldChange] = useFormFields({
     make: "",
     model: "",
@@ -39,20 +42,22 @@ export default function AddCar() {
     Latitude: ""
   });
 
+  const [message, setMessage] = useState("");
+
   const submitVehicle = e => {
     e.preventDefault();
 
     const vehicleData = {
       make: fields.make,
       model: fields.model,
-      rentalCostPerHour: fields.rentalCostPerHour,
-      numberOfSeats: fields.numberOfSeats,
-      year: fields.year,
+      rentalCostPerHour: parseInt(fields.rentalCostPerHour),
+      numberOfSeats: parseInt(fields.numberOfSeats),
+      year: parseInt(fields.year),
       returnDate: null,
       retired: false,
       currentLocation: {
-        Latitude: fields.Latitude,
-        Longitude: fields.Longitude
+        Latitude: parseInt(fields.Latitude),
+        Longitude: parseInt(fields.Longitude)
       }
     };
 
@@ -62,6 +67,9 @@ export default function AddCar() {
       url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
       headers: {},
       data: vehicleData
+    }).then(response => {
+      setMessage("Successfully added.");
+      history.go();
     });
   };
 
@@ -73,7 +81,7 @@ export default function AddCar() {
           Add a Car
         </Typography>
         <form className={classes.form} onSubmit={submitVehicle} noValidate>
-          <Grid container spacing={2}>
+          <Grid container>
             <Grid item xs={12} sm={12}>
               <TextField
                 variant="outlined"
@@ -182,6 +190,9 @@ export default function AddCar() {
           >
             Add Car
           </Button>
+          <Typography variant="subtitle2" className={classes.successMessage}>
+            {message}
+          </Typography>
         </form>
       </div>
     </Container>
