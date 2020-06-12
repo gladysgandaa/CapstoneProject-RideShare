@@ -20,9 +20,10 @@ const HistoryList = ({ bookings }) => {
         bookings.map(booking => {
           return (
             <ShowHistory
+              key={booking.bookingId}
               startTime={booking.startTime}
               bookingId={booking.bookingId}
-              pickupLocation={booking.pickupLocation}
+              pickUpLocation={booking.pickUpLocation}
               carId={booking.carId}
               duration={booking.duration}
               userId={booking.userId}

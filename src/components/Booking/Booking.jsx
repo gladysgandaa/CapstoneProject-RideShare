@@ -82,15 +82,15 @@ const BookingForm = props => {
       };
 
       console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
-      axios(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-        bookingData,
-        {
-          headers: {
-            "Access-Control-Allow-Origin": "*"
-          }
-        }
-      )
+      axios({
+        method: "post",
+        url:
+          "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        data: bookingData
+      })
         .then(response => {
           console.log(`Response => ${response}`);
           toPayment();

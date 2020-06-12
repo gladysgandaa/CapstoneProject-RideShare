@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
@@ -30,36 +30,38 @@ const useStyles = makeStyles(() => ({
 const History = () => {
   const classes = useStyles();
   const [bookings, setBookings] = useState("");
-  const { currentUser } = useAppContext();
+  const { currentSession } = useAppContext();
 
-  const userId = currentUser.id;
+  const userId = currentSession.idToken.payload["cognito:username"];
 
-  axios
-    .get(
-      `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/bookings?userId=${userId}`
-    )
-    .then(response => {
-      console.log(`Response => ${response}`);
-      setBookings(response.data);
-    })
-    .catch(error => {
-      console.log(`Error => ${error}`);
-      if (error.response.status === 500) {
-        console.log(error);
-      }
-    });
-
+  useEffect(() => {
+    axios
+      .get(
+        `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/bookings?userId=${userId}`
+      )
+      .then(response => {
+        console.log(response);
+        setBookings(response.data);
+      })
+      .catch(error => {
+        console.log(`Error => ${error}`);
+        if (error.response.status === 500) {
+          console.log(error);
+        }
+      });
+  }, [userId]);
+  console.log(bookings);
   return (
     <div>
       <ListItem alignItems="flex-start">
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={12} justify="center">
+          <Grid container item xs={12} sm={12} justify="center">
             <Typography component="h1" variant="h4">
               Booking History
             </Typography>
           </Grid>
-          <Divider variant="inset" classes={{ root: classes.root }} />
           <Grid item xs={12} sm={12}>
+            <Divider variant="inset" classes={{ root: classes.root }} />
             <HistoryList bookings={bookings} />
           </Grid>
         </Grid>

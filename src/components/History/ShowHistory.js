@@ -7,7 +7,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
 
@@ -35,15 +34,7 @@ const useStyles = makeStyles(() => ({
 const ShowHistory = props => {
   console.log(props);
   const classes = useStyles();
-  const {
-    startTime,
-    bookingId,
-    pickupLocation,
-    carId,
-    duration,
-    userId,
-    car
-  } = props;
+  const { startTime, bookingId, carId, duration, car } = props;
 
   const returnVehicle = () => {
     const carData = {
@@ -101,29 +92,14 @@ const ShowHistory = props => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <Link
-                to={{
-                  pathname: "/book",
-                  state: {
-                    startTime: startTime,
-                    bookingId: bookingId,
-                    pickupLocation: pickupLocation,
-                    carId: carId,
-                    duration: duration,
-                    userId: userId
-                  }
-                }}
+              <Button
+                variant="contained"
+                color="primary"
+                classes={{ root: classes.button }}
+                onClick={returnVehicle}
               >
-                <Button
-                  alignItems="flex-end"
-                  variant="contained"
-                  color="primary"
-                  classes={{ root: classes.button }}
-                  onClick={returnVehicle}
-                >
-                  Return
-                </Button>
-              </Link>
+                Return
+              </Button>
             </Grid>
           </Grid>
         </ListItem>
