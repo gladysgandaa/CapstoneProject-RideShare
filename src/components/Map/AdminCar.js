@@ -44,7 +44,7 @@ class AdminCar extends Component {
   };
 
   render() {
-    const { carId, make, model, rentalCostPerHour, returnDate } = this.props;
+    const { carId, make, model, rentalCostPerHour } = this.props;
     const useStyles = makeStyles(theme => ({
       inline: {
         display: "inline"
@@ -65,8 +65,7 @@ class AdminCar extends Component {
                 className={useStyles.inline}
                 color="textPrimary"
               >
-                ${rentalCostPerHour} hourly <br></br> Expected Return:{" "}
-                {returnDate}
+                ${rentalCostPerHour} hourly <br></br> Available:
                 <br></br>
                 <div>
                   <Button

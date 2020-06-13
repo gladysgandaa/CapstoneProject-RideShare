@@ -144,6 +144,14 @@ class AdminDashboard extends Component {
   };
 
   render() {
+    const navHeight = document.getElementById("nav").clientHeight;
+    const containerStyle = {
+      flexGrow: "inherit",
+      maxWidth: "inherit",
+      maxHeight: `calc(100% - ${navHeight}px)`,
+      flexBasis: "inherit"
+    };
+
     if (this.state.callComplete === true) {
       return (
         <div>
@@ -151,8 +159,8 @@ class AdminDashboard extends Component {
           {this.props.admin === true && (
             <div>
               <div>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                <Grid container>
+                  <Grid item xs={12} sm={4}>
                     <div>
                       <br />
                       <Button onClick={this.handleOpen}>Add a Car at:</Button>
@@ -185,19 +193,17 @@ class AdminDashboard extends Component {
                         open={this.state.open}
                         handleClose={this.handleClose}
                       />
-                      <SideList
-                        cars={this.state.dbVehicles}
-                        account={this.state.account}
-                      />
+                      <SideList cars={this.state.dbVehicles} account="admin" />
                     </div>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={8}>
                     <Map
                       google={this.props.google}
                       zoom={12}
                       initialCenter={{ lat: -37.8136, lng: 144.9631 }}
                       center={this.props.userLocation}
                       onClick={this.onClick}
+                      containerStyle={containerStyle}
                     >
                       {this.displayVehicles()}
                       {this.displayAdd()}

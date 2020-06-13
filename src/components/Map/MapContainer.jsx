@@ -104,9 +104,7 @@ class MapContainer extends Component {
   };
 
   displayVehicles = () => {
-    //This doesn't work
     if (!this.state.dbVehicles) {
-      console.log("no vehicles");
       return null;
     }
 
@@ -137,7 +135,7 @@ class MapContainer extends Component {
       currentUser.lat = position.coords.latitude;
       currentUser.lng = position.coords.longitude;
       this.setState({ user: currentUser });
-      console.log("user position", this.state.user);
+      // console.log("user position", this.state.user);
       this.setState({ updatedLocation: true });
       this.getVehicles();
     });
@@ -172,7 +170,7 @@ class MapContainer extends Component {
   };
 
   render() {
-    console.log(this.props);
+    // console.log(this.props);
     if (!this.props.loaded) return <div>Loading...</div>;
     const navHeight = document.getElementById("nav").clientHeight;
     const containerStyle = {
@@ -214,7 +212,7 @@ class MapContainer extends Component {
         </Grid>
       );
     } else {
-      console.log("user position before update", this.state.user);
+      // console.log("user position before update", this.state.user);
       return <h3>Loading...</h3>;
     }
   }

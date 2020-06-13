@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -7,8 +7,8 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
+import axios from "axios";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -32,18 +32,52 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ShowHistory = props => {
-  console.log(props);
   const classes = useStyles();
   const {
     startTime,
     bookingId,
-    pickupLocation,
     carId,
     duration,
+    car,
+    pickUpLocation,
     userId,
-    make,
-    model
+    returnDate
   } = props;
+
+  const returnVehicle = () => {
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    var date = new Date();
+    const returnDate = new Date(date - tzoffset).toISOString().slice(0, -5);
+
+    const bookingData = {
+      bookingId: bookingId,
+      carId: carId,
+      duration: duration,
+      startTime: startTime,
+      pickUpLocation: {
+        Latitude: pickUpLocation.Latitude,
+        Longitude: pickUpLocation.Longitude
+      },
+      userId: userId,
+      returnDate: returnDate
+    };
+
+    // console.log(JSON.stringify(bookingData));
+
+    axios({
+      method: "put",
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking`,
+      headers: {},
+      data: bookingData
+    })
+      .then(response => {})
+      .catch(error => {
+        // console.log(`Error => ${error}`);
+        if (error.response.status && error.response.status === 500) {
+          console.log(error);
+        }
+      });
+  };
 
   return (
     <div>
@@ -58,7 +92,7 @@ const ShowHistory = props => {
             <Grid item xs={12} sm={8}>
               <ListItemText
                 classes={{ primary: classes.primary }}
-                primary={`${make} ${model}`}
+                primary={`${car.make} ${car.model}`}
                 secondary={
                   <Typography
                     component="span"
@@ -76,28 +110,16 @@ const ShowHistory = props => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <Link
-                to={{
-                  pathname: "/book",
-                  state: {
-                    startTime: startTime,
-                    bookingId: bookingId,
-                    pickupLocation: pickupLocation,
-                    carId: carId,
-                    duration: duration,
-                    userId: userId
-                  }
-                }}
-              >
+              {returnDate === null && (
                 <Button
-                  alignItems="flex-end"
                   variant="contained"
                   color="primary"
                   classes={{ root: classes.button }}
+                  onClick={returnVehicle}
                 >
-                  Book Again
+                  Return
                 </Button>
-              </Link>
+              )}
             </Grid>
           </Grid>
         </ListItem>

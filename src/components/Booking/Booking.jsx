@@ -4,8 +4,8 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
-import axios from "axios";
 import { useHistory, useLocation } from "react-router-dom";
+import { API } from "aws-amplify";
 
 import MaterialDialog from "../Dialog/Dialog";
 import { useAppContext } from "../../libs/contextLib";
@@ -15,30 +15,26 @@ import SignUp from "../Authentication/SignUp";
 
 const BookingForm = props => {
   let location = useLocation();
+
   const {
     carId,
     make,
     model,
-    numberOfSeats,
-    year,
     rentalCostPerHour,
     currentLocation
   } = location.state;
+
   const {
     isAuthenticated,
     isRegistered,
-    currentUser,
+    currentSession,
     userHasRegistered
   } = useAppContext();
 
-  const [returnDate, setReturnDate] = useState("");
-  console.log(currentUser);
-  const userId = currentUser.id;
   const tzoffset = new Date().getTimezoneOffset() * 60000;
   const localISOTime = new Date(Date.now() - tzoffset);
   localISOTime.setSeconds(0);
   const defaultDate = localISOTime.toISOString().slice(0, -5);
-  const defaultUserId = 1;
   const [open, setOpen] = useState(false);
   const [duration, setDuration] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
@@ -56,75 +52,53 @@ const BookingForm = props => {
     setDuration(event.target.value);
   };
 
-  const handleOpen = e => {
+  const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = e => {
+  const handleClose = () => {
+    setErrorMessage("");
     setOpen(false);
   };
 
   const submitHandler = e => {
     e.preventDefault();
-    const bookingData = {
-      carId: carId,
-      duration: duration,
-      date: fields.date,
-      pickUpLocation: {
-        Latitude: currentLocation.Latitude,
-        Longitude: currentLocation.Longitude
-      },
-      userId: userId || defaultUserId
-    };
 
-    console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
-    axios(
-      "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/availability",
-      bookingData
-    )
-      .then(response => {
-        console.log(`Response => ${response}`);
-        toPayment();
+    if (isAuthenticated) {
+      const userId =
+        location.state.userId ||
+        currentSession.idToken.payload["cognito:username"];
+
+      const bookingData = {
+        carId: carId,
+        duration: duration,
+        date: fields.date,
+        pickUpLocation: {
+          Latitude: currentLocation.Latitude,
+          Longitude: currentLocation.Longitude
+        },
+        userId: userId,
+        returnDate: null
+      };
+
+      console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
+
+      API.post("rideshare", "/booking", {
+        body: bookingData
       })
-      .catch(error => {
-        console.log(`Error => ${error}`);
-        if (error.response.status === 500) {
-          setErrorMessage(
-            `Selected time for the ${make} ${model} is unavailable. Please select another time.`
-          );
-          handleOpen();
-        }
-      });
-    toPayment();
-  };
-
-  const addReturnDate = () => {
-    var dateObj = new Date(fields.date);
-    dateObj.setHours(dateObj.getHours() + fields.duration);
-    setReturnDate(dateObj);
-
-    const carData = {
-      carId: carId,
-      model: model,
-      make: make,
-      rentalCostPerHour: rentalCostPerHour,
-      returnDate: returnDate || null,
-      numberOfSeats: numberOfSeats,
-      year: year,
-      currentLocation: {
-        Latitude: currentLocation.Latitude,
-        Longitude: currentLocation.Longitude
-      },
-      retired: false
-    };
-
-    console.log("put contents", JSON.stringify(carData));
-    axios({
-      method: "put",
-      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
-      headers: {},
-      data: carData
-    });
+        .then(response => {
+          // console.log(`Response => ${response}`);
+          toPayment();
+        })
+        .catch(error => {
+          // console.log(`Error => ${error}`);
+          if (error.response.status === 500) {
+            setErrorMessage(
+              `Selected time for the ${make} ${model} is unavailable. Please select another time.`
+            );
+          }
+        });
+    }
   };
 
   const toPayment = () => {
@@ -137,7 +111,6 @@ const BookingForm = props => {
         duration: fields.duration
       }
     });
-    addReturnDate();
   };
 
   const formSpacing = {
@@ -154,22 +127,22 @@ const BookingForm = props => {
           <Grid item xs={12} sm={6}>
             <TextField
               required
-              id="firstName"
-              name="firstName"
+              id="fname"
+              name="fname"
               label="First name"
               fullWidth
-              autoComplete="firstName"
+              autoComplete="fname"
               onChange={handleFieldChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               required
-              id="lastName"
-              name="lastName"
+              id="lname"
+              name="lname"
               label="Last name"
               fullWidth
-              autoComplete="lastName"
+              autoComplete="lname"
               onChange={handleFieldChange}
             />
           </Grid>
@@ -280,15 +253,35 @@ const BookingForm = props => {
             {isRegistered === true ? (
               <MaterialDialog
                 content={
-                  <SignIn handleClick={() => userHasRegistered(false)} />
+                  <SignIn
+                    handleClick={() => userHasRegistered(false)}
+                    handleClose={handleClose}
+                    state={location.state}
+                  />
                 }
                 open={open}
                 handleClose={handleClose}
               />
             ) : (
               <MaterialDialog
-                content={<SignUp handleClick={() => userHasRegistered(true)} />}
+                content={
+                  <SignUp
+                    handleClick={() => userHasRegistered(true)}
+                    handleClose={handleClose}
+                    state={location.state}
+                  />
+                }
                 open={open}
+                handleClose={handleClose}
+              />
+            )}
+            {errorMessage && (
+              <MaterialDialog
+                title="Sorry"
+                content={
+                  "Please select another time, the car is unavailable for the selected booking time."
+                }
+                open={errorMessage !== null}
                 handleClose={handleClose}
               />
             )}

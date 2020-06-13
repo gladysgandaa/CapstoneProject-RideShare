@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -7,12 +7,12 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import axios from "axios";
-
+import { useHistory } from "react-router";
 import { useFormFields } from "../../libs/hooksLib";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -23,11 +23,15 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  successMessage: {
+    color: theme.palette.success.main
   }
 }));
 
 export default function AddCar(props) {
   const classes = useStyles();
+  const history = useHistory();
   const [fields, handleFieldChange] = useFormFields({
     make: "",
     model: "",
@@ -38,6 +42,8 @@ export default function AddCar(props) {
     Latitude: ""
   });
 
+  const [message, setMessage] = useState("");
+
   const submitVehicle = e => {
     //Request will not complete in time for default reload
     e.preventDefault();
@@ -45,47 +51,24 @@ export default function AddCar(props) {
     const vehicleData = {
       make: fields.make,
       model: fields.model,
-      rentalCostPerHour: fields.rentalCostPerHour,
-      numberOfSeats: fields.numberOfSeats,
-      year: fields.year,
-      returnDate: null,
+      rentalCostPerHour: parseInt(fields.rentalCostPerHour),
+      numberOfSeats: parseInt(fields.numberOfSeats),
+      year: parseInt(fields.year),
       retired: false,
       currentLocation: {
-        Latitude: fields.Latitude,
-        Longitude: fields.Longitude
+        Latitude: props.Latitude,
+        Longitude: props.Longitude
       }
     };
-
-    //Since this component is shared between Edit and Add, we conditionally call PUT/POST
-    if (props.action == "EDITING") {
-      //Ensures props are passed even if field is not interacted with
-      for (var key in vehicleData) {
-        if (!vehicleData[key]) {
-          vehicleData[key] = props.car[`${key}`];
-        }
-      }
-
-      vehicleData.carId = props.car.carId;
-      axios({
-        method: "put",
-        url:
-          "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
-          props.carId,
-        headers: {},
-        data: vehicleData
-      }).then(res => {
-        window.location.reload();
-      });
-    } else if (props.action == "ADDING") {
-      axios({
-        method: "post",
-        url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
-        headers: {},
-        data: JSON.parse(JSON.stringify(vehicleData))
-      }).then(res => {
-        window.location.reload();
-      });
-    }
+    console.log("vehicleData from Add", vehicleData);
+    axios({
+      method: "post",
+      url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
+      headers: {},
+      data: vehicleData
+    }).then(res => {
+      // window.location.reload();
+    });
   };
 
   return (
@@ -96,7 +79,7 @@ export default function AddCar(props) {
           Add a Car
         </Typography>
         <form className={classes.form} onSubmit={submitVehicle} noValidate>
-          <Grid container spacing={2}>
+          <Grid container>
             <Grid item xs={12} sm={12}>
               <TextField
                 variant="outlined"
@@ -177,6 +160,9 @@ export default function AddCar(props) {
           >
             Add Car
           </Button>
+          <Typography variant="subtitle2" className={classes.successMessage}>
+            {message}
+          </Typography>
         </form>
       </div>
     </Container>
