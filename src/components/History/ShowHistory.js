@@ -46,8 +46,12 @@ const ShowHistory = props => {
   const [updatedReturnDate, setUpdatedReturnDate] = useState(null);
 
   const returnVehicle = () => {
-    var dateObj = new Date();
-    setUpdatedReturnDate(dateObj);
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    var date = new Date();
+    console.log(date.getHours());
+    date.setHours(date.getHours() + duration);
+    const returnDate = new Date(date - tzoffset).toISOString().slice(0, -5);
+    setUpdatedReturnDate(returnDate);
 
     const bookingData = {
       carId: carId,

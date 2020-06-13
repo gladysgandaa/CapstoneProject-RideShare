@@ -63,10 +63,6 @@ const BookingForm = props => {
 
   const submitHandler = e => {
     e.preventDefault();
-    var date = new Date(fields.date);
-    console.log(date.getHours());
-    date.setHours(date.getHours() + duration);
-    const returnDate = new Date(date - tzoffset).toISOString().slice(0, -5);
 
     if (isAuthenticated) {
       const userId =
@@ -82,7 +78,7 @@ const BookingForm = props => {
           Longitude: currentLocation.Longitude
         },
         userId: userId,
-        returnDate: returnDate
+        returnDate: null
       };
 
       console.log(`Booking Data: ${JSON.stringify(bookingData)}`);
