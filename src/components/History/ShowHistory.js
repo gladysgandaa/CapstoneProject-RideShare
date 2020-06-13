@@ -43,17 +43,14 @@ const ShowHistory = props => {
     userId,
     returnDate
   } = props;
-  const [updatedReturnDate, setUpdatedReturnDate] = useState(null);
 
   const returnVehicle = () => {
     const tzoffset = new Date().getTimezoneOffset() * 60000;
     var date = new Date();
-    console.log(date.getHours());
-    date.setHours(date.getHours() + duration);
     const returnDate = new Date(date - tzoffset).toISOString().slice(0, -5);
-    setUpdatedReturnDate(returnDate);
 
     const bookingData = {
+      bookingId: bookingId,
       carId: carId,
       duration: duration,
       startTime: startTime,
@@ -62,15 +59,24 @@ const ShowHistory = props => {
         Longitude: pickUpLocation.Longitude
       },
       userId: userId,
-      returnDate: updatedReturnDate
+      returnDate: returnDate
     };
+
+    // console.log(JSON.stringify(bookingData));
 
     axios({
       method: "put",
-      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/update`,
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking`,
       headers: {},
       data: bookingData
-    });
+    })
+      .then(response => {})
+      .catch(error => {
+        // console.log(`Error => ${error}`);
+        if (error.response.status && error.response.status === 500) {
+          console.log(error);
+        }
+      });
   };
 
   return (
