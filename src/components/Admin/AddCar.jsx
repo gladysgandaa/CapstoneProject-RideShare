@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function AddCar(props) {
   const classes = useStyles();
-  console.log("These are the props:", props.carId);
+  console.log("These are the props:", props.car);
 
   const [fields, handleFieldChange] = useFormFields({
     make: "",
@@ -39,6 +39,11 @@ export default function AddCar(props) {
     Longitude: "",
     Latitude: ""
   });
+  console.log("fields", fields);
+
+  if (props.action == "EDITING") {
+    fields.make = props.car.make;
+  }
 
   const submitVehicle = e => {
     e.preventDefault();
@@ -56,8 +61,7 @@ export default function AddCar(props) {
         Longitude: fields.Longitude
       }
     };
-    console.log("Vehicle Date to Put", vehicleData);
-
+    console.log("Vehicle Date to PUT", vehicleData);
     if (props.action == "EDITING") {
       axios({
         method: "put",
@@ -70,15 +74,17 @@ export default function AddCar(props) {
         window.location.reload();
       });
     } else if (props.action == "ADDING") {
-      console.log("there are no props");
-      console.log(vehicleData);
+      console.log(
+        "Vehicle Date to POST",
+        JSON.parse(JSON.stringify(vehicleData))
+      );
       axios({
         method: "post",
         url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
         headers: {},
-        data: vehicleData
+        data: JSON.parse(JSON.stringify(vehicleData))
       }).then(res => {
-        window.location.reload();
+        // window.location.reload();
       });
     }
   };
@@ -103,6 +109,7 @@ export default function AddCar(props) {
                 name="make"
                 autoComplete="make"
                 autoFocus
+                defaultValue={props.car ? props.car.make : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -117,6 +124,7 @@ export default function AddCar(props) {
                 name="model"
                 autoComplete="model"
                 autoFocus
+                defaultValue={props.car ? props.car.model : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -131,6 +139,7 @@ export default function AddCar(props) {
                 name="rentalCostPerHour"
                 autoComplete="rentalCostPerHour"
                 autoFocus
+                defaultValue={props.car ? props.car.rentalCostPerHour : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -145,6 +154,7 @@ export default function AddCar(props) {
                 name="numberOfSeats"
                 autoComplete="numberOfSeats"
                 autoFocus
+                defaultValue={props.car ? props.car.model : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -159,6 +169,7 @@ export default function AddCar(props) {
                 name="year"
                 autoComplete="year"
                 autoFocus
+                defaultValue={props.car ? props.car.year : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -173,6 +184,9 @@ export default function AddCar(props) {
                 name="Latitude"
                 autoComplete="Latitude"
                 autoFocus
+                defaultValue={
+                  props.car ? props.car.currentLocation.Latitude : ""
+                }
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -187,6 +201,9 @@ export default function AddCar(props) {
                 name="Longitude"
                 autoComplete="Longitude"
                 autoFocus
+                defaultValue={
+                  props.car ? props.car.currentLocation.Longitude : ""
+                }
                 onChange={handleFieldChange}
               />
             </Grid>

@@ -20,8 +20,9 @@ class AdminCar extends Component {
     };
   }
 
-  testFunction = carId => {
+  editForm = carId => {
     console.log("carId from function", carId);
+    console.log("props", this.props);
     if (this.state.editing === false) {
       this.setState({ editing: true });
     } else {
@@ -71,7 +72,7 @@ class AdminCar extends Component {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => this.testFunction(carId)}
+                    onClick={() => this.editForm(carId)}
                   >
                     Edit
                   </Button>
@@ -92,7 +93,11 @@ class AdminCar extends Component {
           />
           <div>
             {this.state.editing && (
-              <AddCar carId={this.props.carId} action="EDITING"></AddCar>
+              <AddCar
+                carId={this.props.carId}
+                car={this.props}
+                action="EDITING"
+              ></AddCar>
             )}
           </div>
         </ListItem>
