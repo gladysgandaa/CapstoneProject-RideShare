@@ -104,7 +104,7 @@ const ShowHistory = props => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              {returnDate !== null && (
+              {returnDate === null && (
                 <Button
                   variant="contained"
                   color="primary"
