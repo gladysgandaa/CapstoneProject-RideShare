@@ -9,7 +9,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
-import AddCar from "../Admin/AddCar";
+import EditCar from "../Admin/EditCar";
 
 class AdminCar extends Component {
   constructor(props) {
@@ -72,17 +72,17 @@ class AdminCar extends Component {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => this.editForm(carId)}
+                    onClick={() => this.removeVehicle(carId)}
                   >
-                    Edit
+                    Remove
                   </Button>
                   &nbsp;
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => this.removeVehicle(carId)}
+                    onClick={() => this.editForm(carId)}
                   >
-                    Remove
+                    Edit
                   </Button>
                 </div>
                 {this.state.removed && (
@@ -93,11 +93,11 @@ class AdminCar extends Component {
           />
           <div>
             {this.state.editing && (
-              <AddCar
+              <EditCar
                 carId={this.props.carId}
                 car={this.props}
                 action="EDITING"
-              ></AddCar>
+              ></EditCar>
             )}
           </div>
         </ListItem>

@@ -108,7 +108,6 @@ export default function AddCar(props) {
                 name="make"
                 autoComplete="make"
                 autoFocus
-                defaultValue={props.car ? props.car.make : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -123,7 +122,6 @@ export default function AddCar(props) {
                 name="model"
                 autoComplete="model"
                 autoFocus
-                defaultValue={props.car ? props.car.model : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -138,7 +136,6 @@ export default function AddCar(props) {
                 name="rentalCostPerHour"
                 autoComplete="rentalCostPerHour"
                 autoFocus
-                defaultValue={props.car ? props.car.rentalCostPerHour : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -153,7 +150,6 @@ export default function AddCar(props) {
                 name="numberOfSeats"
                 autoComplete="numberOfSeats"
                 autoFocus
-                defaultValue={props.car ? props.car.model : ""}
                 onChange={handleFieldChange}
               />
             </Grid>
@@ -168,41 +164,6 @@ export default function AddCar(props) {
                 name="year"
                 autoComplete="year"
                 autoFocus
-                defaultValue={props.car ? props.car.year : ""}
-                onChange={handleFieldChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="Latitude"
-                label="Latitude"
-                name="Latitude"
-                autoComplete="Latitude"
-                autoFocus
-                defaultValue={
-                  props.car ? props.car.currentLocation.Latitude : ""
-                }
-                onChange={handleFieldChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="Longitude"
-                label="Longitude"
-                name="Longitude"
-                autoComplete="Longitude"
-                autoFocus
-                defaultValue={
-                  props.car ? props.car.currentLocation.Longitude : ""
-                }
                 onChange={handleFieldChange}
               />
             </Grid>

@@ -52,6 +52,18 @@ class AdminDashboard extends Component {
     };
   }
 
+  displayAdd = () => {
+    return (
+      <Marker
+        name="User Marker"
+        position={{
+          lat: this.state.Latitude,
+          lng: this.state.Longitude
+        }}
+      />
+    );
+  };
+
   //Marker Functions
   onMarkerClick = (props, marker) =>
     this.setState({
@@ -128,7 +140,6 @@ class AdminDashboard extends Component {
     const { latLng } = coord;
     const lat = latLng.lat();
     const lng = latLng.lng();
-    console.log("position", lat);
     this.setState({ Longitude: lng, Latitude: lat });
   };
 
@@ -144,9 +155,33 @@ class AdminDashboard extends Component {
                   <Grid item xs={12} sm={6}>
                     <div>
                       <br />
-                      <Button onClick={this.handleOpen}>Add a Car</Button>
+                      <Button onClick={this.handleOpen}>Add a Car at:</Button>
+                      <br />
+                      <input
+                        name="longitude"
+                        placeholder="Longitude"
+                        value={this.state.Longitude}
+                        onChange={e =>
+                          this.setState({ Longitude: e.target.value })
+                        }
+                      />
+                      <br />
+                      <input
+                        name="latitude"
+                        placeholder="Latitude"
+                        value={this.state.Latitude}
+                        onChange={e =>
+                          this.setState({ Latitude: e.target.value })
+                        }
+                      />
                       <MaterialDialog
-                        content={<AddCar action="ADDING" />}
+                        content={
+                          <AddCar
+                            action="ADDING"
+                            Longitude={this.state.Longitude}
+                            Latitude={this.state.Latitude}
+                          />
+                        }
                         open={this.state.open}
                         handleClose={this.handleClose}
                       />
@@ -165,6 +200,7 @@ class AdminDashboard extends Component {
                       onClick={this.onClick}
                     >
                       {this.displayVehicles()}
+                      {this.displayAdd()}
                       <InfoWindow
                         marker={this.state.activeMarker}
                         onClose={this.onInfoWindowClose}
