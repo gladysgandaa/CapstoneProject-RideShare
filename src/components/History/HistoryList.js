@@ -27,6 +27,7 @@ const HistoryList = ({ bookings }) => {
               carId={booking.carId}
               duration={booking.duration}
               userId={booking.userId}
+              returnDate={booking.returnDate}
               car={booking.car}
             />
           );

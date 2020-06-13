@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -33,29 +33,43 @@ const useStyles = makeStyles(() => ({
 
 const ShowHistory = props => {
   const classes = useStyles();
-  const { startTime, bookingId, carId, duration, car } = props;
+  const {
+    startTime,
+    bookingId,
+    carId,
+    duration,
+    car,
+    pickUpLocation,
+    userId,
+    returnDate
+  } = props;
+  const [updatedReturnDate, setUpdatedReturnDate] = useState(null);
 
   const returnVehicle = () => {
-    const carData = {
+    const tzoffset = new Date().getTimezoneOffset() * 60000;
+    var date = new Date();
+    console.log(date.getHours());
+    date.setHours(date.getHours() + duration);
+    const returnDate = new Date(date - tzoffset).toISOString().slice(0, -5);
+    setUpdatedReturnDate(returnDate);
+
+    const bookingData = {
       carId: carId,
-      model: car.model,
-      make: car.make,
-      rentalCostPerHour: car.rentalCostPerHour,
-      returnDate: null,
-      numberOfSeats: car.numberOfSeats,
-      year: car.year,
-      currentLocation: {
-        Latitude: car.currentLocation.Latitude,
-        Longitude: car.currentLocation.Longitude
+      duration: duration,
+      startTime: startTime,
+      pickUpLocation: {
+        Latitude: pickUpLocation.Latitude,
+        Longitude: pickUpLocation.Longitude
       },
-      retired: false
+      userId: userId,
+      returnDate: updatedReturnDate
     };
 
     axios({
       method: "put",
-      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=${carId}`,
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/booking/update`,
       headers: {},
-      data: carData
+      data: bookingData
     });
   };
 
@@ -90,7 +104,7 @@ const ShowHistory = props => {
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              {car.returnDate !== null && (
+              {returnDate !== null && (
                 <Button
                   variant="contained"
                   color="primary"
