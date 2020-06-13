@@ -28,8 +28,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function AddCar(props) {
   const classes = useStyles();
-  console.log("These are the props:", props.car);
-
   const [fields, handleFieldChange] = useFormFields({
     make: "",
     model: "",
@@ -39,13 +37,9 @@ export default function AddCar(props) {
     Longitude: "",
     Latitude: ""
   });
-  console.log("fields", fields);
-
-  if (props.action == "EDITING") {
-    fields.make = props.car.make;
-  }
 
   const submitVehicle = e => {
+    //Request will not complete in time for default reload
     e.preventDefault();
 
     const vehicleData = {
@@ -61,8 +55,17 @@ export default function AddCar(props) {
         Longitude: fields.Longitude
       }
     };
-    console.log("Vehicle Date to PUT", vehicleData);
+
+    //Since this component is shared between Edit and Add, we conditionally call PUT/POST
     if (props.action == "EDITING") {
+      //Ensures props are passed even if field is not interacted with
+      for (var key in vehicleData) {
+        if (!vehicleData[key]) {
+          vehicleData[key] = props.car[`${key}`];
+        }
+      }
+
+      vehicleData.carId = props.car.carId;
       axios({
         method: "put",
         url:
@@ -74,17 +77,13 @@ export default function AddCar(props) {
         window.location.reload();
       });
     } else if (props.action == "ADDING") {
-      console.log(
-        "Vehicle Date to POST",
-        JSON.parse(JSON.stringify(vehicleData))
-      );
       axios({
         method: "post",
         url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
         headers: {},
         data: JSON.parse(JSON.stringify(vehicleData))
       }).then(res => {
-        // window.location.reload();
+        window.location.reload();
       });
     }
   };
