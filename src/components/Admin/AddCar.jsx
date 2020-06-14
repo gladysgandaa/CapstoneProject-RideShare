@@ -67,7 +67,7 @@ export default function AddCar(props) {
       headers: {},
       data: vehicleData
     }).then(res => {
-      // window.location.reload();
+      window.location.reload();
     });
   };
 
