@@ -113,49 +113,39 @@ class AdminCar extends Component {
   };
 
   render() {
+    const { carId, make, model, rentalCostPerHour, returnDate } = this.props;
+    const useStyles = makeStyles(theme => ({
+      inline: {
+        display: "inline"
+      }
+    }));
     return (
       <div>
         <ListItem alignItems="flex-start">
-          <Grid container direction="row" justify="space-between">
-            <Grid
-              container
-              direction="row"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item>
-                <ListItemAvatar>
-                  <Avatar alt={this.props.model} src="" />
-                </ListItemAvatar>
-              </Grid>
-              <Grid item>
-                <Typography component="h2" variant="body1" color="textPrimary">
-                  {this.props.make} {this.props.model}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography component="h2" variant="body2" color="textPrimary">
-                ${this.props.rentalCostPerHour} hourly
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6}>
+          <ListItemAvatar>
+            <Avatar alt={model} src="" />
+          </ListItemAvatar>
+          <ListItemText
+            primary={`${make} ${model}`}
+            secondary={
               <Typography
-                component="h2"
+                component="span"
                 variant="body2"
+                className={useStyles.inline}
                 color="textPrimary"
-                align="right"
               >
-                Status: {this.props.status}
-              </Typography>
-            </Grid>
-            {/* <Button
+                ${rentalCostPerHour} hourly <br></br> Expected Return:{" "}
+                {returnDate}
+                <br></br>
+                <div>
+                  {/* <Button
                     variant="contained"
                     color="primary"
                     onClick={() => this.removeVehicle(carId)}
                   >
                     Edit
                   </Button> */}
+
             &nbsp;
             {this.props.status !== "Booked" && (
               <Grid
@@ -167,7 +157,6 @@ class AdminCar extends Component {
               >
                 <Grid item xs={12} sm={3}>
                   <Button
-                    fullWidth
                     variant="contained"
                     color="primary"
                     onClick={() => this.retireVehicle()}
@@ -232,7 +221,7 @@ class AdminCar extends Component {
             )}
           </div>
         </ListItem>
-        <Divider component="li" />
+        <Divider variant="inset" component="li" />
       </div>
     );
   }

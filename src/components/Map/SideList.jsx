@@ -6,13 +6,11 @@ import AdminCar from "./AdminCar";
 
 var navHeight = 64;
 var buttonHeight = 113;
+
 const useStyles = makeStyles({
   root: {
     width: "100%",
-    left: 0,
-    maxHeight: `calc(100vh - ${navHeight + buttonHeight}px)`,
-    position: "relative",
-    overflow: "auto"
+    left: 0
   }
 });
 
@@ -56,6 +54,7 @@ const SideList = ({ cars, account, availableVehicles }) => {
                 distance={car.distance}
                 year={car.year}
                 numberOfSeats={car.numberOfSeats}
+                returnDate={car.returnDate}
                 rentalCostPerHour={car.rentalCostPerHour}
                 currentLocation={car.currentLocation}
                 status={checkStatus(car)}

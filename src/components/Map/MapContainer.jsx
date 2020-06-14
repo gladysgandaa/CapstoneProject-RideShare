@@ -74,7 +74,6 @@ class MapContainer extends Component {
       if (rmDbVehicles[d].distance > this.state.search_distance) {
         delete rmDbVehicles[d];
         this.setState({ dbVehicles: rmDbVehicles });
-        this.setState({ updatedDistance: true });
       }
     }
   };
@@ -89,6 +88,7 @@ class MapContainer extends Component {
         this.setState({ dbVehicles }, () => {
           this.getDistances(this.state.user, this.state.dbVehicles);
           this.removeFarVehicles();
+          this.setState({ updatedDistance: true });
         });
       });
   };

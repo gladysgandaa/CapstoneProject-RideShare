@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import { useHistory } from "react-router-dom";
 
 import HistoryList from "./HistoryList.js";
-import { useAppContext } from "../../libs/contextLib";
+import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -61,19 +61,20 @@ const History = () => {
 
   return (
     <div>
+      <h2>Past Booking</h2>
       <ListItem alignItems="flex-start">
         <Grid container spacing={3}>
-          <Grid container item xs={12} sm={12} justify="center">
+          <Grid item xs={12} sm={12}>
             <Typography component="h1" variant="h4">
               Booking History
             </Typography>
           </Grid>
           <Grid item xs={12} sm={12}>
-            <Divider variant="inset" classes={{ root: classes.root }} />
             <HistoryList bookings={bookings} />
           </Grid>
         </Grid>
       </ListItem>
+      <Divider variant="inset" classes={{ root: classes.root }} />
     </div>
   );
 };

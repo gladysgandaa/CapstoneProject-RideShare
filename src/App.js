@@ -11,7 +11,7 @@ import Routes from "./Routes";
 //TODO - this should call map now, which will then call map container
 const App = () => {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
-
+  const [user, setUser] = useState({ Latitude: -8.0, Longitude: -190.0 });
   const [isRegistered, userHasRegistered] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [currentSession, setCurrentSession] = useState("");

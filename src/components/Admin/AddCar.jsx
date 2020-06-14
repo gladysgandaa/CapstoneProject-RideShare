@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -7,12 +7,12 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import axios from "axios";
-import { useHistory } from "react-router";
+
 import { useFormFields } from "../../libs/hooksLib";
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -23,15 +23,12 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
-  },
-  successMessage: {
-    color: theme.palette.success.main
   }
 }));
 
 export default function AddCar(props) {
   const classes = useStyles();
-  const history = useHistory();
+
   const [fields, handleFieldChange] = useFormFields({
     make: "",
     model: "",
@@ -42,8 +39,6 @@ export default function AddCar(props) {
     Latitude: ""
   });
 
-  const [message, setMessage] = useState("");
-
   const submitVehicle = e => {
     //Request will not complete in time for default reload
     e.preventDefault();
@@ -51,9 +46,10 @@ export default function AddCar(props) {
     const vehicleData = {
       make: fields.make,
       model: fields.model,
-      rentalCostPerHour: parseInt(fields.rentalCostPerHour),
-      numberOfSeats: parseInt(fields.numberOfSeats),
-      year: parseInt(fields.year),
+      rentalCostPerHour: fields.rentalCostPerHour,
+      numberOfSeats: fields.numberOfSeats,
+      year: fields.year,
+      returnDate: null,
       retired: false,
       currentLocation: {
         Latitude: props.Latitude,
@@ -79,7 +75,7 @@ export default function AddCar(props) {
           Add a Car
         </Typography>
         <form className={classes.form} onSubmit={submitVehicle} noValidate>
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12}>
               <TextField
                 variant="outlined"
@@ -160,9 +156,6 @@ export default function AddCar(props) {
           >
             Add Car
           </Button>
-          <Typography variant="subtitle2" className={classes.successMessage}>
-            {message}
-          </Typography>
         </form>
       </div>
     </Container>
