@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function AddCar() {
+export default function AddCar(props) {
   const classes = useStyles();
   const history = useHistory();
   const [fields, handleFieldChange] = useFormFields({
@@ -45,6 +45,7 @@ export default function AddCar() {
   const [message, setMessage] = useState("");
 
   const submitVehicle = e => {
+    //Request will not complete in time for default reload
     e.preventDefault();
 
     const vehicleData = {
@@ -55,20 +56,18 @@ export default function AddCar() {
       year: parseInt(fields.year),
       retired: false,
       currentLocation: {
-        Latitude: parseFloat(fields.Latitude),
-        Longitude: parseFloat(fields.Longitude)
+        Latitude: props.Latitude,
+        Longitude: props.Longitude
       }
     };
-
-    console.log(vehicleData);
+    console.log("vehicleData from Add", vehicleData);
     axios({
       method: "post",
       url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
       headers: {},
       data: vehicleData
-    }).then(response => {
-      setMessage("Successfully added.");
-      history.go();
+    }).then(res => {
+      window.location.reload();
     });
   };
 
@@ -147,34 +146,6 @@ export default function AddCar() {
                 label="Make Year"
                 name="year"
                 autoComplete="year"
-                autoFocus
-                onChange={handleFieldChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="Latitude"
-                label="Latitude"
-                name="Latitude"
-                autoComplete="Latitude"
-                autoFocus
-                onChange={handleFieldChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="Longitude"
-                label="Longitude"
-                name="Longitude"
-                autoComplete="Longitude"
                 autoFocus
                 onChange={handleFieldChange}
               />
