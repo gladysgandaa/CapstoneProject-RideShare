@@ -66,7 +66,8 @@ export default function AddCar(props) {
       headers: {},
       data: vehicleData
     }).then(res => {
-      window.location.reload();
+      setMessage("Successfully added.");
+      history.go();
     });
   };
 
