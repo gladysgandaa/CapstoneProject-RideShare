@@ -104,9 +104,7 @@ class MapContainer extends Component {
   };
 
   displayVehicles = () => {
-    //This doesn't work
     if (!this.state.dbVehicles) {
-      // console.log("no vehicles");
       return null;
     }
 

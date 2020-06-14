@@ -17,7 +17,6 @@ const useStyles = makeStyles({
 });
 
 const SideList = ({ cars, account, availableVehicles }) => {
-  console.log("logging from sidelist");
   const classes = useStyles();
   navHeight = document.getElementById("nav").clientHeight;
 
