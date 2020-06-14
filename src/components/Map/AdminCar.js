@@ -3,11 +3,11 @@ import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import axios from "axios";
 import EditCar from "../Admin/EditCar";
 
@@ -67,8 +67,7 @@ class AdminCar extends Component {
       data: vehicleData
     })
       .then(response => {
-        // eslint-disable-next-line no-restricted-globals
-        location.reload();
+        window.location.reload();
       })
       .catch(error => {
         // console.log(`Error => ${error}`);
@@ -103,8 +102,7 @@ class AdminCar extends Component {
       data: vehicleData
     })
       .then(response => {
-        // eslint-disable-next-line no-restricted-globals
-        location.reload();
+        window.location.reload();
       })
       .catch(error => {
         // console.log(`Error => ${error}`);
@@ -167,7 +165,7 @@ class AdminCar extends Component {
                 justify="center"
                 alignItems="center"
               >
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <Button
                     fullWidth
                     variant="contained"
@@ -177,7 +175,7 @@ class AdminCar extends Component {
                     Retire
                   </Button>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   {this.props.maintenance === false ? (
                     <Button
                       fullWidth
@@ -198,13 +196,24 @@ class AdminCar extends Component {
                     </Button>
                   )}
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <Button
                     fullWidth
                     variant="contained"
                     color="secondary"
                     onClick={() => this.removeVehicle(this.props.carId)}
                     startIcon={<DeleteIcon />}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="default"
+                    onClick={() => this.removeVehicle(this.props.carId)}
+                    startIcon={<EditIcon />}
                   >
                     Edit
                   </Button>

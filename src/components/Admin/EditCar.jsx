@@ -57,7 +57,7 @@ export default function EditCar(props) {
 
     // Pass props if form is not changed
     for (var key in vehicleData) {
-      if (key == "currentLocation") {
+      if (key === "currentLocation") {
         if (!vehicleData.currentLocation.Longitude) {
           vehicleData[key].Longitude = props.car.currentLocation.Longitude;
         }

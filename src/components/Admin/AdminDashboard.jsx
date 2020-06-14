@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import Divider from "@material-ui/core/Divider";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 
 import SideList from "../Map/SideList";
@@ -48,7 +50,8 @@ class AdminDashboard extends Component {
             Latitude: -37.3303708
           }
         }
-      ]
+      ],
+      availableVehicles: []
     };
   }
 
@@ -107,6 +110,7 @@ class AdminDashboard extends Component {
 
   componentWillMount() {
     this.getVehicles();
+    this.getAvailableVehicles();
   }
 
   //Get vehicle and store IDs
@@ -117,6 +121,17 @@ class AdminDashboard extends Component {
         const dbVehicles = res.data;
         this.setState({ dbVehicles });
         this.setState({ callComplete: true });
+      });
+  };
+
+  getAvailableVehicles = () => {
+    axios
+      .get(
+        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars/available"
+      )
+      .then(res => {
+        const availableVehicles = res.data;
+        this.setState({ availableVehicles });
       });
   };
 
@@ -160,40 +175,61 @@ class AdminDashboard extends Component {
               <div>
                 <Grid container>
                   <Grid item xs={12} sm={4}>
-                    <div>
-                      <br />
-                      <Button onClick={this.handleOpen}>Add a Car at:</Button>
-                      <br />
-                      <input
-                        name="longitude"
-                        placeholder="Longitude"
-                        value={this.state.Longitude}
-                        onChange={e =>
-                          this.setState({ Longitude: e.target.value })
-                        }
-                      />
-                      <br />
-                      <input
-                        name="latitude"
-                        placeholder="Latitude"
-                        value={this.state.Latitude}
-                        onChange={e =>
-                          this.setState({ Latitude: e.target.value })
-                        }
-                      />
-                      <MaterialDialog
-                        content={
-                          <AddCar
-                            action="ADDING"
-                            Longitude={this.state.Longitude}
-                            Latitude={this.state.Latitude}
+                    <div id="admin-add-car-section">
+                      <Grid container>
+                        <Grid item xs={12}>
+                          <Button fullWidth onClick={this.handleOpen}>
+                            Add a Car at:
+                          </Button>
+                        </Grid>
+                      </Grid>
+                      <Grid container spacing={2} justify="center">
+                        <Grid item xs={12} sm={3}>
+                          <TextField
+                            label="Longitude"
+                            name="longitude"
+                            placeholder="Longitude"
+                            value={this.state.Longitude}
+                            variant="outlined"
+                            className="coordinate-fields"
+                            onChange={e =>
+                              this.setState({ Longitude: e.target.value })
+                            }
                           />
-                        }
-                        open={this.state.open}
-                        handleClose={this.handleClose}
-                      />
-                      <SideList cars={this.state.dbVehicles} account="admin" />
+                        </Grid>
+                        <Grid item xs={12} sm={3}>
+                          <TextField
+                            label="Latitude"
+                            name="latitude"
+                            placeholder="Latitude"
+                            value={this.state.Latitude}
+                            variant="outlined"
+                            className="coordinate-fields"
+                            onChange={e =>
+                              this.setState({ Latitude: e.target.value })
+                            }
+                          />
+                        </Grid>
+                      </Grid>
+                      <Divider />
                     </div>
+                    <MaterialDialog
+                      content={
+                        <AddCar
+                          action="ADDING"
+                          Longitude={this.state.Longitude}
+                          Latitude={this.state.Latitude}
+                        />
+                      }
+                      open={this.state.open}
+                      handleClose={this.handleClose}
+                    />
+
+                    <SideList
+                      cars={this.state.dbVehicles}
+                      availableVehicles={this.state.availableVehicles}
+                      account="admin"
+                    />
                   </Grid>
                   <Grid item xs={12} sm={8}>
                     <Map
