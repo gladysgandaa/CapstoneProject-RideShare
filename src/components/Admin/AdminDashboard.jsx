@@ -5,6 +5,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
+
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 
 import SideList from "../Map/SideList";
@@ -50,8 +51,7 @@ class AdminDashboard extends Component {
             Latitude: -37.3303708
           }
         }
-      ],
-      availableVehicles: []
+      ]
     };
   }
 
@@ -124,17 +124,6 @@ class AdminDashboard extends Component {
       });
   };
 
-  getAvailableVehicles = () => {
-    axios
-      .get(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars/available"
-      )
-      .then(res => {
-        const availableVehicles = res.data;
-        this.setState({ availableVehicles });
-      });
-  };
-
   handleOpen = () => {
     this.setState({ open: true });
   };
@@ -158,14 +147,6 @@ class AdminDashboard extends Component {
   };
 
   render() {
-    const navHeight = document.getElementById("nav").clientHeight;
-    const containerStyle = {
-      flexGrow: "inherit",
-      maxWidth: "inherit",
-      maxHeight: `calc(100% - ${navHeight}px)`,
-      flexBasis: "inherit"
-    };
-
     if (this.state.callComplete === true) {
       return (
         <div>
@@ -231,14 +212,13 @@ class AdminDashboard extends Component {
                       account="admin"
                     />
                   </Grid>
-                  <Grid item xs={12} sm={8}>
+                  <Grid item xs={12} sm={6}>
                     <Map
                       google={this.props.google}
                       zoom={12}
                       initialCenter={{ lat: -37.8136, lng: 144.9631 }}
                       center={this.props.userLocation}
                       onClick={this.onClick}
-                      containerStyle={containerStyle}
                     >
                       {this.displayVehicles()}
                       {this.displayAdd()}

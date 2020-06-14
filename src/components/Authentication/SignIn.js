@@ -16,6 +16,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import LoaderButton from "../LoaderButton";
 import { onError } from "../../libs/errorLib";
 import { useFormFields } from "../../libs/hooksLib";
+import { withStyles } from "@material-ui/core/styles";
 
 function Copyright() {
   return (
@@ -60,8 +61,7 @@ export default function SignIn(props) {
   const {
     userHasAuthenticated,
     setCurrentSession,
-    setIsAdmin,
-    setCurrentUser
+    setIsAdmin
   } = useAppContext();
   const [isLoading, setIsLoading] = useState(false);
   const [fields, handleFieldChange] = useFormFields({
@@ -81,7 +81,6 @@ export default function SignIn(props) {
       userHasAuthenticated(true);
       console.log(session);
       setCurrentSession(session);
-      setCurrentUser(session);
       setIsLoading(false);
       if (
         session.signInUserSession.idToken.payload.hasOwnProperty(
@@ -92,12 +91,7 @@ export default function SignIn(props) {
       ) {
         setIsAdmin(true);
       }
-      console.log(`State => ${props.state}`);
-      history.replace(from, { ...props.state, userId: session.username });
-      if (props.handleClose) {
-        props.handleClose();
-      }
-      history.go();
+      history.replace(from);
     } catch (e) {
       onError(e);
       setIsLoading(false);
