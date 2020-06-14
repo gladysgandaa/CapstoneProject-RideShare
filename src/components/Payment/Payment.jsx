@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import PayPalBtn from "./PayPalBtn";
-import { browserHistory } from "react-router";
-import { withRouter } from "react-router-dom";
 
 export default class PaymentExample extends Component {
   paymentHandler = (details, data) => {
