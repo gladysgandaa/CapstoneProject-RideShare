@@ -60,7 +60,9 @@ export default function AddCar(props) {
         Longitude: props.Longitude
       }
     };
-    console.log("vehicleData from Add", vehicleData);
+
+    // console.log("vehicleData from Add", vehicleData);
+
     axios({
       method: "post",
       url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",

@@ -40,13 +40,13 @@ const History = () => {
         `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/bookings?userId=${userId}`
       )
       .then(response => {
-        console.log(response);
+        // console.log(response);
         setBookings(response.data);
       })
       .catch(error => {
         console.log(`Error => ${error}`);
-        if (error.response.status === 500) {
-          console.log(error);
+        if (error.response && error.response.status === 500) {
+          // console.log(error);
         }
       });
   }, [userId]);
