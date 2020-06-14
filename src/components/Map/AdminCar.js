@@ -52,6 +52,7 @@ class AdminCar extends Component {
 
   retireVehicle = () => {
     const vehicleData = {
+      carId: this.props.carId,
       make: this.props.make,
       model: this.props.model,
       rentalCostPerHour: parseInt(this.props.rentalCostPerHour),
@@ -72,17 +73,21 @@ class AdminCar extends Component {
       headers: {},
       data: vehicleData
     })
-      .then(response => {})
+      .then(response => {
+        // eslint-disable-next-line no-restricted-globals
+        location.reload();
+      })
       .catch(error => {
         // console.log(`Error => ${error}`);
-        if (error.response.status && error.response.status === 500) {
+        if (error.response && error.response.status === 500) {
           console.log(error);
         }
       });
   };
 
-  maintainVehicle = () => {
+  maintainVehicle = maintenance => {
     const vehicleData = {
+      carId: this.props.carId,
       make: this.props.make,
       model: this.props.model,
       rentalCostPerHour: parseInt(this.props.rentalCostPerHour),
@@ -93,7 +98,7 @@ class AdminCar extends Component {
         Latitude: parseFloat(this.props.currentLocation.Latitude),
         Longitude: parseFloat(this.props.currentLocation.Longitude)
       },
-      maintenance: true
+      maintenance: maintenance
     };
 
     // console.log(JSON.stringify(vehicleData));
@@ -104,10 +109,13 @@ class AdminCar extends Component {
       headers: {},
       data: vehicleData
     })
-      .then(response => {})
+      .then(response => {
+        // eslint-disable-next-line no-restricted-globals
+        location.reload();
+      })
       .catch(error => {
         // console.log(`Error => ${error}`);
-        if (error.response.status && error.response.status === 500) {
+        if (error.response && error.response.status === 500) {
           console.log(error);
         }
       });
@@ -158,45 +166,58 @@ class AdminCar extends Component {
                     Edit
                   </Button> */}
             &nbsp;
-            <Grid
-              container
-              spacing={1}
-              direction="row"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item xs={12} sm={4}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={() => this.retireVehicle(this.props.carId)}
-                >
-                  Retire
-                </Button>
+            {this.props.status !== "Booked" && (
+              <Grid
+                container
+                spacing={1}
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <Grid item xs={12} sm={4}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    onClick={() => this.retireVehicle()}
+                  >
+                    Retire
+                  </Button>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  {this.props.maintenance === false ? (
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      className="maintenanceButton"
+                      onClick={() => this.maintainVehicle(true)}
+                    >
+                      Maintenance
+                    </Button>
+                  ) : (
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      className="availableButton"
+                      onClick={() => this.maintainVehicle(false)}
+                    >
+                      Available
+                    </Button>
+                  )}
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => this.removeVehicle(this.props.carId)}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  className="maintenanceButton"
-                  onClick={() => this.maintainVehicle(this.props.carId)}
-                >
-                  Maintenance
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => this.removeVehicle(this.props.carId)}
-                  startIcon={<DeleteIcon />}
-                >
-                  Remove
-                </Button>
-              </Grid>
-            </Grid>
+            )}
           </Grid>
           {this.state.removed && <div style={{ color: "red" }}>REMOVED</div>}
           <div>
