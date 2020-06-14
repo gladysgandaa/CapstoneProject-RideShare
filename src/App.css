@@ -49,3 +49,8 @@
   color: #fff !important;
   background-color: #4caf50 !important;
 }
+
+.coordinate-fields {
+  margin-bottom: 10px !important;
+  margin-top: 10px !important;
+}

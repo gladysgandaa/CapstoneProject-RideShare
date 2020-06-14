@@ -5,7 +5,7 @@ import Car from "./Car";
 import AdminCar from "./AdminCar";
 
 var navHeight = 64;
-var buttonHeight = 36;
+var buttonHeight = 113;
 const useStyles = makeStyles({
   root: {
     width: "100%",
@@ -19,12 +19,16 @@ const useStyles = makeStyles({
 const SideList = ({ cars, account, availableVehicles }) => {
   const classes = useStyles();
   navHeight = document.getElementById("nav").clientHeight;
+  if (document.getElementById("admin-add-car-section")) {
+    buttonHeight = document.getElementById("admin-add-car-section")
+      .clientHeight;
+  }
 
   const checkStatus = car => {
     const result = availableVehicles.some(
       availableCar => availableCar.carId === car.carId
     );
-    console.log(result);
+    // console.log(result);
     if (result) {
       return "Available";
     } else if (car.retired === true) {
@@ -55,6 +59,7 @@ const SideList = ({ cars, account, availableVehicles }) => {
                 rentalCostPerHour={car.rentalCostPerHour}
                 currentLocation={car.currentLocation}
                 status={checkStatus(car)}
+                maintenance={car.maintenance}
               />
             );
           }
