@@ -65,7 +65,7 @@ const Car = props => {
               color="textPrimary"
             >
               From: ${rentalCostPerHour} hourly
-              <br></br>Currently Available
+              <br></br>Available
               <br></br>
               Kilometres from you: {round_dist}
               <div>
