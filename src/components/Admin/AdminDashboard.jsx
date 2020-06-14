@@ -3,8 +3,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
-import AddIcon from "@material-ui/icons/Add";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from "google-maps-react";
 
 import SideList from "../Map/SideList";
@@ -50,8 +48,7 @@ class AdminDashboard extends Component {
             Latitude: -37.3303708
           }
         }
-      ],
-      availableVehicles: []
+      ]
     };
   }
 
@@ -99,8 +96,6 @@ class AdminDashboard extends Component {
 
   componentWillMount() {
     this.getVehicles();
-    this.getAvailableVehicles();
-    console.log(this.state.availableVehicles);
   }
 
   //Get vehicle and store IDs
@@ -111,17 +106,6 @@ class AdminDashboard extends Component {
         const dbVehicles = res.data;
         this.setState({ dbVehicles });
         this.setState({ callComplete: true });
-      });
-  };
-
-  getAvailableVehicles = () => {
-    axios
-      .get(
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/cars/available"
-      )
-      .then(res => {
-        const availableVehicles = res.data;
-        this.setState({ availableVehicles });
       });
   };
 
@@ -149,14 +133,6 @@ class AdminDashboard extends Component {
   };
 
   render() {
-    const navHeight = document.getElementById("nav").clientHeight;
-    const containerStyle = {
-      flexGrow: "inherit",
-      maxWidth: "inherit",
-      maxHeight: `calc(100% - ${navHeight}px)`,
-      flexBasis: "inherit"
-    };
-
     if (this.state.callComplete === true) {
       return (
         <div>
@@ -164,18 +140,11 @@ class AdminDashboard extends Component {
           {this.props.admin === true && (
             <div>
               <div>
-                <Grid container>
-                  <Grid item xs={12} sm={4}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6}>
                     <div>
-                      <Button
-                        fullWidth
-                        onClick={this.handleOpen}
-                        id="addCarButton"
-                        startIcon={<AddIcon />}
-                      >
-                        Add a Car
-                      </Button>
-                      <Divider />
+                      <br />
+                      <Button onClick={this.handleOpen}>Add a Car</Button>
                       <MaterialDialog
                         content={<AddCar />}
                         open={this.state.open}
@@ -183,19 +152,17 @@ class AdminDashboard extends Component {
                       />
                       <SideList
                         cars={this.state.dbVehicles}
-                        availableVehicles={this.state.availableVehicles}
-                        account="admin"
+                        account={this.state.account}
                       />
                     </div>
                   </Grid>
-                  <Grid item xs={12} sm={8}>
+                  <Grid item xs={12} sm={6}>
                     <Map
                       google={this.props.google}
                       zoom={12}
                       initialCenter={{ lat: -37.8136, lng: 144.9631 }}
                       center={this.props.userLocation}
                       onClick={this.onClick}
-                      containerStyle={containerStyle}
                     >
                       {this.displayVehicles()}
                       <InfoWindow
