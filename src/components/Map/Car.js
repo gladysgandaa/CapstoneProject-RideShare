@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Car = props => {
-  console.log("props Repeating many times", props);
+  console.log("Car Props", props);
   const {
     carId,
     make,
@@ -47,8 +47,8 @@ const Car = props => {
       }
     });
   };
-
-  var trunc_dist = Math.trunc(distance);
+  console.log("distance from", distance);
+  var round_dist = Math.round(distance * 10) / 10;
   return (
     <div>
       <ListItem alignItems="flex-start">
@@ -67,7 +67,7 @@ const Car = props => {
               From: ${rentalCostPerHour} hourly
               <br></br>Available
               <br></br>
-              Kilometres from you: {trunc_dist}
+              Kilometres from you: {round_dist}
               <div>
                 <Button
                   variant="contained"

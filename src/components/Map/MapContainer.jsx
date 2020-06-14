@@ -15,6 +15,7 @@ class MapContainer extends Component {
     this.lastUpdateDate = new Date();
     this.state = {
       updatedLocation: false,
+      updatedDistance: false,
       search_distance: 10,
       markerName: "placeholder",
       activeMarker: {},
@@ -73,6 +74,7 @@ class MapContainer extends Component {
       if (rmDbVehicles[d].distance > this.state.search_distance) {
         delete rmDbVehicles[d];
         this.setState({ dbVehicles: rmDbVehicles });
+        this.setState({ updatedDistance: true });
       }
     }
   };
@@ -135,7 +137,6 @@ class MapContainer extends Component {
       currentUser.lat = position.coords.latitude;
       currentUser.lng = position.coords.longitude;
       this.setState({ user: currentUser });
-      // console.log("user position", this.state.user);
       this.setState({ updatedLocation: true });
       this.getVehicles();
     });
@@ -166,11 +167,11 @@ class MapContainer extends Component {
         }
       }
     }
+    console.log("Distances from get distances from MapContainer", distances);
     return distances;
   };
 
   render() {
-    // console.log(this.props);
     if (!this.props.loaded) return <div>Loading...</div>;
     const navHeight = document.getElementById("nav").clientHeight;
     const containerStyle = {
@@ -180,7 +181,10 @@ class MapContainer extends Component {
       flexBasis: "inherit"
     };
 
-    if (this.state.updatedLocation === true) {
+    if (
+      this.state.updatedLocation === true &&
+      this.state.updatedDistance === true
+    ) {
       return (
         <Grid container>
           <Grid item xs={12} sm={4}>
@@ -212,7 +216,6 @@ class MapContainer extends Component {
         </Grid>
       );
     } else {
-      // console.log("user position before update", this.state.user);
       return <h3>Loading...</h3>;
     }
   }
