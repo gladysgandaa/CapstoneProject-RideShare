@@ -60,6 +60,7 @@ const SideList = ({ cars, account, availableVehicles }) => {
                 currentLocation={car.currentLocation}
                 status={checkStatus(car)}
                 maintenance={car.maintenance}
+                retired={car.retired}
               />
             );
           }

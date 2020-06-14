@@ -10,21 +10,32 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import EditCar from "../Admin/EditCar";
+import MaterialDialog from "../Dialog/Dialog";
 
 class AdminCar extends Component {
   constructor(props) {
     super(props);
     this.state = {
       editing: false,
-      removed: false
+      removed: false,
+      open: false
     };
   }
+
+  handleOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
   editForm = carId => {
     console.log("carId from function", carId);
     console.log("props", this.props);
     if (this.state.editing === false) {
       this.setState({ editing: true });
+      this.handleOpen();
     } else {
       this.setState({ editing: false });
     }
@@ -55,7 +66,8 @@ class AdminCar extends Component {
       currentLocation: {
         Latitude: parseFloat(this.props.currentLocation.Latitude),
         Longitude: parseFloat(this.props.currentLocation.Longitude)
-      }
+      },
+      maintenance: this.props.maintenance
     };
 
     // console.log(JSON.stringify(bookingData));
@@ -149,14 +161,6 @@ class AdminCar extends Component {
                 Status: {this.props.status}
               </Typography>
             </Grid>
-            {/* <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => this.removeVehicle(carId)}
-                  >
-                    Edit
-                  </Button> */}
-            &nbsp;
             {this.props.status !== "Booked" && (
               <Grid
                 container
@@ -212,7 +216,7 @@ class AdminCar extends Component {
                     fullWidth
                     variant="contained"
                     color="default"
-                    onClick={() => this.removeVehicle(this.props.carId)}
+                    onClick={() => this.editForm()}
                     startIcon={<EditIcon />}
                   >
                     Edit
@@ -224,15 +228,21 @@ class AdminCar extends Component {
           {this.state.removed && <div style={{ color: "red" }}>REMOVED</div>}
           <div>
             {this.state.editing && (
-              <EditCar
-                carId={this.props.carId}
-                car={this.props}
-                action="EDITING"
-              ></EditCar>
+              <MaterialDialog
+                content={
+                  <EditCar
+                    carId={this.props.carId}
+                    car={this.props}
+                    action="EDITING"
+                  />
+                }
+                open={this.state.open}
+                handleClose={this.handleClose}
+              />
             )}
           </div>
         </ListItem>
-        <Divider component="li" />
+        <Divider />
       </div>
     );
   }

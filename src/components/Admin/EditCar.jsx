@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
+import SaveIcon from "@material-ui/icons/Save";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -40,19 +41,21 @@ export default function EditCar(props) {
   const submitVehicle = e => {
     //Request will not complete in time for default reload
     e.preventDefault();
-
+    console.log(props.retired);
     const vehicleData = {
+      carId: props.carId,
       make: fields.make,
       model: fields.model,
       rentalCostPerHour: parseInt(fields.rentalCostPerHour),
       numberOfSeats: parseInt(fields.numberOfSeats),
       year: parseInt(fields.year),
-      returnDate: null,
-      retired: false,
+      returnDate: props.car.returnDate,
+      retired: props.car.retired || false,
       currentLocation: {
         Latitude: parseFloat(fields.Latitude),
         Longitude: parseFloat(fields.Longitude)
-      }
+      },
+      maintenance: props.car.maintenance || false
     };
 
     // Pass props if form is not changed
@@ -75,9 +78,7 @@ export default function EditCar(props) {
 
     axios({
       method: "put",
-      url:
-        "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car?carId=" +
-        props.carId,
+      url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",
       headers: {},
       data: vehicleData
     }).then(res => {
@@ -206,8 +207,9 @@ export default function EditCar(props) {
             variant="contained"
             color="primary"
             className={classes.submit}
+            startIcon={<SaveIcon />}
           >
-            Commit Edit
+            Save
           </Button>
         </form>
       </div>
