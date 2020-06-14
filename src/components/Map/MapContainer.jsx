@@ -167,7 +167,7 @@ class MapContainer extends Component {
         }
       }
     }
-    // console.log("Distances from get distances from MapContainer", distances);
+    console.log("Distances from get distances from MapContainer", distances);
     return distances;
   };
 
