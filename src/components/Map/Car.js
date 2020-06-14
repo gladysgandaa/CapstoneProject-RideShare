@@ -48,6 +48,7 @@ const Car = props => {
     });
   };
 
+  const available = returnDate ? { returnDate }.returnDate : "now";
   var trunc_dist = Math.trunc(distance);
   return (
     <div>
@@ -64,8 +65,8 @@ const Car = props => {
               className={useStyles.inline}
               color="textPrimary"
             >
-              From: ${rentalCostPerHour} hourly
-              <br></br>Currently Available
+              From : ${rentalCostPerHour} hourly
+              <br></br>Available: {available}
               <br></br>
               Kilometres from you: {trunc_dist}
               <div>
