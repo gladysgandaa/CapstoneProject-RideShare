@@ -81,7 +81,6 @@ class AdminDashboard extends Component {
 
   displayVehicles = () => {
     if (!this.state.dbVehicles) {
-      console.log("no vehicles");
       return null;
     }
 
