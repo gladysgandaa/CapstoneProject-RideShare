@@ -108,7 +108,7 @@ const BookingForm = props => {
       state: {
         carId: carId,
         rentalCostPerHour: rentalCostPerHour,
-        duration: fields.duration
+        duration: duration
       }
     });
   };
