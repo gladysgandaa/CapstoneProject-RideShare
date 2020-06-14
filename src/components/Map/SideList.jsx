@@ -16,10 +16,27 @@ const useStyles = makeStyles({
   }
 });
 
-const SideList = ({ cars, account }) => {
+const SideList = ({ cars, account, availableVehicles }) => {
   console.log("logging from sidelist");
   const classes = useStyles();
   navHeight = document.getElementById("nav").clientHeight;
+
+  const checkStatus = car => {
+    const result = availableVehicles.some(
+      availableCar => availableCar.carId === car.carId
+    );
+    console.log(result);
+    if (result) {
+      return "Available";
+    } else if (car.retired === true) {
+      return "Retired";
+    } else if (car.maintenance === true) {
+      return "Undergoing Maintenance";
+    } else {
+      return "Booked";
+    }
+  };
+
   return (
     <List className={classes.root} disablePadding={true}>
       {!cars.length ? (
@@ -38,6 +55,7 @@ const SideList = ({ cars, account }) => {
                 numberOfSeats={car.numberOfSeats}
                 rentalCostPerHour={car.rentalCostPerHour}
                 currentLocation={car.currentLocation}
+                status={checkStatus(car)}
               />
             );
           }

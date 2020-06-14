@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -33,6 +34,8 @@ const useStyles = makeStyles(() => ({
 
 const ShowHistory = props => {
   const classes = useStyles();
+  const history = useHistory();
+
   const {
     startTime,
     bookingId,
@@ -70,7 +73,10 @@ const ShowHistory = props => {
       headers: {},
       data: bookingData
     })
-      .then(response => {})
+      .then(response => {
+        // refresh once returned
+        history.go();
+      })
       .catch(error => {
         // console.log(`Error => ${error}`);
         if (error.response.status && error.response.status === 500) {

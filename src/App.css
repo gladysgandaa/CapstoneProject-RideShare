@@ -39,3 +39,8 @@
 .error {
   color: red;
 }
+
+.maintenanceButton {
+  color: #fff !important;
+  background-color: #ff9800 !important;
+}

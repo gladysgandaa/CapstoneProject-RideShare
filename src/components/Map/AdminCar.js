@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
-import ListItemText from "@material-ui/core/ListItemText";
+import Grid from "@material-ui/core/Grid";
+import DeleteIcon from "@material-ui/icons/Delete";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
 
@@ -25,28 +25,10 @@ import axios from "axios";
 
 class AdminCar extends Component {
   constructor(props) {
-    const {
-      carId,
-      make,
-      model,
-      rentalCostPerHour,
-      year,
-      numberOfSeats,
-      currentLocation,
-      retired
-    } = props;
     super(props);
     this.state = {
       editing: false,
-      removed: false,
-      carId: carId,
-      make: make,
-      model: model,
-      rentalCostPerHour: rentalCostPerHour,
-      numberOfSeats: numberOfSeats,
-      year: year,
-      currentLocation: currentLocation,
-      retired: retired
+      removed: false
     };
   }
 
@@ -70,15 +52,15 @@ class AdminCar extends Component {
 
   retireVehicle = () => {
     const vehicleData = {
-      make: this.state.make,
-      model: this.state.model,
-      rentalCostPerHour: parseInt(this.state.rentalCostPerHour),
-      numberOfSeats: parseInt(this.state.numberOfSeats),
-      year: parseInt(this.state.year),
+      make: this.props.make,
+      model: this.props.model,
+      rentalCostPerHour: parseInt(this.props.rentalCostPerHour),
+      numberOfSeats: parseInt(this.props.numberOfSeats),
+      year: parseInt(this.props.year),
       retired: true,
       currentLocation: {
-        Latitude: parseFloat(this.state.currentLocation.Latitude),
-        Longitude: parseFloat(this.state.currentLocation.Longitude)
+        Latitude: parseFloat(this.props.currentLocation.Latitude),
+        Longitude: parseFloat(this.props.currentLocation.Longitude)
       }
     };
 
@@ -101,15 +83,15 @@ class AdminCar extends Component {
 
   maintainVehicle = () => {
     const vehicleData = {
-      make: this.state.make,
-      model: this.state.model,
-      rentalCostPerHour: parseInt(this.state.rentalCostPerHour),
-      numberOfSeats: parseInt(this.state.numberOfSeats),
-      year: parseInt(this.state.year),
-      retired: this.state.retired,
+      make: this.props.make,
+      model: this.props.model,
+      rentalCostPerHour: parseInt(this.props.rentalCostPerHour),
+      numberOfSeats: parseInt(this.props.numberOfSeats),
+      year: parseInt(this.props.year),
+      retired: this.props.retired,
       currentLocation: {
-        Latitude: parseFloat(this.state.currentLocation.Latitude),
-        Longitude: parseFloat(this.state.currentLocation.Longitude)
+        Latitude: parseFloat(this.props.currentLocation.Latitude),
+        Longitude: parseFloat(this.props.currentLocation.Longitude)
       },
       maintenance: true
     };
@@ -132,65 +114,91 @@ class AdminCar extends Component {
   };
 
   render() {
-    const useStyles = makeStyles(theme => ({
-      inline: {
-        display: "inline"
-      }
-    }));
     return (
       <div>
         <ListItem alignItems="flex-start">
-          <ListItemAvatar>
-            <Avatar alt={this.state.model} src="" />
-          </ListItemAvatar>
-          <ListItemText
-            primary={`${this.state.make} ${this.state.model}`}
-            secondary={
+          <Grid container direction="row" justify="space-between">
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item>
+                <ListItemAvatar>
+                  <Avatar alt={this.props.model} src="" />
+                </ListItemAvatar>
+              </Grid>
+              <Grid item>
+                <Typography component="h2" variant="body1" color="textPrimary">
+                  {this.props.make} {this.props.model}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography component="h2" variant="body2" color="textPrimary">
+                ${this.props.rentalCostPerHour} hourly
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <Typography
-                component="span"
+                component="h2"
                 variant="body2"
-                className={useStyles.inline}
                 color="textPrimary"
+                align="right"
               >
-                ${this.state.rentalCostPerHour} hourly <br></br> Available:
-                <br></br>
-                <div>
-                  {/* <Button
+                Status: {this.props.status}
+              </Typography>
+            </Grid>
+            {/* <Button
                     variant="contained"
                     color="primary"
                     onClick={() => this.testFunction(carId)}
                   >
                     Edit
                   </Button> */}
-                  &nbsp;
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => this.removeVehicle(this.state.carId)}
-                  >
-                    Remove
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => this.retireVehicle(this.state.carId)}
-                  >
-                    Retire
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="info"
-                    onClick={() => this.maintainVehicle(this.state.carId)}
-                  >
-                    Maintenance
-                  </Button>
-                </div>
-                {this.state.removed && (
-                  <div style={{ color: "red" }}>REMOVED</div>
-                )}
-              </Typography>
-            }
-          />
+            &nbsp;
+            <Grid
+              container
+              spacing={1}
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={12} sm={4}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => this.retireVehicle(this.props.carId)}
+                >
+                  Retire
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  className="maintenanceButton"
+                  onClick={() => this.maintainVehicle(this.props.carId)}
+                >
+                  Maintenance
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => this.removeVehicle(this.props.carId)}
+                  startIcon={<DeleteIcon />}
+                >
+                  Remove
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          {this.state.removed && <div style={{ color: "red" }}>REMOVED</div>}
           <div>
             {this.state.editing && (
               <form>
@@ -219,7 +227,7 @@ class AdminCar extends Component {
             )}
           </div>
         </ListItem>
-        <Divider variant="inset" component="li" />
+        <Divider component="li" />
       </div>
     );
   }
