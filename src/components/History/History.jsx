@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
+import { useHistory } from "react-router-dom";
 
 import HistoryList from "./HistoryList.js";
 import { useAppContext } from "../../libs/contextLib";
@@ -31,25 +32,32 @@ const History = () => {
   const classes = useStyles();
   const [bookings, setBookings] = useState("");
   const { currentSession } = useAppContext();
-
-  const userId = currentSession.idToken.payload["cognito:username"];
+  const history = useHistory();
 
   useEffect(() => {
-    axios
-      .get(
-        `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/bookings?userId=${userId}`
-      )
-      .then(response => {
-        // console.log(response);
-        setBookings(response.data);
-      })
-      .catch(error => {
-        console.log(`Error => ${error}`);
-        if (error.response && error.response.status === 500) {
-          // console.log(error);
-        }
-      });
-  }, [userId]);
+    if (
+      currentSession &&
+      currentSession.idToken.payload.hasOwnProperty("cognito:username")
+    ) {
+      const userId = currentSession.idToken.payload["cognito:username"];
+      axios
+        .get(
+          `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/bookings?userId=${userId}`
+        )
+        .then(response => {
+          // console.log(response);
+          setBookings(response.data);
+        })
+        .catch(error => {
+          console.log(`Error => ${error}`);
+          if (error.response && error.response.status === 500) {
+            // console.log(error);
+          }
+        });
+    } else {
+      history.push("/");
+    }
+  }, [history, currentSession]);
 
   return (
     <div>
