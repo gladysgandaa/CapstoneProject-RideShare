@@ -21,7 +21,7 @@ const MapFunctions = {
               Math.sin(difflon / 2)
         )
       );
-    console.log(d);
+    // console.log(d);
     return d;
   }
 };
