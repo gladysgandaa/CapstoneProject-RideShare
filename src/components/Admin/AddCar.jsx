@@ -60,7 +60,7 @@ export default function AddCar() {
       }
     };
 
-    console.log(vehicleData);
+    // console.log(vehicleData);
     axios({
       method: "post",
       url: "https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car",

@@ -25,10 +25,28 @@ import axios from "axios";
 
 class AdminCar extends Component {
   constructor(props) {
+    const {
+      carId,
+      make,
+      model,
+      rentalCostPerHour,
+      year,
+      numberOfSeats,
+      currentLocation,
+      retired
+    } = props;
     super(props);
     this.state = {
       editing: false,
-      removed: false
+      removed: false,
+      carId: carId,
+      make: make,
+      model: model,
+      rentalCostPerHour: rentalCostPerHour,
+      numberOfSeats: numberOfSeats,
+      year: year,
+      currentLocation: currentLocation,
+      retired: retired
     };
   }
 
@@ -50,8 +68,70 @@ class AdminCar extends Component {
     this.setState({ removed: true });
   };
 
+  retireVehicle = () => {
+    const vehicleData = {
+      make: this.state.make,
+      model: this.state.model,
+      rentalCostPerHour: parseInt(this.state.rentalCostPerHour),
+      numberOfSeats: parseInt(this.state.numberOfSeats),
+      year: parseInt(this.state.year),
+      retired: true,
+      currentLocation: {
+        Latitude: parseFloat(this.state.currentLocation.Latitude),
+        Longitude: parseFloat(this.state.currentLocation.Longitude)
+      }
+    };
+
+    // console.log(JSON.stringify(bookingData));
+
+    axios({
+      method: "put",
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car`,
+      headers: {},
+      data: vehicleData
+    })
+      .then(response => {})
+      .catch(error => {
+        // console.log(`Error => ${error}`);
+        if (error.response.status && error.response.status === 500) {
+          console.log(error);
+        }
+      });
+  };
+
+  maintainVehicle = () => {
+    const vehicleData = {
+      make: this.state.make,
+      model: this.state.model,
+      rentalCostPerHour: parseInt(this.state.rentalCostPerHour),
+      numberOfSeats: parseInt(this.state.numberOfSeats),
+      year: parseInt(this.state.year),
+      retired: this.state.retired,
+      currentLocation: {
+        Latitude: parseFloat(this.state.currentLocation.Latitude),
+        Longitude: parseFloat(this.state.currentLocation.Longitude)
+      },
+      maintenance: true
+    };
+
+    // console.log(JSON.stringify(vehicleData));
+
+    axios({
+      method: "put",
+      url: `https://d8m0e1kit9.execute-api.us-east-1.amazonaws.com/data/car`,
+      headers: {},
+      data: vehicleData
+    })
+      .then(response => {})
+      .catch(error => {
+        // console.log(`Error => ${error}`);
+        if (error.response.status && error.response.status === 500) {
+          console.log(error);
+        }
+      });
+  };
+
   render() {
-    const { carId, make, model, rentalCostPerHour } = this.props;
     const useStyles = makeStyles(theme => ({
       inline: {
         display: "inline"
@@ -61,10 +141,10 @@ class AdminCar extends Component {
       <div>
         <ListItem alignItems="flex-start">
           <ListItemAvatar>
-            <Avatar alt={model} src="" />
+            <Avatar alt={this.state.model} src="" />
           </ListItemAvatar>
           <ListItemText
-            primary={`${make} ${model}`}
+            primary={`${this.state.make} ${this.state.model}`}
             secondary={
               <Typography
                 component="span"
@@ -72,7 +152,7 @@ class AdminCar extends Component {
                 className={useStyles.inline}
                 color="textPrimary"
               >
-                ${rentalCostPerHour} hourly <br></br> Available:
+                ${this.state.rentalCostPerHour} hourly <br></br> Available:
                 <br></br>
                 <div>
                   {/* <Button
@@ -86,9 +166,23 @@ class AdminCar extends Component {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => this.removeVehicle(carId)}
+                    onClick={() => this.removeVehicle(this.state.carId)}
                   >
                     Remove
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => this.retireVehicle(this.state.carId)}
+                  >
+                    Retire
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="info"
+                    onClick={() => this.maintainVehicle(this.state.carId)}
+                  >
+                    Maintenance
                   </Button>
                 </div>
                 {this.state.removed && (
