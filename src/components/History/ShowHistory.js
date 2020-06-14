@@ -9,7 +9,6 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   inline: {
@@ -34,8 +33,6 @@ const useStyles = makeStyles(() => ({
 
 const ShowHistory = props => {
   const classes = useStyles();
-  const history = useHistory();
-
   const {
     startTime,
     bookingId,
@@ -73,13 +70,10 @@ const ShowHistory = props => {
       headers: {},
       data: bookingData
     })
-      .then(response => {
-        // refresh once returned
-        history.go();
-      })
+      .then(response => {})
       .catch(error => {
         // console.log(`Error => ${error}`);
-        if (error.response && error.response.status === 500) {
+        if (error.response.status && error.response.status === 500) {
           console.log(error);
         }
       });
@@ -87,47 +81,49 @@ const ShowHistory = props => {
 
   return (
     <div>
-      <ListItem alignItems="flex-start">
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={1}>
-            <ListItemAvatar>
-              <Avatar src="" classes={{ root: classes.avatar }} />
-            </ListItemAvatar>
-          </Grid>
-          <Grid item xs={12} sm={8}>
-            <ListItemText
-              classes={{ primary: classes.primary }}
-              primary={car ? `${car.make} ${car.model}` : `Car ID: ${carId}`}
-              secondary={
-                <Typography
-                  component="span"
-                  variant="body2"
-                  className={useStyles.inline}
-                  color="textPrimary"
+      {
+        <ListItem alignItems="flex-start">
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={1}>
+              <ListItemAvatar>
+                <Avatar src="" classes={{ root: classes.avatar }} />
+              </ListItemAvatar>
+            </Grid>
+            <Grid item xs={12} sm={8}>
+              <ListItemText
+                classes={{ primary: classes.primary }}
+                primary={`${car.make} ${car.model}`}
+                secondary={
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    className={useStyles.inline}
+                    color="textPrimary"
+                  >
+                    Booking ID: {bookingId}
+                    <br></br>
+                    Booking Time: {startTime}
+                    <br></br>
+                    Duration : {duration} hours
+                  </Typography>
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              {returnDate === null && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  classes={{ root: classes.button }}
+                  onClick={returnVehicle}
                 >
-                  Booking ID: {bookingId}
-                  <br></br>
-                  Booking Time: {startTime}
-                  <br></br>
-                  Duration : {duration} hours
-                </Typography>
-              }
-            />
+                  Return
+                </Button>
+              )}
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={3}>
-            {returnDate === null && (
-              <Button
-                variant="contained"
-                color="primary"
-                classes={{ root: classes.button }}
-                onClick={returnVehicle}
-              >
-                Return
-              </Button>
-            )}
-          </Grid>
-        </Grid>
-      </ListItem>
+        </ListItem>
+      }
       <Divider variant="inset" classes={{ root: classes.root }} />
     </div>
   );
