@@ -16,7 +16,6 @@ import { useHistory, useLocation } from "react-router-dom";
 import LoaderButton from "../LoaderButton";
 import { onError } from "../../libs/errorLib";
 import { useFormFields } from "../../libs/hooksLib";
-import { withStyles } from "@material-ui/core/styles";
 
 function Copyright() {
   return (

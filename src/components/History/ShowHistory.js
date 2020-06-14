@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
 const ShowHistory = props => {
   const classes = useStyles();
   const history = useHistory();
-  const [title, setTitle] = useState("");
+
   const {
     startTime,
     bookingId,
