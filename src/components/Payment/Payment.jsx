@@ -5,7 +5,12 @@ export default class PaymentExample extends Component {
   paymentHandler = (details, data) => {
     /** Leave blank since we're not storing payments */
     console.log(details, data);
+    this.goHome();
   };
+
+  goHome() {
+    this.props.history.push("/");
+  }
 
   render() {
     const costPerHour = this.props.location.state.rentalCostPerHour;
